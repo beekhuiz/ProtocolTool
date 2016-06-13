@@ -1,0 +1,8 @@
+#startup bat file
+start
+
+# database
+db_protocoltool
+
+# pycharm
+.idea

@@ -1,0 +1,90 @@
+{% extends "protocoltool/base.html" %}
+
+
+{% block head %}
+<title>
+    Protocol Tool
+</title>
+{% endblock %}
+
+{% block body %}
+<div class="row"> <!--Buttons-->
+    <div class="col-md-12">
+        <div class="pull-right">
+            <button type="button" id="addDataset" onclick="window.location.assign('/project/form/')" class="btn btn-xs btn-primary">Add protocol</button>
+        </div>
+    </div>
+</div> <!--END Buttons-->
+<div class="row"> <!--Datasets table-->
+    <form id="dataset_action_form" action="" method="post">
+        {% csrf_token %}
+        <input type="hidden" name="dataset_action" value="">
+        <input type="hidden" name="dataset_id" value="">
+    </form>
+    <div class="col-md-12">
+        <table id="datasettable" class="table table-striped">
+            <colgroup>
+                <col style="width:19%">
+                <col style="width:12%">
+                <col style="width:44%">
+                <col style="width:8%">
+                <col style="width:17%">
+            </colgroup>
+            <thead>
+                <tr>
+                    <th>Protocol</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for dataset in dataset_list  %}
+                <tr>
+                    <td>{{ dataset.title }}</td>
+                    <!--<td class="textcenter">{{ dataset.creationTime | date:'d-m-Y' }}</td>-->
+                    <td>
+                        <button type="button" class="btn btn-xs btn-default" value="{{ dataset.id }}" name="edit" onclick="submit_dataset_action(this)">Edit</button>
+                        {% if dataset.published %}
+                        <button type="button" class="btn btn-xs btn-default" value="{{ dataset.id }}" name="unpublish" onclick="submit_dataset_action(this)">Unpublish</button>
+                        {% else %}
+                        <button type="button" class="btn btn-xs btn-default" value="{{ dataset.id }}" name="publish" onclick="submit_dataset_action(this)">Publish</button>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td>No protocols defined</td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div> <!--END Datasets table-->
+{% endblock %}
+{% block script %}
+<script>
+    <!--
+    function submit_dataset_action(instance) {
+        document.getElementsByName('dataset_id')[0].value = instance.value;
+        var ds_action = document.getElementsByName('dataset_action')[0];
+        if (instance.name == 'edit') {
+            ds_action.value = 'edit';
+        }
+        if (instance.name == 'publish') {
+            ds_action.value = 'publish';
+        }
+        if (instance.name == 'unpublish' && confirm('You are about to unpublish the protocol. \nDo you want to continue anyway?')) {
+            ds_action.value = 'unpublish';
+        }
+        if (instance.name == 'refresh') {
+            ds_action.value = 'refresh';
+        }
+        if (ds_action.value == 'edit' || ds_action.value == 'publish' || ds_action.value == 'unpublish' || ds_action.value == 'delete' || ds_action.value == 'refresh') {
+            document.getElementById('dataset_action_form').submit();
+            console.log('Form submitted');
+        }
+    }
+    //-->
+</script>
+{% endblock %}
