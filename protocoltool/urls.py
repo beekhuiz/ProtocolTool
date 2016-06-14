@@ -13,4 +13,8 @@ urlpatterns = patterns('',
     # Ex: /project/1/form/2/ (edit existing dataset)
     #url(r'^(?P<project_id>\d*)/form/(?P<dataset_id>\d*)/$', views.edit_dataset, name='edit_dataset'),
     url(r'^form/(?P<dataset_id>\d*)/$', views.edit_dataset, name='edit_dataset'),
+
+    url(r'^addpartner/$', views.addPartner, name='add_partner'),
+    url(r'^updatepartner/$', views.updatePartner, name='update_partner'),
+    url(r'^deletepartner/$', views.deletePartner, name='delete_partner'),
 )

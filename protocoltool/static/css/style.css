@@ -1,0 +1,76 @@
+tbody tr.highlight td {
+    background-color: #ddd;
+}
+
+.table-hover tbody tr:hover td, .table-hover tbody tr:hover th {
+  background-color: #fcf8e3;
+}
+
+.row {
+    margin-top: 8px;
+    margin-bottom: 8px;
+}
+
+.tablepartner {
+    display:block;
+    max-height:160px;
+    overflow-y:scroll;
+}
+
+thead, tbody tr {
+    display:table;
+    width:100%;
+    table-layout:fixed;
+}
+
+thead {
+    background-color: #ddd;
+}
+
+
+#sidebar {
+    border-left-style: dashed;
+    border-color: #b2cbe5;
+}
+
+#not-active {
+    color: #9dabb9;
+    cursor: default;
+    pointer-events: none;
+}
+
+#footer {
+    height: 100px;
+  }
+
+#addButton {
+    vertical-align: bottom;
+}
+
+#meta_table th {
+    text-align: right;
+}
+
+/* form css */
+.meta_table th {
+    text-align: right;
+}
+
+
+
+#noscript-padding {
+    padding-top: 1.9em;
+}
+
+#noscript-warning {
+    background-color: #ae0000;
+    color: #fff;
+    font-size: 120%;
+    font-weight: bold;
+    left: 0;
+    padding: 5px 0;
+    position: fixed;
+    text-align: center;
+    top: 0;
+    width: 100%;
+}

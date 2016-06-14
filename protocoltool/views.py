@@ -11,6 +11,7 @@ import json
 # from django.core.serializers.json import DjangoJSONEncoder
 from django.core import serializers
 from django.utils.safestring import mark_safe
+from django.http import JsonResponse
 
 import pdb
 
@@ -87,53 +88,56 @@ def form_dataset(request):
             # if not formCore.is_valid() or not form_time.is_valid():
             #     valid_models = False
 
-            if valid_models:
 
-                # Save Core form
-                core_obj = BasicDataset(
-                    title=content['title'],
-                    experimentIdea = content['experimentIdea'],
-                    hypothesis = content['hypothesis'],
-                    researchObjective = content['researchObjective'],
-                    principles = content['principles'],
-                    dataReqDescription = content['dataReqDescription'],
-                    dataReqProperties = content['dataReqProperties'],
-                    dataReqContributingPartner = content['dataReqContributingPartner'],
-                    dataReqSubmDate = content['dataReqSubmDate'],
-                    expExecutionSteps = content['expExecutionSteps'],
-                    resultReportingFormatting = content['resultReportingFormatting']
-                    )
-
-                core_obj.save()
-
-                # Save Partner form
-
-                # Checkbox value is not posted if checkbox is not ticked! Check for this.
-                lead = False
-                if 'lead' in content.keys():
-                    lead = True
-
-                partnerObj = Partner(
-                    dataset = core_obj,
-                    name=content['name'],
-                    email=content['email'],
-                    lead=lead
-                    )
-
-                partnerObj.save()
-
-                return HttpResponseRedirect(
-                    reverse('protocoltool:detail')
+            # Save Core form
+            core_obj = BasicDataset(
+                title=content['title'],
+                experimentIdea = content['experimentIdea'],
+                hypothesis = content['hypothesis'],
+                researchObjective = content['researchObjective'],
+                principles = content['principles'],
+                dataReqDescription = content['dataReqDescription'],
+                dataReqProperties = content['dataReqProperties'],
+                dataReqContributingPartner = content['dataReqContributingPartner'],
+                dataReqSubmDate = content['dataReqSubmDate'],
+                expExecutionSteps = content['expExecutionSteps'],
+                resultReportingFormatting = content['resultReportingFormatting']
                 )
+
+            core_obj.save()
+
+            # Save Partner form
+
+            # Checkbox value is not posted if checkbox is not ticked! Check for this.
+            lead = False
+            if 'lead' in content.keys():
+                lead = True
+
+            partnerObj = Partner(
+                dataset = core_obj,
+                name=content['name'],
+                email=content['email'],
+                lead=lead
+                )
+
+            partnerObj.save()
+
+            return HttpResponseRedirect(
+                reverse('protocoltool:detail')
+            )
         else:
             # User is redirected to main page
             return HttpResponseRedirect(reverse('protocoltool:detail'))
 
     elif request.method == 'GET':
 
-        # formCore = BasicDatasetForm(auto_id='id_basic_%s')
-        formCore = BasicDatasetForm()
-        # formPartner = PartnerForm(auto_id='id_partner_%s')
+        core_obj = BasicDataset(
+            title='Title of the protocol'
+            )
+        core_obj.save()
+
+        coreData = BasicDataset.objects.get(id=core_obj.id)
+        formCore = BasicDatasetForm(instance=coreData)
         formPartner = PartnerForm()
 
         formList = [
@@ -142,12 +146,13 @@ def form_dataset(request):
         ]
 
         context = {
+            'dataset_id': core_obj.id,
+            'edit': True,
             'forms_list': formList,
             'existingPartnersJSON': json.dumps([])
         }
 
         return render(request, 'protocoltool/form.html', context)
-
 
 
 def edit_dataset(request, dataset_id="0"):
@@ -200,40 +205,118 @@ def edit_dataset(request, dataset_id="0"):
     elif request.method == 'POST' and dataset_id != 0:
         content = request.POST
 
-        valid_models = True
+        core_obj = BasicDataset(
+            id=dataset_id,
+            title=content['title'],
+            experimentIdea = content['experimentIdea'],
+            hypothesis = content['hypothesis'],
+            researchObjective = content['researchObjective'],
+            principles = content['principles'],
+            dataReqDescription = content['dataReqDescription'],
+            dataReqProperties = content['dataReqProperties'],
+            dataReqContributingPartner = content['dataReqContributingPartner'],
+            dataReqSubmDate = content['dataReqSubmDate'],
+            expExecutionSteps = content['expExecutionSteps'],
+            resultReportingFormatting = content['resultReportingFormatting']
+        )
+        core_obj.save()
 
-        # # Collect basic form data and validate it
-        # formCore = BasicDatasetForm(content, auto_id='id_basic_%s')
-        # form_time = TemporalExtentForm(content, auto_id='id_temporalExtent_%s')
-        #
-        # forms_list = [
-        #     ['Basic', formCore],
-        #     ['Temporal Extent', form_time],
-        # ]
-        #
-        # if not formCore.is_valid() or not form_time.is_valid():
-        #     valid_models = False
-
-
-        if valid_models:
-            # Update Core form
-            core_obj = BasicDataset(
-                id=dataset_id,
-                title=content['title'],
-                experimentIdea = content['experimentIdea'],
-                hypothesis = content['hypothesis'],
-                researchObjective = content['researchObjective'],
-                principles = content['principles'],
-                dataReqDescription = content['dataReqDescription'],
-                dataReqProperties = content['dataReqProperties'],
-                dataReqContributingPartner = content['dataReqContributingPartner'],
-                dataReqSubmDate = content['dataReqSubmDate'],
-                expExecutionSteps = content['expExecutionSteps'],
-                resultReportingFormatting = content['resultReportingFormatting']
-            )
-            core_obj.save()
-
-            return HttpResponseRedirect(
-                reverse('protocoltool:detail'))
+        return HttpResponseRedirect(
+            reverse('protocoltool:detail'))
 
     return HttpResponseRedirect(reverse('protocoltool:detail'))
+
+
+def addPartner(request):
+
+    newPartner = request.POST.dict()
+    #pdb.set_trace()
+
+    # get the ID of the protocol of this partner
+    dataset = BasicDataset.objects.get(id=newPartner['datasetID'])
+
+    # create new partner object
+    partnerObj = Partner(
+        dataset = dataset,
+        name=newPartner['name'],
+        email=newPartner['email'],
+        lead=newPartner['lead']
+        )
+
+    partnerObj.save()
+
+    # reload all partner information as a array list
+    existingPartners = Partner.objects.filter(dataset__id=newPartner['datasetID'])
+
+    existingPartnersList = []
+    for partner in existingPartners:
+        partnerDict = {
+            "id": partner.id,
+            "name": partner.name,
+            "email": partner.email,
+            "lead": str(partner.lead),
+        }
+        existingPartnersList.append(partnerDict)
+
+    # Send all partner information back
+    return JsonResponse({'existingPartnersJSON': json.dumps(existingPartnersList)})
+
+
+
+def updatePartner(request):
+
+    updatedPartner = request.POST.dict()
+    #pdb.set_trace()
+
+    # get the ID of the protocol of this partner
+    # dataset = BasicDataset.objects.get(id=updatedPartner['datasetID'])
+
+    Partner.objects.filter(id=updatedPartner['partnerID']).update(
+        name=updatedPartner['name'],
+        email=updatedPartner['email'],
+        lead=updatedPartner['lead']
+    )
+
+    # reload all partner information as a array list
+    existingPartners = Partner.objects.filter(dataset__id=updatedPartner['datasetID'])
+
+    existingPartnersList = []
+    for partner in existingPartners:
+        partnerDict = {
+            "id": partner.id,
+            "name": partner.name,
+            "email": partner.email,
+            "lead": str(partner.lead),
+        }
+        existingPartnersList.append(partnerDict)
+
+    # Send all partner information back
+    return JsonResponse({'existingPartnersJSON': json.dumps(existingPartnersList)})
+
+
+def deletePartner(request):
+
+    deletedPartner = request.POST.dict()
+
+    #pdb.set_trace()
+
+    # get the ID of the protocol of this partner
+    # dataset = BasicDataset.objects.get(id=updatedPartner['datasetID'])
+
+    Partner.objects.filter(id=deletedPartner['partnerID']).delete()
+
+    # reload all partner information as a array list
+    existingPartners = Partner.objects.filter(dataset__id=deletedPartner['datasetID'])
+
+    existingPartnersList = []
+    for partner in existingPartners:
+        partnerDict = {
+            "id": partner.id,
+            "name": partner.name,
+            "email": partner.email,
+            "lead": str(partner.lead),
+        }
+        existingPartnersList.append(partnerDict)
+
+    # Send all partner information back
+    return JsonResponse({'existingPartnersJSON': json.dumps(existingPartnersList)})
