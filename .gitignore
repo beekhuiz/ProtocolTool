@@ -6,3 +6,4 @@ db_protocoltool
 
 # pycharm
 .idea
+.pyc
