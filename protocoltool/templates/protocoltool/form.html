@@ -1,16 +1,14 @@
 {% extends "protocoltool/base.html" %}
 
-{% block head %}
 <title>
     Protocol Tool
 </title>
-
-{% endblock %}
 
 {% block body %}
 
 
 <form role="form" id="dataset_form" class="form-horizontal" action="/project/form/{% if edit %}{{ dataset_id }}/{% endif %}" method="post">
+
     {% csrf_token %}
 
     {% for form in forms_list %}
@@ -98,24 +96,30 @@
                     </div>
             </div>
 
+
             <div class="col-md-4">
 
-                <!--<input type="hidden" id="selectedPartnerID" value="-99">-->
                 <input type="hidden" id="selectedPartnerID" value="-99">
+                <!--<input type="hidden" id="selectedPartnerID" value="-99">-->
+                 <h4>Current partners:</h4>
 
+                <table id="partnerTable" class="table table-hover table-bordered tablepartner">
+                    <thead>
+                        <tr>
+                            <th class="col-md-8"><strong>Name</strong></th>
+                            <th class="col-md-4"><strong>Lead</strong></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for partner in existingPartners %}
+                       <tr class="partnerRow">
+                           <td class="col-md-8 partnername">{{ partner.name }}</td>
+                           <td class="col-md-4">{{ partner.lead }}</td>
+                       </tr>
+                      {% endfor %} <!-- end for sources -->
 
-                <div class="dropdown">
-                  <button class="btn btn-default dropdown-toggle" type="button" id="dropdownPartners" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                    Partners
-                    <span class="caret"></span>
-                  </button>
-                  <ul id="partnerList" class="dropdown-menu" aria-labelledby="dropdownPartners">
-                    {% for partner in existingPartners %}
-                      <li>{{ partner.name }}</li>
-                    {% endfor %}
-                  </ul>
-                </div>
-
+                    </tbody>
+                </table>
 
             </div>
 
@@ -125,10 +129,12 @@
     </div>
     {% endfor %}
 </form>
+
+
 <div class="row">
     <div class="col-md-12"> <!--Form submission button-->
         {% if edit %}
-            <button type="button" class="btn btn-primary pull-right" onclick="checkform()" >Update Protocol</button>
+            <button type="button" class="btn btn-primary pull-right" onclick="checkform()">Update Protocol</button>
         {% else %}
             <button type="button" class="btn btn-primary pull-right" onclick="checkform()">Create Protocol</button>
         {% endif %}
@@ -138,187 +144,16 @@
 
 {% block script %}
 
-
-<!-- Reformat the error message to use bootstrap styling -->
-<!--<script type='text/javascript'>-->
+<!--Load in all data from Django to javascript-->
 <script type='text/javascript'>
 
+    var datasetID = "{{ dataset_id }}";
     var existingPartners = {{ existingPartnersJSON|safe }};
 
-    $('#partnerList').on('click', 'li', function(){
+    console.log(existingPartners);
 
-        console.log("partnerList clicked");
-        selectedPartner = $(this).text();
-
-        var arrayLength = existingPartners.length;
-
-        for (i = 0; i < arrayLength; i++) {
-
-            if(existingPartners[i].name == selectedPartner){
-                $('#id_name').val(existingPartners[i].name);
-                $('#id_email').val(existingPartners[i].email);
-
-                if(existingPartners[i].lead == 'True'){
-                    console.log("Check the cb!");
-                    $('#id_lead').prop('checked', true);
-                    //cb.val(cb.prop('checked'));
-                }
-                else{
-                    $('#id_lead').prop('checked', false);
-                }
-
-                $('#selectedPartnerID').val(existingPartners[i].id);
-
-                // update buttons
-                $('#updatePartnerID').removeClass( "disabled" ).addClass( "active" );
-                $('#deletePartnerID').removeClass( "disabled" ).addClass( "active" );
-            }
-        }
-    });
-
-
-     $('#addPartnerID').on('click', function(){
-
-        var arrayLength = existingPartners.length;
-
-        // get a new partnerID (max ID + 1)
-        var maxPartnerID = 0;
-        for (i = 0; i < arrayLength; i++) {
-            if(existingPartners[i].id > maxPartnerID){
-                maxPartnerID = existingPartners[i].id;
-            }
-        }
-
-        var lead = 'False';
-        if($('#checkbox').is(':checked')){
-            lead = 'True';
-        }
-        newID = maxPartnerID + 1
-
-        var newPartner = {"id": String(newID), "name": $('#id_name').val(), "email": $('#id_email').val(), "lead": lead};
-        existingPartners.push(newPartner);
-        console.log(newPartner);
-        console.log("Existing: ");
-        console.log(existingPartners);
-
-        // Reset all stuff
-        $('#id_name').val("");
-        $('#id_email').val("");
-        $('#id_lead').prop('checked', false);
-
-        // update buttons
-        $('#updatePartnerID').removeClass( "active" ).addClass( "disabled" );
-        $('#deletePartnerID').removeClass( "active" ).addClass( "disabled" );
-
-        // reset selected partner ID
-        $('#selectedPartnerID').val('-99')
-
-        // update list
-        $('#partnerList').empty();
-
-        var arrayLength = existingPartners.length;
-        for (i = 0; i < arrayLength; i++) {
-            $('#partnerList').append("<li>" + existingPartners[i].name + "</li>");
-        }
-    });
-
-
-    $('#updatePartnerID').on('click', function(){
-
-        var partnerID = $('#selectedPartnerID').val();
-
-        var arrayLength = existingPartners.length;
-
-        for (i = 0; i < arrayLength; i++) {
-            if(existingPartners[i].id == partnerID){
-
-                console.log("Name: " + $('#id_name').val());
-
-                existingPartners[i].name = $('#id_name').val();
-                existingPartners[i].email = $('#id_email').val();
-
-                if($('#checkbox').is(':checked')){
-                    existingPartners[i].lead = 'True';
-                }
-                else{
-                    existingPartners[i].lead = 'False';
-                }
-            }
-        }
-
-        // Reset all stuff
-        $('#id_name').val("");
-        $('#id_email').val("");
-        $('#id_lead').prop('checked', false);
-
-        // update buttons
-        $('#updatePartnerID').removeClass( "active" ).addClass( "disabled" );
-        $('#deletePartnerID').removeClass( "active" ).addClass( "disabled" );
-
-        // reset selected partner ID
-        $('#selectedPartnerID').val('-99')
-
-        // update list
-        $('#partnerList').empty();
-        for (i = 0; i < arrayLength; i++) {
-            $('#partnerList').append("<li>" + existingPartners[i].name + "</li>");
-        }
-    });
-
-
-   $('#deletePartnerID').on('click', function(){
-
-        var partnerID = $('#selectedPartnerID').val();
-        console.log("Partner ID: " + partnerID);
-
-        var arrayLength = existingPartners.length;
-        console.log("existingPartners before splice: ")
-        console.log(existingPartners);
-        console.log("Array length before splice: " + arrayLength);
-
-        for (i = 0; i < arrayLength; i++) {
-            if(existingPartners[i].id == partnerID){
-                console.log("Remove partner id");
-                var indexPartnerToRemove = i;
-            }
-        }
-
-        existingPartners.splice(indexPartnerToRemove, 1);
-
-        $('#partnerList').empty();
-
-        // update the array length after the splice
-        var arrayLength = existingPartners.length;
-
-        console.log("existingPartners after splice: ")
-        console.log(existingPartners);
-        console.log("Array length after splice: " + arrayLength);
-
-        for (i = 0; i < arrayLength; i++) {
-            $('#partnerList').append("<li>" + existingPartners[i].name + "</li>");
-        }
-
-        $('#id_name').val("");
-        $('#id_email').val("");
-        $('#id_lead').prop('checked', false);
-
-        // update buttons
-        $('#updatePartnerID').removeClass( "active" ).addClass( "disabled" );
-        $('#deletePartnerID').removeClass( "active" ).addClass( "disabled" );
-
-        // reset selected partner ID
-        $('#selectedPartnerID').val('-99')
-    });
-
+    var csrfmiddlewaretoken =  "{{ csrf_token }}";
 
 </script>
 
-<!-- Validate form (client side) TODO: Make validation checks for all fields -->
-<script>
-    <!--
-    function checkform() {
-        document.getElementById('dataset_form').submit();
-    }
-    //-->
-</script>
 {% endblock %}

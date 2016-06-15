@@ -10,6 +10,7 @@ urlpatterns = patterns('',
     # url(r'^blog/', include('blog.urls')),
 
     url(r'^admin/', include(admin.site.urls)),
+    url(r'^', include('protocoltool.urls', namespace='protocoltool')),
     url(r'^project/', include('protocoltool.urls', namespace='protocoltool')),
 )
 

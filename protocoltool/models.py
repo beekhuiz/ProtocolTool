@@ -1,5 +1,12 @@
 from django.db import models
+import datetime
+
+from django.contrib.auth.models import User
+
+
 # Create your models here.
+
+
 
 class Project(models.Model):
     def __unicode__(self):
@@ -16,14 +23,14 @@ class BasicDataset(models.Model):
         return self.title
 
     title = models.CharField(max_length=200)
-    experimentIdea = models.TextField()
-    hypothesis = models.TextField()
-    researchObjective = models.TextField()
+    experimentIdea = models.TextField(blank=True)
+    hypothesis = models.TextField(blank=True)
+    researchObjective = models.TextField(blank=True)
     principles = models.TextField(blank=True)
     dataReqDescription = models.TextField(blank=True)
     dataReqProperties = models.TextField(blank=True)
     dataReqContributingPartner = models.CharField(max_length=200, blank=True)
-    dataReqSubmDate = models.DateField(blank=True, null=True)
+    dataReqSubmDate = models.DateField(blank=True, default=datetime.date.today)
     expExecutionSteps = models.CharField(max_length=200, blank=True)
     resultReportingFormatting = models.CharField(max_length=200, blank=True)
 
