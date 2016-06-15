@@ -2,19 +2,19 @@ tbody tr.highlight td {
     background-color: #ddd;
 }
 
-.table-hover tbody tr:hover td, .table-hover tbody tr:hover th {
+/*.table-hover tbody tr:hover td, .table-hover tbody tr:hover th {
   background-color: #fcf8e3;
-}
+}*/
 
 .row {
     margin-top: 8px;
     margin-bottom: 8px;
 }
 
-.tablepartner {
+.table-hover {
     display:block;
     max-height:160px;
-    overflow-y:scroll;
+    overflow-y:auto;
 }
 
 thead, tbody tr {
