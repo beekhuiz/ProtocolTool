@@ -4,7 +4,6 @@ from django.core.urlresolvers import reverse
 from django.http import Http404, HttpResponseRedirect
 from django.shortcuts import render
 # Imports of models
-from datetime import datetime
 from .forms import BasicDatasetForm, PartnerForm
 from .models import BasicDataset, Partner
 import json
@@ -12,6 +11,7 @@ import json
 from django.core import serializers
 from django.utils.safestring import mark_safe
 from django.http import JsonResponse
+import datetime
 
 import pdb
 
@@ -101,7 +101,8 @@ def form_dataset(request):
                 dataReqContributingPartner = content['dataReqContributingPartner'],
                 dataReqSubmDate = content['dataReqSubmDate'],
                 expExecutionSteps = content['expExecutionSteps'],
-                resultReportingFormatting = content['resultReportingFormatting']
+                resultReportingFormatting = content['resultReportingFormatting'],
+                dateLastUpdate = str(datetime.date.today())
                 )
 
             core_obj.save()
@@ -217,7 +218,8 @@ def edit_dataset(request, dataset_id="0"):
             dataReqContributingPartner = content['dataReqContributingPartner'],
             dataReqSubmDate = content['dataReqSubmDate'],
             expExecutionSteps = content['expExecutionSteps'],
-            resultReportingFormatting = content['resultReportingFormatting']
+            resultReportingFormatting = content['resultReportingFormatting'],
+            dateLastUpdate = str(datetime.date.today())
         )
         core_obj.save()
 

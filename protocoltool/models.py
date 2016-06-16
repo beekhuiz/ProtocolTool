@@ -34,6 +34,7 @@ class BasicDataset(models.Model):
     expExecutionSteps = models.CharField(max_length=200, blank=True)
     resultReportingFormatting = models.CharField(max_length=200, blank=True)
 
+    dateLastUpdate = models.DateField(blank=True, default=datetime.date.today)
     published = models.BooleanField(default=False)
 
 

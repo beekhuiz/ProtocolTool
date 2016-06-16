@@ -33,6 +33,7 @@
             <thead>
                 <tr>
                     <th>Protocol</th>
+                    <th>Last update</th>
                     <th>Actions</th>
                 </tr>
             </thead>
@@ -40,7 +41,8 @@
                 {% for dataset in dataset_list  %}
                 <tr>
                     <td>{{ dataset.title }}</td>
-                    <!--<td class="textcenter">{{ dataset.creationTime | date:'d-m-Y' }}</td>-->
+                    <!--<td class="textcenter">{{ dataset.las | date:'d-m-Y' }}</td>                    -->
+                    <td class="textcenter">{{ dataset.dateLastUpdate | date:'d-m-Y' }}</td>
                     <td>
                         <button type="button" class="btn btn-xs btn-default" value="{{ dataset.id }}" name="edit" onclick="submit_dataset_action(this)">Edit</button>
                         {% if dataset.published %}
