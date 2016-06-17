@@ -28,39 +28,6 @@ function refreshPartners(){
 }
 
 
-// AJAX for adding partner
-function addPartner() {
-
-    // get all filled in data
-    var lead = 'False';
-    if($('#checkbox').is(':checked')){
-        lead = 'True';
-    }
-
-    $.ajax({
-        url: "/project/addpartner/",
-        type: "POST",
-        data: {datasetID: datasetID,
-               name: $('#id_name').val(),
-               email: $('#id_email').val(),
-               lead: lead,
-               csrfmiddlewaretoken: csrfmiddlewaretoken},
-
-        // handle a successful response
-        success : function(json) {
-            console.log("success"); // another sanity check
-            console.log(json['existingPartnersJSON']); // another sanity check
-            existingPartners = JSON.parse(json['existingPartnersJSON']);
-            refreshPartners();
-        },
-        // handle a non-successful response
-        error : function(xhr,errmsg,err) {
-            console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
-        }
-    });
-};
-
-
 $(document).ready(function(){
 
     $('#partnerTable').on('click', 'tr', function(){
@@ -97,7 +64,7 @@ $(document).ready(function(){
     });
 
 
-     $('#addPartnerID').on('click', function(){
+    $('#addPartnerID').on('click', function(){
 
 //        var arrayLength = existingPartners.length;
 //
@@ -142,9 +109,13 @@ $(document).ready(function(){
 //        }
         // get all filled in data
         var lead = 'False';
-        if($('#checkbox').is(':checked')){
+        if($('#id_lead').is(':checked')){
             lead = 'True';
         }
+
+        console.log("lead: ")
+        console.log(lead)
+
 
         $.ajax({
             url: "/project/addpartner/",
@@ -176,7 +147,7 @@ $(document).ready(function(){
         var partnerID = $('#selectedPartnerID').val();
 
         var lead = 'False';
-        if($('#checkbox').is(':checked')){
+        if($('#id_lead').is(':checked')){
             lead = 'True';
         }
 
@@ -202,8 +173,6 @@ $(document).ready(function(){
                 console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
             }
         });
-
-
 //        var partnerID = $('#selectedPartnerID').val();
 //        var arrayLength = existingPartners.length;
 //
@@ -267,8 +236,6 @@ $(document).ready(function(){
                 console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
             }
         });
-
-
 //        console.log("Partner ID: " + partnerID);
 //
 //        var arrayLength = existingPartners.length;

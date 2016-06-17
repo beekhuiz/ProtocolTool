@@ -1,32 +1,29 @@
 from django.contrib import admin
-from .models import BasicDataset, Project, Partner, LinkProtocol, TemporalExtend
+from .models import BasicDataset, Partner, DataReq, ExpStep, ResultRep
 
 # Register your models here.
-
-class ProjectAdmin(admin.ModelAdmin):
-    list_display = ('name', 'number', 'leader', 'e_mail')
 
 class BasicDatasetAdmin(admin.ModelAdmin):
     list_display = ('title',
             'experimentIdea',
             'hypothesis',
             'researchObjective',
-            'principles',
-            'dataReqDescription',
-            'dataReqProperties',
-            'dataReqContributingPartner',
-            'dataReqSubmDate',
-            'expExecutionSteps',
-            'resultReportingFormatting')
+            'principles')
 
 class PartnerAdmin(admin.ModelAdmin):
     list_display = ('name', 'email', 'lead')
 
-class TemporalExtendAdmin(admin.ModelAdmin):
-    list_display = ('dataset', 'start_date', 'end_date')
+class DataReqAdmin(admin.ModelAdmin):
+    list_display = ('description', 'properties', 'partner', 'deadline')
+
+class ExpStepAdmin(admin.ModelAdmin):
+    list_display = ('description', 'output', 'partner', 'deadline')
+
+class ResultRepAdmin(admin.ModelAdmin):
+    list_display = ('description', 'output', 'partner', 'deadline')
 
 admin.site.register(BasicDataset, BasicDatasetAdmin)
 admin.site.register(Partner, PartnerAdmin)
-admin.site.register(LinkProtocol)
-admin.site.register(Project, ProjectAdmin)
-admin.site.register(TemporalExtend, TemporalExtendAdmin)
+admin.site.register(DataReq, DataReqAdmin)
+admin.site.register(ExpStep, ExpStepAdmin)
+admin.site.register(ResultRep, ResultRepAdmin)

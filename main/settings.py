@@ -74,14 +74,6 @@ WSGI_APPLICATION = 'main.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/1.8/ref/settings/#databases
-
-# with open('main/db_parameters.txt', 'r') as f:
-#     f_list = f.read().strip().split('\n')
-#     parameters = {}
-#     for item in f_list:
-#         key, value = item.split(':')
-#         parameters[key] = value
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
