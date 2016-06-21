@@ -43,7 +43,9 @@
                 {% endif %}
             </div>
         </div> <!-- end row with the protocol information-->
+
         {% endif %}
+
 
 
         {% if form.0 == 'Partner' %}
@@ -230,18 +232,21 @@
 
     </div>  <!--End div overall form-->
     {% endfor %}
+
+
+    <div class="row">
+        <div class="col-md-12"> <!--Form submission button-->
+            {% if edit %}
+                <button type="button" class="btn btn-primary pull-right" onclick="checkform()">Update</button>
+            {% else %}
+                <button type="button" class="btn btn-primary pull-right" onclick="checkform()">Create Protocol</button>
+            {% endif %}
+        </div> <!--END Form submission button-->
+    </div>
 </form>
 
 
-<div class="row">
-    <div class="col-md-12"> <!--Form submission button-->
-        {% if edit %}
-            <button type="button" class="btn btn-primary pull-right" onclick="checkform()">Update Protocol</button>
-        {% else %}
-            <button type="button" class="btn btn-primary pull-right" onclick="checkform()">Create Protocol</button>
-        {% endif %}
-    </div> <!--END Form submission button-->
-</div>
+
 {% endblock %}
 
 {% block script %}
@@ -258,5 +263,7 @@
     var csrfmiddlewaretoken =  "{{ csrf_token }}";
 
 </script>
+
+
 
 {% endblock %}

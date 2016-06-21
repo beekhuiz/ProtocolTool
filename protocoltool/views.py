@@ -35,14 +35,13 @@ def detail(request):
 
         elif postDict['dataset_action'] == 'publish':
             # Fill in dataset published field
-            if dataset_obj.published is None:
-                dataset_obj.published = datetime.now()
-                dataset_obj.save()
+            dataset_obj.published = True
+            dataset_obj.save()
 
         elif postDict['dataset_action'] == 'unpublish':
             # Empty the dataset published field
             if dataset_obj.published is not None:
-                dataset_obj.published = None
+                dataset_obj.published = False
                 dataset_obj.save()
 
         elif postDict['dataset_action'] == 'edit':
@@ -68,43 +67,54 @@ def detail(request):
 
 def formBasic(request):
 
-    if request.method == 'POST':
-        content = request.POST
+    # Create empty dataset
+    core_obj = BasicDataset(
+        title='',
+        dateLastUpdate = str(datetime.date.today())
+        )
 
-        if 'form_action' in content:
+    core_obj.save()
 
-            # Save Core form
-            core_obj = BasicDataset(
-                title=content['title'],
-                experimentIdea = content['experimentIdea'],
-                hypothesis = content['hypothesis'],
-                researchObjective = content['researchObjective'],
-                principles = content['principles'],
-                dateLastUpdate = str(datetime.date.today())
-                )
+    url = '/form/%s/' % core_obj.id
+    return HttpResponseRedirect(url)
 
-            core_obj.save()
-
-            url = '/form/%s/' % core_obj.id
-            return HttpResponseRedirect(url)
-
-        else:
-            # User is redirected to main page
-            return HttpResponseRedirect(reverse('protocoltool:detail'))
-
-    elif request.method == 'GET':
-
-        formCore = BasicDatasetForm()
-
-        formList = [
-            ['Basic', formCore],
-        ]
-
-        context = {
-            'forms_list': formList
-        }
-
-        return render(request, 'protocoltool/formbasic.html', context)
+    # if request.method == 'POST':
+    #     content = request.POST
+    #
+    #     if 'form_action' in content:
+    #
+    #         # Save Core form
+    #         core_obj = BasicDataset(
+    #             title=content['title'],
+    #             experimentIdea = content['experimentIdea'],
+    #             hypothesis = content['hypothesis'],
+    #             researchObjective = content['researchObjective'],
+    #             principles = content['principles'],
+    #             dateLastUpdate = str(datetime.date.today())
+    #             )
+    #
+    #         core_obj.save()
+    #
+    #         url = '/form/%s/' % core_obj.id
+    #         return HttpResponseRedirect(url)
+    #
+    #     else:
+    #         # User is redirected to main page
+    #         return HttpResponseRedirect(reverse('protocoltool:detail'))
+    #
+    # elif request.method == 'GET':
+    #
+    #     formCore = BasicDatasetForm()
+    #
+    #     formList = [
+    #         ['Basic', formCore],
+    #     ]
+    #
+    #     context = {
+    #         'forms_list': formList
+    #     }
+    #
+    #     return render(request, 'protocoltool/formbasic.html', context)
 
 
 def formAll(request, dataset_id="0"):
@@ -116,67 +126,15 @@ def formAll(request, dataset_id="0"):
     }
 
     if request.method == 'GET' and dataset_id != 0:
-        coreData = BasicDataset.objects.get(id=dataset_id)
-        formCore = BasicDatasetForm(instance=coreData, auto_id='id_basic_%s')
 
-
-        # Load in existing partners
-        existingPartners = Partner.objects.filter(dataset__id=dataset_id)
-
-        existingPartnersList = []
-        for partner in existingPartners:
-            partnerDict = {
-                "id": partner.id,
-                "name": partner.name,
-                "email": partner.email,
-                "lead": str(partner.lead),
-            }
-            existingPartnersList.append(partnerDict)
-
-        formPartner = PartnerForm()
-
-
-        # Load in existing reqs
-        existingReqs = DataReq.objects.filter(dataset__id=dataset_id)
-
-        existingReqsList = []
-        for req in existingReqs:
-            reqDict = {
-                "id": req.id,
-                "description": req.description,
-                "properties": req.properties,
-                "partner": req.partner,
-                "deadline": req.deadline,
-            }
-            existingReqsList.append(reqDict)
-
-
-        formDataReq = DataReqForm()
-        formExpStep = ExpStepForm()
-
-        formList = [
-            ['Basic', formCore],
-            ['Partner', formPartner],
-            ['DataReq', formDataReq],
-            ['ExpStep', formExpStep],
-        ]
-
-        context.update({
-            'edit': True,
-            'dataset_id': dataset_id,
-            'existingPartners': existingPartners,   # for filling in the initial list; TODO: make this unnecessary: fill in list with jscript
-            'existingPartnersJSON': json.dumps(existingPartnersList), #mark_safe(existingPartnersJSON),#json.dumps(list(existingPartners), cls=DjangoJSONEncoder),
-            'existingReqs': existingReqs,
-            'existingReqsJSON': json.dumps(existingReqsList),
-            'forms_list': formList
-        })
-
+        context = getAllProtocolInfo(dataset_id)
         return render(request, 'protocoltool/form.html', context)
 
 
     elif request.method == 'POST' and dataset_id != 0:
         content = request.POST
 
+        # update the basic information of the protocol
         core_obj = BasicDataset(
             id=dataset_id,
             title=content['title'],
@@ -184,12 +142,16 @@ def formAll(request, dataset_id="0"):
             hypothesis = content['hypothesis'],
             researchObjective = content['researchObjective'],
             principles = content['principles'],
+            checked = True,
             dateLastUpdate = str(datetime.date.today())
         )
         core_obj.save()
 
         return HttpResponseRedirect(
             reverse('protocoltool:detail'))
+
+        # context = getAllProtocolInfo(dataset_id)
+        # return render(request, 'protocoltool/form.html', context)
 
     return HttpResponseRedirect(reverse('protocoltool:detail'))
 
@@ -233,7 +195,6 @@ def addPartner(request):
 
     # Send all partner information back
     return JsonResponse({'existingPartnersJSON': json.dumps(existingPartnersList)})
-
 
 
 def updatePartner(request):
@@ -296,7 +257,6 @@ def deletePartner(request):
     return JsonResponse({'existingPartnersJSON': json.dumps(existingPartnersList)})
 
 
-
 def addReq(request):
 
     postDict = request.POST.dict()
@@ -335,94 +295,62 @@ def addReq(request):
     return JsonResponse({'existingPartnersJSON': json.dumps(existingReqsList)})
 
 
+def getAllProtocolInfo(datasetID):
+
+    coreData = BasicDataset.objects.get(id=datasetID)
+    formCore = BasicDatasetForm(instance=coreData, auto_id='id_basic_%s')
+
+    # Load in existing partners
+    existingPartners = Partner.objects.filter(dataset__id=datasetID)
+
+    existingPartnersList = []
+    for partner in existingPartners:
+        partnerDict = {
+            "id": partner.id,
+            "name": partner.name,
+            "email": partner.email,
+            "lead": str(partner.lead),
+        }
+        existingPartnersList.append(partnerDict)
+
+    formPartner = PartnerForm()
 
 
-# def form_dataset(request):
-#
-#     context = {}
-#
-#     if request.method == 'POST':
-#         content = request.POST
-#
-#         if 'form_action' in content:
-#             # A (filled in) form is submitted
-#             valid_models = True
-#             # Collect basic form data and validate it
-#             # formCore = BasicDatasetForm(content, auto_id='id_basic_%s')
-#             #
-#             # formPartner = PartnerForm(content, auto_id='id_partner_%s')
-#             #
-#             # formList = [
-#             #     ['Basic', formCore],
-#             #     ['Partner', formPartner],
-#             # ]
-#
-#             # if not formCore.is_valid() or not form_time.is_valid():
-#             #     valid_models = False
-#
-#
-#             # Save Core form
-#             core_obj = BasicDataset(
-#                 title=content['title'],
-#                 experimentIdea = content['experimentIdea'],
-#                 hypothesis = content['hypothesis'],
-#                 researchObjective = content['researchObjective'],
-#                 principles = content['principles'],
-#                 dataReqDescription = content['dataReqDescription'],
-#                 dataReqProperties = content['dataReqProperties'],
-#                 dataReqContributingPartner = content['dataReqContributingPartner'],
-#                 dataReqSubmDate = content['dataReqSubmDate'],
-#                 expExecutionSteps = content['expExecutionSteps'],
-#                 resultReportingFormatting = content['resultReportingFormatting'],
-#                 dateLastUpdate = str(datetime.date.today())
-#                 )
-#
-#             core_obj.save()
-#
-#             # Save Partner form
-#
-#             # Checkbox value is not posted if checkbox is not ticked! Check for this.
-#             lead = False
-#             if 'lead' in content.keys():
-#                 lead = True
-#
-#             partnerObj = Partner(
-#                 dataset = core_obj,
-#                 name=content['name'],
-#                 email=content['email'],
-#                 lead=lead
-#                 )
-#
-#             partnerObj.save()
-#
-#             return HttpResponseRedirect(
-#                 reverse('protocoltool:detail')
-#             )
-#         else:
-#             # User is redirected to main page
-#             return HttpResponseRedirect(reverse('protocoltool:detail'))
-#
-#     elif request.method == 'GET':
-#
-#         core_obj = BasicDataset(
-#             title='Title of the protocol'
-#             )
-#         core_obj.save()
-#
-#         coreData = BasicDataset.objects.get(id=core_obj.id)
-#         formCore = BasicDatasetForm(instance=coreData)
-#         formPartner = PartnerForm()
-#
-#         formList = [
-#             ['Basic', formCore],
-#             ['Partner', formPartner],
-#         ]
-#
-#         context = {
-#             'dataset_id': core_obj.id,
-#             'edit': True,
-#             'forms_list': formList,
-#             'existingPartnersJSON': json.dumps([])
-#         }
-#
-#         return render(request, 'protocoltool/form.html', context)
+    # Load in existing reqs
+    existingReqs = DataReq.objects.filter(dataset__id=datasetID)
+
+    existingReqsList = []
+    for req in existingReqs:
+        reqDict = {
+            "id": req.id,
+            "description": req.description,
+            "properties": req.properties,
+            "partner": req.partner,
+            "deadline": req.deadline,
+        }
+        existingReqsList.append(reqDict)
+
+
+    formDataReq = DataReqForm()
+    formExpStep = ExpStepForm()
+
+    formList = [
+        ['Basic', formCore],
+        ['Partner', formPartner],
+        ['DataReq', formDataReq],
+        ['ExpStep', formExpStep],
+    ]
+
+    context = {}
+
+    context.update({
+        'edit': True,
+        'dataset_id': datasetID,
+        'existingPartners': existingPartners,   # for filling in the initial list; TODO: make this unnecessary: fill in list with jscript
+        'existingPartnersJSON': json.dumps(existingPartnersList), #mark_safe(existingPartnersJSON),#json.dumps(list(existingPartners), cls=DjangoJSONEncoder),
+        'existingReqs': existingReqs,
+        'existingReqsJSON': json.dumps(existingReqsList),
+        'forms_list': formList
+    })
+
+    return context

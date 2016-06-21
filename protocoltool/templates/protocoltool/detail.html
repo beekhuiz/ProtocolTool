@@ -34,24 +34,33 @@
                 <tr>
                     <th>Protocol</th>
                     <th>Last update</th>
+                    <th>Status</th>
                     <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
                 {% for dataset in dataset_list  %}
-                <tr>
-                    <td>{{ dataset.title }}</td>
-                    <!--<td class="textcenter">{{ dataset.las | date:'d-m-Y' }}</td>                    -->
-                    <td class="textcenter">{{ dataset.dateLastUpdate | date:'d-m-Y' }}</td>
-                    <td>
-                        <button type="button" class="btn btn-xs btn-default" value="{{ dataset.id }}" name="edit" onclick="submit_dataset_action(this)">Edit</button>
-                        {% if dataset.published %}
-                        <button type="button" class="btn btn-xs btn-default" value="{{ dataset.id }}" name="unpublish" onclick="submit_dataset_action(this)">Unpublish</button>
-                        {% else %}
-                        <button type="button" class="btn btn-xs btn-default" value="{{ dataset.id }}" name="publish" onclick="submit_dataset_action(this)">Publish</button>
-                        {% endif %}
-                    </td>
-                </tr>
+                    {% if dataset.checked %}
+                    <tr>
+                        <td>{{ dataset.title }}</td>
+                        <!--<td class="textcenter">{{ dataset.las | date:'d-m-Y' }}</td> -->
+                        <td class="textcenter">{{ dataset.dateLastUpdate | date:'d-m-Y' }}</td>
+                        <td> {% if dataset.published %}
+                            Published
+                            {% else %}
+                            In progress
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if dataset.published %}
+                            <!--<button type="button" class="btn btn-xs btn-default" value="{{ dataset.id }}" name="unpublish" onclick="submit_dataset_action(this)">Unpublish</button>-->
+                            {% else %}
+                            <button type="button" class="btn btn-xs btn-default" value="{{ dataset.id }}" name="edit" onclick="submit_dataset_action(this)">Edit</button>
+                            <button type="button" class="btn btn-xs btn-default" value="{{ dataset.id }}" name="publish" onclick="submit_dataset_action(this)">Publish</button>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endif %}
                 {% empty %}
                 <tr>
                     <td>No protocols defined</td>
@@ -73,8 +82,9 @@
         if (instance.name == 'edit') {
             ds_action.value = 'edit';
         }
-        if (instance.name == 'publish') {
+        if (instance.name == 'publish' && confirm('No more changes can be made after publishing. Are you sure you wish to publish the protocol?')) {
             ds_action.value = 'publish';
+            console.log("Publish");
         }
         if (instance.name == 'unpublish' && confirm('You are about to unpublish the protocol. \nDo you want to continue anyway?')) {
             ds_action.value = 'unpublish';

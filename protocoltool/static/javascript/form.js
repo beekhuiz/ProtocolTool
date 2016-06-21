@@ -1,7 +1,17 @@
 
 // Validate form (client side) TODO: Make validation checks for all fields -->
 function checkform() {
-    document.getElementById('dataset_form').submit();
+
+    var expTitle = $('#id_basic_title').val();
+    console.log(expTitle);
+    //var okName = /[^a-zA-Z0-9]/.test(expTitle);
+
+    if (expTitle == ""){
+        alert("Please give a valid experiment title");
+    }
+    else{
+        document.getElementById('dataset_form').submit();
+    }
 }
 
 

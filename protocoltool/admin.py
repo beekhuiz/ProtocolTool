@@ -8,7 +8,9 @@ class BasicDatasetAdmin(admin.ModelAdmin):
             'experimentIdea',
             'hypothesis',
             'researchObjective',
-            'principles')
+            'principles',
+            'published',
+            'checked')
 
 class PartnerAdmin(admin.ModelAdmin):
     list_display = ('name', 'email', 'lead')

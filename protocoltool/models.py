@@ -14,6 +14,7 @@ class BasicDataset(models.Model):
     principles = models.TextField(blank=True)
 
     dateLastUpdate = models.DateField(blank=True, default=datetime.date.today)
+    checked = models.BooleanField(default=False)
     published = models.BooleanField(default=False)
 
 
