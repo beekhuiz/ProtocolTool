@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import BasicDataset, Partner, DataReq, ExpStep, ResultRep
+from .models import BasicDataset, Partner, DataReq, ExpStep, Reporting
 
 # Register your models here.
 
@@ -8,24 +8,23 @@ class BasicDatasetAdmin(admin.ModelAdmin):
             'experimentIdea',
             'hypothesis',
             'researchObjective',
-            'principles',
             'published',
             'checked')
 
 class PartnerAdmin(admin.ModelAdmin):
-    list_display = ('name', 'email', 'lead')
+    list_display = ('id', 'name', 'email', 'organisation', 'lead')
 
 class DataReqAdmin(admin.ModelAdmin):
-    list_display = ('description', 'properties', 'partner', 'deadline')
+    list_display = ('description', 'properties', 'partner', 'deadline', 'done')
 
 class ExpStepAdmin(admin.ModelAdmin):
-    list_display = ('description', 'output', 'partner', 'deadline')
+    list_display = ('description', 'properties', 'partner', 'deadline')
 
-class ResultRepAdmin(admin.ModelAdmin):
-    list_display = ('description', 'output', 'partner', 'deadline')
+class ReportingAdmin(admin.ModelAdmin):
+    list_display = ('description', 'properties', 'partner', 'deadline')
 
 admin.site.register(BasicDataset, BasicDatasetAdmin)
 admin.site.register(Partner, PartnerAdmin)
 admin.site.register(DataReq, DataReqAdmin)
 admin.site.register(ExpStep, ExpStepAdmin)
-admin.site.register(ResultRep, ResultRepAdmin)
+admin.site.register(Reporting, ReportingAdmin)

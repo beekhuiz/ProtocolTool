@@ -1,255 +1,362 @@
-{% extends "protocoltool/base.html" %}
+<!DOCTYPE html>
+<html lang="en">
+    <body>
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<title>
-    Protocol Tool
-</title>
+            <!--CSS/Bootstrap-->
 
-{% block body %}
+            <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+
+            {% load staticfiles %}
+            <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}" />
+
+            <!--Javascript-->
+            <script src="https://code.jquery.com/jquery-2.2.4.js" integrity="sha256-iT6Q9iMJYuQiMWNd9lDyBUStIq/8PuOW33aOqmvFpqI=" crossorigin="anonymous"></script>
+            <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+            <!--jQuery-->
+            <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+            <script src="{% static 'javascript/form.js' %}"></script>
+            <script src="{% static 'javascript/functions.js' %}"></script>
+
+        </head>
 
 
-<form role="form" id="dataset_form" class="form-horizontal" action="/project/form/{% if edit %}{{ dataset_id }}/{% endif %}" method="post">
+        <div class="container">
 
-    {% csrf_token %}
+            <h1>
+                Protocol Tool
+            </h1>
 
-    {% for form in forms_list %}
-    <div id="{{ form.0 }}" class="row">
 
-        {% if form.0 == 'Basic' %}
-        <div class="row">
+            <form role="form" id="dataset_form" class="form-horizontal" action="/project/form/{% if edit %}{{ dataset_id }}/{% endif %}" method="post">
 
-            <div class="col-md-8">
+                {% csrf_token %}
 
-                {% for field in form.1 %}
+                {% for form in forms_list %}
+                <div id="{{ form.0 }}" class="row">
 
-                    <!--Set subtitles-->
-                    {% if field.name == 'title' %}
-                    <hr>
-                    <h4>General information</h4>
+                    {% if form.0 == 'Basic' %}
+                    <div class="row">
+
+                        <div class="col-md-7">
+
+                            {% for field in form.1 %}
+
+                                <!--Set subtitles-->
+                                {% if field.name == 'title' %}
+                                <hr>
+                                <h4>General information</h4>
+                                {% endif %}
+
+                                <div id="{{ field.label }}" class="form-group">
+                                    <label for="{{ field.id_for_label }}" class="col-md-3 control-label">{{ field.label }}:</label>
+                                    <div id="{{ field.label }}_field" class="col-md-9">
+                                        {{ field }}
+                                        {{ field.errors }}
+                                    </div>
+                                </div>
+                            {% endfor %}
+                            {% if edit %}
+                            <input type="hidden" name="dataset_id" value="{{ dataset_id }}" />
+                            <input type="hidden" name="form_action" value="update" />
+                            {% else %}
+                            <input type="hidden" name="form_action" value="create" />
+                            {% endif %}
+                        </div>
+                    </div> <!-- end row with the protocol information-->
+
                     {% endif %}
 
-                    <div id="{{ field.label }}" class="form-group">
-                        <label for="{{ field.id_for_label }}" class="col-md-3 control-label">{{ field.label }}:</label>
-                        <div id="{{ field.label }}_field" class="col-md-9">
-                            {{ field }}
-                            {{ field.errors }}
+
+                    {% if form.0 == 'Partner' %}
+                    <div class="row">
+                        <hr>
+                        <div class="col-md-7">
+                            <h4>1) Partners</h4>
+                            {% for field in form.1 %}
+                            <div id="{{ field.label }}" class="form-group">
+                                <label for="{{ field.id_for_label }}" class="col-md-3 control-label">{{ field.label }}:</label>
+                                <div id="{{ field.label }}_field" class="col-md-9">
+                                    {{ field }}
+                                    {{ field.errors }}
+                                </div>
+                            </div>
+                            {% endfor %}
+
+                            <div class="btn-group btn-group-justified" role="group" aria-label="...">
+                              <div class="btn-group" role="group">
+                                <button type="button" id="addPartnerID" class="btn btn-default active">Add</button>
+                              </div>
+                              <div class="btn-group" role="group">
+                                <button type="button" id="updatePartnerID" class="btn btn-default disabled">Update</button>
+                              </div>
+                              <div class="btn-group" role="group">
+                                <button type="button" id="deletePartnerID" class="btn btn-default disabled">Delete</button>
+                              </div>
+                            </div>
                         </div>
-                    </div>
-                {% endfor %}
-                {% if edit %}
-                <input type="hidden" name="dataset_id" value="{{ dataset_id }}" />
-                <input type="hidden" name="form_action" value="update" />
-                {% else %}
-                <input type="hidden" name="form_action" value="create" />
-                {% endif %}
-            </div>
-        </div> <!-- end row with the protocol information-->
-
-        {% endif %}
 
 
+                        <div class="col-md-5">
 
-        {% if form.0 == 'Partner' %}
-        <div class="row">
-            <hr>
-            <div class="col-md-8">
-                <h4>1) Partners</h4>
-                {% for field in form.1 %}
-                <div id="{{ field.label }}" class="form-group">
-                    <label for="{{ field.id_for_label }}" class="col-md-3 control-label">{{ field.label }}:</label>
-                    <div id="{{ field.label }}_field" class="col-md-9">
-                        {{ field }}
-                        {{ field.errors }}
-                    </div>
-                </div>
-                {% endfor %}
+                            <input type="hidden" id="selectedPartnerID" value="-99">
+                            <!--<input type="hidden" id="selectedPartnerID" value="-99">-->
+                             <h4>Current partners:</h4>
 
-                <div class="btn-group btn-group-justified" role="group" aria-label="...">
-                  <div class="btn-group" role="group">
-                    <button type="button" id="addPartnerID" class="btn btn-default active">Add</button>
-                  </div>
-                  <div class="btn-group" role="group">
-                    <button type="button" id="updatePartnerID" class="btn btn-default disabled">Update</button>
-                  </div>
-                  <div class="btn-group" role="group">
-                    <button type="button" id="deletePartnerID" class="btn btn-default disabled">Delete</button>
-                  </div>
-                </div>
-            </div>
+                            <table id="partnerTable" class="table table-hover table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th class="col-md-5"><strong>Name</strong></th>
+                                        <th class="col-md-5"><strong>Organisation</strong></th>
+                                        <th class="col-md-2"><strong></strong></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
 
 
-            <div class="col-md-4">
+                                </tbody>
+                            </table>
 
-                <input type="hidden" id="selectedPartnerID" value="-99">
-                <!--<input type="hidden" id="selectedPartnerID" value="-99">-->
-                 <h4>Current partners:</h4>
-
-                <table id="partnerTable" class="table table-hover table-bordered">
-                    <thead>
-                        <tr>
-                            <th class="col-md-8"><strong>Name</strong></th>
-                            <th class="col-md-4"><strong>Lead</strong></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for partner in existingPartners %}
-                       <tr class="partnerRow">
-                           <td class="col-md-8 partnername">{{ partner.name }}</td>
-                           <td class="col-md-4">{{ partner.lead }}</td>
-                       </tr>
-                      {% endfor %} <!-- end for sources -->
-
-                    </tbody>
-                </table>
-
-            </div>
-
-        </div>  <!-- end row with partner information-->
-        {% endif %} <!--end if form is partner-->
-
-
-      {% if form.0 == 'DataReq' %}
-        <div class="row">
-            <hr>
-
-                <div class="col-md-8">
-
-                    <h4>2) Data & Method Requirements </h4>
-                    <p>(e.g. data collection, scripts, models, tools)</p>
-
-                    {% for field in form.1 %}
-                    <div id="{{ field.label }}" class="form-group">
-                        <label for="{{ field.id_for_label }}" class="col-md-3 control-label">{{ field.label }}:</label>
-                        <div id="{{ field.label }}_field" class="col-md-9">
-                            {{ field }}
-                            {{ field.errors }}
                         </div>
-                    </div>
-                    {% endfor %}
 
-                    <div class="btn-group btn-group-justified" role="group" aria-label="...">
-                      <div class="btn-group" role="group">
-                        <button type="button" id="addDataReqID" class="btn btn-default active">Add</button>
-                      </div>
-                      <div class="btn-group" role="group">
-                        <button type="button" id="updateDataReqID" class="btn btn-default disabled">Update</button>
-                      </div>
-                      <div class="btn-group" role="group">
-                        <button type="button" id="deleteDataReqID" class="btn btn-default disabled">Delete</button>
-                      </div>
-                    </div>
-            </div>
+                    </div>  <!-- end row with partner information-->
+                    {% endif %} <!--end if form is partner-->
 
 
-            <div class="col-md-4">
+                    {% if form.0 == 'DataReq' %}
+                    <div class="row">
+                        <hr>
 
-                <input type="hidden" id="selectedDataReqID" value="-99">
-                 <h4>Current requirements:</h4>
+                            <div class="col-md-7">
 
-                <table id="reqTableID" class="table table-hover table-bordered">
-                    <thead>
-                        <tr>
-                            <th class="col-md-8"><strong>Description</strong></th>
-                            <th class="col-md-4"><strong>Deadline</strong></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for req in existingReqs %}
-                       <tr class="partnerRow">
-                           <td class="col-md-8 reqname">{{ req.description }}</td>
-                           <td class="col-md-4">{{ req.deadline }}</td>
-                       </tr>
-                      {% endfor %} <!-- end for sources -->
+                                <h4>2) Data & Method preparation </h4>
+                                <p>(e.g. data collection, scripts, models, tools)</p>
 
-                    </tbody>
-                </table>
-
-            </div>
-
-        </div>  <!-- end row with DataMethodReqForm information-->
-        {% endif %} <!--end if form is DataMethodReqForm-->
+                                {% for field in form.1 %}
+                                <div id="{{ field.label }}" class="form-group">
+                                    <label for="{{ field.id_for_label }}" class="col-md-3 control-label">{{ field.label }}:</label>
+                                    <div id="{{ field.label }}_field" class="col-md-9">
+                                        {{ field }}
+                                        {{ field.errors }}
+                                    </div>
+                                </div>
+                                {% endfor %}
 
 
-        {% if form.0 == 'ExpStep' %}
-        <div class="row">
-            <hr>
+                                <!--select the partner-->
+                                <div class="form-group">
+                                    <!--<input type="text" id="contrPartnerDataReqID" value="-99">-->
+                                    <label class="col-md-3 control-label">Contributing partner</label>
+                                    <div class="col-md-9">
+                                        <select class="form-control" id="partnerDataReq">
+                                            <!--Contents of select box are added with javascript-->
+                                        </select>
+                                    </div>
+                                </div>
 
-            <div class="col-md-8">
 
-                <h4>3) Experiment Execution Steps </h4>
+                                <div class="btn-group btn-group-justified" role="group" aria-label="...">
+                                  <div class="btn-group" role="group">
+                                    <button type="button" id="addReqID" class="btn btn-default active">Add</button>
+                                  </div>
+                                  <div class="btn-group" role="group">
+                                    <button type="button" id="updateReqID" class="btn btn-default disabled">Update</button>
+                                  </div>
+                                  <div class="btn-group" role="group">
+                                    <button type="button" id="deleteReqID" class="btn btn-default disabled">Delete</button>
+                                  </div>
+                                </div>
+                        </div>
 
-                {% for field in form.1 %}
-                <div id="{{ field.label }}" class="form-group">
-                    <label for="{{ field.id_for_label }}" class="col-md-3 control-label">{{ field.label }}:</label>
-                    <div id="{{ field.label }}_field" class="col-md-9">
-                        {{ field }}
-                        {{ field.errors }}
-                    </div>
-                </div>
+
+                        <div class="col-md-5">
+
+                            <input type="hidden" id="selectedReqID" value="-99">
+                             <h4>Current requirements:</h4>
+
+                            <table id="reqTableID" class="table table-hover table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th class="col-md-7"><strong>Description</strong></th>
+                                        <th class="col-md-3"><strong>Deadline</strong></th>
+                                        <th class="col-md-2"><strong>Done</strong></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!--{% for req in existingReqs %}-->
+                                   <!--<tr class="contrPartnerReqRow" data-value = {{ req.id }}>-->
+                                       <!--<td class="col-md-8 reqname">{{ req.description }}</td>-->
+                                       <!--<td class="col-md-4">{{ req.deadline }}</td>-->
+                                   <!--</tr>-->
+                                  <!--{% endfor %} &lt;!&ndash; end for sources &ndash;&gt;-->
+
+                                </tbody>
+                            </table>
+
+                        </div>
+
+                    </div>  <!-- end row with DataMethodReqForm information-->
+                    {% endif %} <!--end if form is DataMethodReqForm-->
+
+
+                    {% if form.0 == 'ExpStep' %}
+                    <div class="row">
+                        <hr>
+
+                        <div class="col-md-7">
+
+                            <h4>3) Experiment Analysis Steps </h4>
+
+                            {% for field in form.1 %}
+                            <div id="{{ field.label }}" class="form-group">
+                                <label for="{{ field.id_for_label }}" class="col-md-3 control-label">{{ field.label }}:</label>
+                                <div id="{{ field.label }}_field" class="col-md-9">
+                                    {{ field }}
+                                    {{ field.errors }}
+                                </div>
+                            </div>
+                            {% endfor %}
+
+                            <!--select the partner-->
+                            <div class="form-group">
+                                <label class="col-md-3 control-label">Contributing partner</label>
+                                <div class="col-md-9">
+                                    <select class="form-control" id="partnerExpStep">
+
+                                    </select>
+                                </div>
+                            </div>
+
+
+                            <div class="btn-group btn-group-justified" role="group" aria-label="...">
+                              <div class="btn-group" role="group">
+                                <button type="button" id="addExpStepID" class="btn btn-default active">Add</button>
+                              </div>
+                              <div class="btn-group" role="group">
+                                <button type="button" id="updateExpStepID" class="btn btn-default disabled">Update</button>
+                              </div>
+                              <div class="btn-group" role="group">
+                                <button type="button" id="deleteExpStepID" class="btn btn-default disabled">Delete</button>
+                              </div>
+                            </div>
+                        </div>
+
+
+                        <div class="col-md-5">
+
+                            <input type="hidden" id="selectedExpStepID" value="-99">
+                             <h4>Current experiment steps:</h4>
+
+                            <table id="expStepTableID" class="table table-hover table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th class="col-md-8"><strong>Description</strong></th>
+                                        <th class="col-md-4"><strong>Deadline</strong></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+
+                                </tbody>
+                            </table>
+
+                        </div>
+
+                    </div>  <!-- end row with Exp Step information-->
+                    {% endif %} <!--end if form is ExpStepForm-->
+
+
+                    {% if form.0 == 'Reporting' %}
+                    <div class="row">
+                        <hr>
+
+                        <div class="col-md-7">
+
+                            <h4>4) Result reporting </h4>
+
+                            {% for field in form.1 %}
+                            <div id="{{ field.label }}" class="form-group">
+                                <label for="{{ field.id_for_label }}" class="col-md-3 control-label">{{ field.label }}:</label>
+                                <div id="{{ field.label }}_field" class="col-md-9">
+                                    {{ field }}
+                                    {{ field.errors }}
+                                </div>
+                            </div>
+                            {% endfor %}
+
+                            <!--select the partner-->
+                            <div class="form-group">
+                                <label class="col-md-3 control-label">Contributing partner</label>
+                                <div class="col-md-9">
+                                    <select class="form-control" id="partnerReporting">
+
+                                    </select>
+                                </div>
+                            </div>
+
+
+                            <div class="btn-group btn-group-justified" role="group" aria-label="...">
+                              <div class="btn-group" role="group">
+                                <button type="button" id="addReportingID" class="btn btn-default active">Add</button>
+                              </div>
+                              <div class="btn-group" role="group">
+                                <button type="button" id="updateReportingID" class="btn btn-default disabled">Update</button>
+                              </div>
+                              <div class="btn-group" role="group">
+                                <button type="button" id="deleteReportingID" class="btn btn-default disabled">Delete</button>
+                              </div>
+                            </div>
+                        </div>
+
+
+                        <div class="col-md-5">
+
+                            <input type="hidden" id="selectedReportingID" value="-99">
+                             <h4>Current result reporting:</h4>
+
+                            <table id="reportingTableID" class="table table-hover table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th class="col-md-8"><strong>Description</strong></th>
+                                        <th class="col-md-4"><strong>Deadline</strong></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+
+                                </tbody>
+                            </table>
+
+                        </div>
+
+                    </div>  <!-- end row with Result reporting information-->
+                    {% endif %} <!--end if form is reportingForm-->
+
+
+
+                </div>  <!--End div overall form-->
                 {% endfor %}
 
-                <div class="btn-group btn-group-justified" role="group" aria-label="...">
-                  <div class="btn-group" role="group">
-                    <button type="button" id="addExpStepID" class="btn btn-default active">Add</button>
-                  </div>
-                  <div class="btn-group" role="group">
-                    <button type="button" id="updateExpStepID" class="btn btn-default disabled">Update</button>
-                  </div>
-                  <div class="btn-group" role="group">
-                    <button type="button" id="deleteExpStepID" class="btn btn-default disabled">Delete</button>
-                  </div>
+
+                <div class="row">
+                    <div class="col-md-12"> <!--Form submission button-->
+                        {% if edit %}
+                            <button type="button" class="btn btn-primary pull-right" onclick="checkform()">Submit</button>
+                        {% else %}
+                            <button type="button" class="btn btn-primary pull-right" onclick="checkform()">Submit</button>
+                        {% endif %}
+                    </div> <!--END Form submission button-->
                 </div>
-            </div>
 
+            </form>
 
-            <div class="col-md-4">
-
-                <input type="hidden" id="selectedExpStepID" value="-99">
-                 <h4>Current experiment steps:</h4>
-
-                <table id="expStepTableID" class="table table-hover table-bordered">
-                    <thead>
-                        <tr>
-                            <th class="col-md-8"><strong>Description</strong></th>
-                            <th class="col-md-4"><strong>Deadline</strong></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for expStep in expSteps %}
-                       <tr class="expStepRow">
-                           <td class="col-md-8 expStep">{{ expStep.description }}</td>
-                           <td class="col-md-4">{{ expStep.deadline }}</td>
-                       </tr>
-                      {% endfor %} <!-- end for sources -->
-
-                    </tbody>
-                </table>
-
-            </div>
-
-        </div>  <!-- end row with Exp Step information-->
-        {% endif %} <!--end if form is ExpStepForm-->
-
-
-    </div>  <!--End div overall form-->
-    {% endfor %}
-
-
-    <div class="row">
-        <div class="col-md-12"> <!--Form submission button-->
-            {% if edit %}
-                <button type="button" class="btn btn-primary pull-right" onclick="checkform()">Update</button>
-            {% else %}
-                <button type="button" class="btn btn-primary pull-right" onclick="checkform()">Create Protocol</button>
-            {% endif %}
-        </div> <!--END Form submission button-->
-    </div>
-</form>
+        </div> <!--END CONTAINER -->
+    </body>
+</html>
 
 
 
-{% endblock %}
 
-{% block script %}
 
 <!--Load in all data from Django to javascript-->
 <script type='text/javascript'>
@@ -257,13 +364,11 @@
     var datasetID = "{{ dataset_id }}";
     var existingPartners = {{ existingPartnersJSON|safe }};
     var existingReqs = {{ existingReqsJSON|safe }};
+    var existingExpSteps = {{ existingExpStepsJSON|safe }};
+    var existingReportings = {{ existingReportingsJSON|safe }};
 
     console.log(existingPartners);
 
     var csrfmiddlewaretoken =  "{{ csrf_token }}";
 
 </script>
-
-
-
-{% endblock %}

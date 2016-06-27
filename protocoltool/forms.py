@@ -1,6 +1,6 @@
 from django import forms
-from .models import BasicDataset, Partner, DataReq, ExpStep, ResultRep
-from django.forms.widgets import DateInput, NumberInput, Select, Textarea, TextInput, EmailInput
+from .models import BasicDataset, Partner, DataReq, ExpStep, Reporting
+from django.forms.widgets import DateInput, CheckboxInput, NumberInput, Select, Textarea, TextInput, EmailInput
 
 class BasicDatasetForm(forms.ModelForm):
     class Meta:
@@ -10,14 +10,12 @@ class BasicDatasetForm(forms.ModelForm):
             'experimentIdea',
             'hypothesis',
             'researchObjective',
-            'principles'
         ]
         labels = {
             'title': 'Protocol name',
             'experimentIdea': 'Experiment Idea',
             'hypothesis' : 'Hypothesis',
             'researchObjective': 'Research Objective',
-            'principles': 'Principles'
         }
         widgets = {
             'title': TextInput(
@@ -31,9 +29,6 @@ class BasicDatasetForm(forms.ModelForm):
             ),
             'researchObjective': Textarea(
                 attrs={'rows':2, 'class': 'form-control input-sm'}
-            ),
-            'principles': Textarea(
-                attrs={'rows':2, 'class': 'form-control input-sm'}
             )
         }
 
@@ -44,6 +39,7 @@ class PartnerForm(forms.ModelForm):
         fields = [
             'name',
             'email',
+            'organisation',
             'lead',
         ]
 
@@ -54,6 +50,10 @@ class PartnerForm(forms.ModelForm):
             'email': EmailInput(
                 attrs={'class': 'form-control input-sm'}
             ),
+            'organisation': TextInput(
+                attrs={'class': 'form-control input-sm'}
+            ),
+
         }
 
 
@@ -63,22 +63,24 @@ class DataReqForm(forms.ModelForm):
         fields = [
             'description',
             'properties',
-            'deadline'
+            'deadline',
+            'done',
         ]
         labels = {
             'description': 'Description',
             'properties': 'Properties',
-            'deadline': 'Deadline'
+            'deadline': 'Deadline',
+            'done': 'Done',
         }
         widgets = {
             'description': Textarea(
-                attrs={'rows':2, 'class': 'form-control input-sm'}
+                attrs={'rows':2, 'class': 'form-control input-sm reqdesc', 'placeholder': 'Short description of the protocol'}
             ),
             'properties': Textarea(
-                attrs={'rows':2, 'class': 'form-control input-sm'}
+                attrs={'rows':2, 'class': 'form-control input-sm reqprop', 'placeholder': 'e.g. time period, domain, etc.'}
             ),
             'deadline': DateInput(
-                attrs={'class': 'form-control input-sm', 'type': 'date', 'placeholder': 'yyyy-mm-dd'}
+                attrs={'class': 'form-control input-sm reqdeadline', 'type': 'date', 'placeholder': 'yyyy-mm-dd'}
             ),
         }
 
@@ -87,47 +89,47 @@ class ExpStepForm(forms.ModelForm):
         model = ExpStep
         fields = [
             'description',
-            'output',
+            'properties',
             'deadline'
         ]
         labels = {
             'description': 'Description',
-            'output': 'Output',
+            'properties': 'Output',
             'deadline': 'Deadline'
         }
         widgets = {
             'description': Textarea(
-                attrs={'rows':2, 'class': 'form-control input-sm'}
+                attrs={'rows':2, 'class': 'form-control input-sm expstepdesc', 'placeholder': 'e.g. transform data, createinput files, run model'}
             ),
-            'output': Textarea(
-                attrs={'rows':2, 'class': 'form-control input-sm'}
+            'properties': Textarea(
+                attrs={'rows':2, 'class': 'form-control input-sm expstepproperties', 'placeholder': 'e.g. variables, formats, etc.'}
             ),
             'deadline': DateInput(
-                attrs={'class': 'form-control input-sm', 'type': 'date', 'placeholder': 'yyyy-mm-dd'}
+                attrs={'class': 'form-control input-sm expstepdeadline', 'type': 'date', 'placeholder': 'yyyy-mm-dd'}
             ),
         }
 
-class ResultRepForm(forms.ModelForm):
+class ReportingForm(forms.ModelForm):
     class Meta:
-        model = ResultRep
+        model = Reporting
         fields = [
             'description',
-            'output',
+            'properties',
             'deadline'
         ]
         labels = {
             'description': 'Description',
-            'output': 'Output',
+            'properties': 'Output',
             'deadline': 'Deadline'
         }
         widgets = {
             'description': Textarea(
-                attrs={'rows':2, 'class': 'form-control input-sm'}
+                attrs={'rows':2, 'class': 'form-control input-sm reportingdesc', 'placeholder': 'e.g. findings, '}
             ),
-            'output': Textarea(
-                attrs={'rows':2, 'class': 'form-control input-sm'}
+            'properties': Textarea(
+                attrs={'rows':2, 'class': 'form-control input-sm reportingproperties', 'placeholder': 'e.g. graphs, maps, etc.'}
             ),
             'deadline': DateInput(
-                attrs={'class': 'form-control input-sm', 'type': 'date', 'placeholder': 'yyyy-mm-dd'}
+                attrs={'class': 'form-control input-sm reportingdeadline', 'type': 'date', 'placeholder': 'yyyy-mm-dd'}
             ),
         }

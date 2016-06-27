@@ -1,49 +1,11 @@
-
-// Validate form (client side) TODO: Make validation checks for all fields -->
-function checkform() {
-
-    var expTitle = $('#id_basic_title').val();
-    console.log(expTitle);
-    //var okName = /[^a-zA-Z0-9]/.test(expTitle);
-
-    if (expTitle == ""){
-        alert("Please give a valid experiment title");
-    }
-    else{
-        document.getElementById('dataset_form').submit();
-    }
-}
-
-
-function refreshPartners(){
-    // Reset all stuff
-    $('#id_name').val("");
-    $('#id_email').val("");
-    $('#id_lead').prop('checked', false);
-
-    // update buttons
-    $('#updatePartnerID').removeClass( "active" ).addClass( "disabled" );
-    $('#deletePartnerID').removeClass( "active" ).addClass( "disabled" );
-
-    // reset selected partner ID
-    $('#selectedPartnerID').val('-99')
-
-    var arrayLength = existingPartners.length;
-    $("#partnerTable tbody tr").remove();
-
-    for (i = 0; i < arrayLength; i++) {
-        $("#partnerTable > tbody").append('<tr class="partnerRow"><td class="col-md-8 partnername">' + existingPartners[i].name + '</td>' +
-                                '<td class="col-md-4">' + existingPartners[i].lead + '</td></tr>');
-    }
-}
-
-
 $(document).ready(function(){
+
+    // fill in all the partner information
+    refreshAll();
 
     $('#partnerTable').on('click', 'tr', function(){
 
         console.log("partnerList clicked");
-        //console.log($(this).find(".partnername").text());
 
         selectedPartner = $(this).find(".partnername").text();
 
@@ -54,11 +16,11 @@ $(document).ready(function(){
             if(existingPartners[i].name == selectedPartner){
                 $('#id_name').val(existingPartners[i].name);
                 $('#id_email').val(existingPartners[i].email);
+                $('#id_organisation').val(existingPartners[i].organisation);
 
                 if(existingPartners[i].lead == 'True'){
                     console.log("Check the cb!");
                     $('#id_lead').prop('checked', true);
-                    //cb.val(cb.prop('checked'));
                 }
                 else{
                     $('#id_lead').prop('checked', false);
@@ -68,223 +30,299 @@ $(document).ready(function(){
 
                 // update buttons
                 $('#updatePartnerID').removeClass( "disabled" ).addClass( "active" );
+                $('#updatePartnerID').prop( "disabled", false);
                 $('#deletePartnerID').removeClass( "disabled" ).addClass( "active" );
+                $('#deletePartnerID').prop( "disabled", false);
             }
         }
     });
-
 
     $('#addPartnerID').on('click', function(){
-
-//        var arrayLength = existingPartners.length;
-//
-//        // get a new partnerID (max ID + 1)
-//        var maxPartnerID = 0;
-//        for (i = 0; i < arrayLength; i++) {
-//            if(existingPartners[i].id > maxPartnerID){
-//                maxPartnerID = existingPartners[i].id;
-//            }
-//        }
-//
-//        var lead = 'False';
-//        if($('#checkbox').is(':checked')){
-//            lead = 'True';
-//        }
-//        newID = maxPartnerID + 1
-//
-//        var newPartner = {"id": String(newID), "name": $('#id_name').val(), "email": $('#id_email').val(), "lead": lead};
-//        existingPartners.push(newPartner);
-//        console.log(newPartner);
-//        console.log("Existing: ");
-//        console.log(existingPartners);
-//
-//        // Reset all stuff
-//        $('#id_name').val("");
-//        $('#id_email').val("");
-//        $('#id_lead').prop('checked', false);
-//
-//        // update buttons
-//        $('#updatePartnerID').removeClass( "active" ).addClass( "disabled" );
-//        $('#deletePartnerID').removeClass( "active" ).addClass( "disabled" );
-//
-//        // reset selected partner ID
-//        $('#selectedPartnerID').val('-99')
-//
-//        // update list
-//        $('#partnerList').empty();
-//
-//        var arrayLength = existingPartners.length;
-//        for (i = 0; i < arrayLength; i++) {
-//            $('#partnerList').append("<li>" + existingPartners[i].name + "</li>");
-//        }
-        // get all filled in data
-        var lead = 'False';
-        if($('#id_lead').is(':checked')){
-            lead = 'True';
-        }
-
-        console.log("lead: ")
-        console.log(lead)
-
-
-        $.ajax({
-            url: "/project/addpartner/",
-            type: "POST",
-            data: {datasetID: datasetID,
-                   name: $('#id_name').val(),
-                   email: $('#id_email').val(),
-                   lead: lead,
-                   csrfmiddlewaretoken: csrfmiddlewaretoken},
-
-            // handle a successful response
-            success : function(json) {
-                console.log("success"); // another sanity check
-                console.log(json['existingPartnersJSON']); // another sanity check
-                existingPartners = JSON.parse(json['existingPartnersJSON']);
-                refreshPartners();
-            },
-            // handle a non-successful response
-            error : function(xhr,errmsg,err) {
-                console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
-            }
-        });
-
+        sendPartnerInfoToServer(false);
     });
-
 
     $('#updatePartnerID').on('click', function(){
-
-        var partnerID = $('#selectedPartnerID').val();
-
-        var lead = 'False';
-        if($('#id_lead').is(':checked')){
-            lead = 'True';
-        }
-
-        $.ajax({
-            url: "/project/updatepartner/",
-            type: "POST",
-            data: {partnerID: partnerID,
-                   datasetID: datasetID,
-                   name: $('#id_name').val(),
-                   email: $('#id_email').val(),
-                   lead: lead,
-                   csrfmiddlewaretoken: csrfmiddlewaretoken},
-
-            // handle a successful response
-            success : function(json) {
-                console.log("success"); // another sanity check
-                console.log(json['existingPartnersJSON']); // another sanity check
-                existingPartners = JSON.parse(json['existingPartnersJSON']);
-                refreshPartners();
-            },
-            // handle a non-successful response
-            error : function(xhr,errmsg,err) {
-                console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
-            }
-        });
-//        var partnerID = $('#selectedPartnerID').val();
-//        var arrayLength = existingPartners.length;
-//
-//        for (i = 0; i < arrayLength; i++) {
-//            if(existingPartners[i].id == partnerID){
-//
-//                console.log("Name: " + $('#id_name').val());
-//
-//                existingPartners[i].name = $('#id_name').val();
-//                existingPartners[i].email = $('#id_email').val();
-//
-//                if($('#checkbox').is(':checked')){
-//                    existingPartners[i].lead = 'True';
-//                }
-//                else{
-//                    existingPartners[i].lead = 'False';
-//                }
-//            }
-//        }
-//
-//        // Reset all stuff
-//        $('#id_name').val("");
-//        $('#id_email').val("");
-//        $('#id_lead').prop('checked', false);
-//
-//        // update buttons
-//        $('#updatePartnerID').removeClass( "active" ).addClass( "disabled" );
-//        $('#deletePartnerID').removeClass( "active" ).addClass( "disabled" );
-//
-//        // reset selected partner ID
-//        $('#selectedPartnerID').val('-99')
-//
-//        // update list
-//        $('#partnerList').empty();
-//        for (i = 0; i < arrayLength; i++) {
-//            $('#partnerList').append("<li>" + existingPartners[i].name + "</li>");
-//        }
+        sendPartnerInfoToServer(true);
     });
-
 
     $('#deletePartnerID').on('click', function(){
 
         var partnerID = $('#selectedPartnerID').val();
 
+        partnerUsed = false
+
+        // check if all the partner is not used in the reqs
+        var nrReqs = existingReqs.length;
+        for (i = 0; i < nrReqs; i++) {
+            if (existingReqs[i].partnerID == partnerID){
+                partnerUsed = true;
+                alert("This partner is a contributing partner in the data&method preparation, removal is therefore not allowed.")
+            }
+        }
+
+        // check if all the partner is not used in the exp steps
+        var nrExpSteps = existingExpSteps.length;
+        for (i = 0; i < nrExpSteps; i++) {
+            if (existingExpSteps[i].partnerID == partnerID){
+                partnerUsed = true;
+                alert("This partner is a contributing partner in the experiment steps, removal is therefore not allowed.")
+            }
+        }
+
+        if(partnerUsed == false){
+            $.ajax({
+                url: "/project/deletepartner/",
+                type: "POST",
+                data: {partnerID: partnerID,
+                       datasetID: datasetID,
+                       csrfmiddlewaretoken: csrfmiddlewaretoken},
+
+                // handle a successful response
+                success : function(json) {
+                    console.log("success"); // another sanity check
+                    console.log(json['existingPartnersJSON']); // another sanity check
+                    existingPartners = JSON.parse(json['existingPartnersJSON']);
+                    refreshPartners();
+                },
+                // handle a non-successful response
+                error : function(xhr,errmsg,err) {
+                    console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
+                }
+            });
+        }
+    });
+
+
+    //
+    // FUNCTIONS FOR THE DATA REQS
+    //
+
+    $('#reqTableID').on('click', 'tr', function(){
+
+        console.log("req Table clicked");
+
+        selectedReqID = $(this).closest("tr").attr('id');
+        console.log(selectedReqID);
+
+        var nrReqs = existingReqs.length;
+
+        for (i = 0; i < nrReqs; i++) {
+
+            if (existingReqs[i].id == selectedReqID){
+
+                $('.reqdesc').val(existingReqs[i].description);
+                $('.reqprop').val(existingReqs[i].properties);
+                $('.reqdeadline').val(existingReqs[i].deadline);
+                 if(existingReqs[i].done == 'True'){
+                    $('#id_done').prop('checked', true);
+                }
+                else{
+                    $('#id_done').prop('checked', false);
+                }
+
+                contrPartner = getPartnerByID(existingReqs[i].partnerID);
+                console.log(contrPartner)
+
+                $('#partnerDataReq').val(contrPartner.id);
+                $('#selectedReqID').val(selectedReqID);
+
+                // update buttons
+                $('#updateReqID').removeClass( "disabled" ).addClass( "active" );
+                $('#updateReqID').prop( "disabled", false);
+                $('#deleteReqID').removeClass( "disabled" ).addClass( "active" );
+                $('#deleteReqID').prop( "disabled", false);
+            }
+        } // end for
+
+    }); // end on reqTable clicked
+
+    $('#addReqID').on('click', function(){
+
+        console.log($("#partnerDataReq").val())
+
+        // check if a partner is selected
+        if($("#partnerDataReq").val()){
+            sendReqInfoToServer(false);
+        }
+        else{
+            alert("Please add a partner");
+        }
+    });
+
+    $('#updateReqID').on('click', function(){
+        sendReqInfoToServer(true);
+    });
+
+    $('#deleteReqID').on('click', function(){
+
+        var reqID = $('#selectedReqID').val();
+        console.log(reqID)
+
         $.ajax({
-            url: "/project/deletepartner/",
+            url: "/project/deletereq/",
             type: "POST",
-            data: {partnerID: partnerID,
+            data: {reqID: reqID,
                    datasetID: datasetID,
                    csrfmiddlewaretoken: csrfmiddlewaretoken},
 
             // handle a successful response
             success : function(json) {
-                console.log("success"); // another sanity check
-                console.log(json['existingPartnersJSON']); // another sanity check
-                existingPartners = JSON.parse(json['existingPartnersJSON']);
-                refreshPartners();
+                existingReqs = JSON.parse(json['existingReqsJSON']);
+                refreshReqs();
             },
             // handle a non-successful response
             error : function(xhr,errmsg,err) {
                 console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
             }
         });
-//        console.log("Partner ID: " + partnerID);
-//
-//        var arrayLength = existingPartners.length;
-//        console.log("existingPartners before splice: ")
-//        console.log(existingPartners);
-//        console.log("Array length before splice: " + arrayLength);
-//
-//        for (i = 0; i < arrayLength; i++) {
-//            if(existingPartners[i].id == partnerID){
-//                console.log("Remove partner id");
-//                var indexPartnerToRemove = i;
-//            }
-//        }
-//
-//        existingPartners.splice(indexPartnerToRemove, 1);
-//
-//        $('#partnerList').empty();
-//
-//        // update the array length after the splice
-//        var arrayLength = existingPartners.length;
-//
-//        console.log("existingPartners after splice: ")
-//        console.log(existingPartners);
-//        console.log("Array length after splice: " + arrayLength);
-//
-//        for (i = 0; i < arrayLength; i++) {
-//            $('#partnerList').append("<li>" + existingPartners[i].name + "</li>");
-//        }
-//
-//        $('#id_name').val("");
-//        $('#id_email').val("");
-//        $('#id_lead').prop('checked', false);
-//
-//        // update buttons
-//        $('#updatePartnerID').removeClass( "active" ).addClass( "disabled" );
-//        $('#deletePartnerID').removeClass( "active" ).addClass( "disabled" );
-//
-//        // reset selected partner ID
-//        $('#selectedPartnerID').val('-99')
     });
+
+
+    //
+    // FUNCTIONS FOR THE STEPS
+    //
+
+    $('#expStepTableID').on('click', 'tr', function(){
+
+        selectedExpStepID = $(this).closest("tr").attr('id');
+        var nrExpSteps = existingExpSteps.length;
+
+        for (i = 0; i < nrExpSteps; i++) {
+
+            if (existingExpSteps[i].id == selectedExpStepID){
+
+                $('.expstepdesc').val(existingExpSteps[i].description);
+                $('.expstepprop').val(existingExpSteps[i].properties);
+                $('.expstepdeadline').val(existingExpSteps[i].deadline);
+
+                contrPartner = getPartnerByID(existingExpSteps[i].partnerID);
+                console.log(contrPartner)
+
+                $('#partnerExpStep').val(contrPartner.id);
+                $('#selectedExpStepID').val(selectedExpStepID);
+
+                // update buttons
+                $('#updateExpStepID').removeClass( "disabled" ).addClass( "active" );
+                $('#updateExpStepID').prop( "disabled", false);
+                $('#deleteExpStepID').removeClass( "disabled" ).addClass( "active" );
+                $('#deleteExpStepID').prop( "disabled", false);
+            }
+        } // end for
+
+    }); // end on expStepTable clicked
+
+    $('#addExpStepID').on('click', function(){
+
+        console.log($("#partnerExpStep").val())
+
+        // check if a partner is selected
+        if($("#partnerExpStep").val()){
+            sendExpStepInfoToServer(false);
+        }
+        else{
+            alert("Please add a partner");
+        }
+    });
+
+    $('#updateExpStepID').on('click', function(){
+        sendExpStepInfoToServer(true);
+    });
+
+    $('#deleteExpStepID').on('click', function(){
+
+        var expStepID = $('#selectedExpStepID').val();
+        console.log(expStepID)
+
+        $.ajax({
+            url: "/project/deletestep/",
+            type: "POST",
+            data: {expStepID: expStepID,
+                   datasetID: datasetID,
+                   csrfmiddlewaretoken: csrfmiddlewaretoken},
+
+            // handle a successful response
+            success : function(json) {
+                existingExpSteps = JSON.parse(json['existingExpStepsJSON']);
+                refreshExpSteps();
+            },
+            // handle a non-successful response
+            error : function(xhr,errmsg,err) {
+                console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
+            }
+        });
+    });
+    
+    
+    //
+    // FUNCTIONS FOR THE REPORTING
+    //
+
+    $('#reportingTableID').on('click', 'tr', function(){
+
+        selectedReportingID = $(this).closest("tr").attr('id');
+        var nrReportings = existingReportings.length;
+
+        for (i = 0; i < nrReportings; i++) {
+
+            if (existingReportings[i].id == selectedReportingID){
+
+                $('.reportingdesc').val(existingReportings[i].description);
+                $('.reportingprop').val(existingReportings[i].properties);
+                $('.reportingdeadline').val(existingReportings[i].deadline);
+
+                contrPartner = getPartnerByID(existingReportings[i].partnerID);
+                console.log(contrPartner)
+
+                $('#partnerReporting').val(contrPartner.id);
+                $('#selectedReportingID').val(selectedReportingID);
+
+                // update buttons
+                $('#updateReportingID').removeClass( "disabled" ).addClass( "active" );
+                $('#updateReportingID').prop( "disabled", false);
+                $('#deleteReportingID').removeClass( "disabled" ).addClass( "active" );
+                $('#deleteReportingID').prop( "disabled", false);
+            }
+        } // end for
+
+    }); // end on reportingTable clicked
+
+    $('#addReportingID').on('click', function(){
+
+        // check if a partner is selected
+        if($("#partnerReporting").val()){
+            sendReportingInfoToServer(false);
+        }
+        else{
+            alert("Please add a partner");
+        }
+    });
+
+    $('#updateReportingID').on('click', function(){
+        sendReportingInfoToServer(true);
+    });
+
+    $('#deleteReportingID').on('click', function(){
+
+        var reportingID = $('#selectedReportingID').val();
+        console.log(reportingID)
+
+        $.ajax({
+            url: "/project/deletereporting/",
+            type: "POST",
+            data: {reportingID: reportingID,
+                   datasetID: datasetID,
+                   csrfmiddlewaretoken: csrfmiddlewaretoken},
+
+            // handle a successful response
+            success : function(json) {
+                existingReportings = JSON.parse(json['existingReportingsJSON']);
+                refreshReporting();
+            },
+            // handle a non-successful response
+            error : function(xhr,errmsg,err) {
+                console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
+            }
+        });
+    });    
 
 });

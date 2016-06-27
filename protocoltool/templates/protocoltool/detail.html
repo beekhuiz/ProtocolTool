@@ -1,81 +1,123 @@
-{% extends "protocoltool/base.html" %}
 
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
 
-{% block head %}
-<title>
-    Protocol Tool
-</title>
-{% endblock %}
+        <!--CSS/Bootstrap-->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
 
-{% block body %}
-<div class="row"> <!--Buttons-->
-    <div class="col-md-12">
-        <div class="pull-right">
-            <button type="button" id="addDataset" onclick="window.location.assign('/project/form/')" class="btn btn-xs btn-primary">Add protocol</button>
-        </div>
-    </div>
-</div> <!--END Buttons-->
-<div class="row"> <!--Datasets table-->
-    <form id="dataset_action_form" action="" method="post">
-        {% csrf_token %}
-        <input type="hidden" name="dataset_action" value="">
-        <input type="hidden" name="dataset_id" value="">
-    </form>
-    <div class="col-md-12">
-        <table id="datasettable" class="table table-striped">
-            <colgroup>
-                <col style="width:19%">
-                <col style="width:12%">
-                <col style="width:44%">
-                <col style="width:8%">
-                <col style="width:17%">
-            </colgroup>
-            <thead>
-                <tr>
-                    <th>Protocol</th>
-                    <th>Last update</th>
-                    <th>Status</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for dataset in dataset_list  %}
-                    {% if dataset.checked %}
-                    <tr>
-                        <td>{{ dataset.title }}</td>
-                        <!--<td class="textcenter">{{ dataset.las | date:'d-m-Y' }}</td> -->
-                        <td class="textcenter">{{ dataset.dateLastUpdate | date:'d-m-Y' }}</td>
-                        <td> {% if dataset.published %}
-                            Published
-                            {% else %}
-                            In progress
-                            {% endif %}
-                        </td>
-                        <td>
-                            {% if dataset.published %}
-                            <!--<button type="button" class="btn btn-xs btn-default" value="{{ dataset.id }}" name="unpublish" onclick="submit_dataset_action(this)">Unpublish</button>-->
-                            {% else %}
-                            <button type="button" class="btn btn-xs btn-default" value="{{ dataset.id }}" name="edit" onclick="submit_dataset_action(this)">Edit</button>
-                            <button type="button" class="btn btn-xs btn-default" value="{{ dataset.id }}" name="publish" onclick="submit_dataset_action(this)">Publish</button>
-                            {% endif %}
-                        </td>
-                    </tr>
-                    {% endif %}
-                {% empty %}
-                <tr>
-                    <td>No protocols defined</td>
-                    <td></td>
-                    <td></td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
-</div> <!--END Datasets table-->
-{% endblock %}
-{% block script %}
+        {% load staticfiles %}
+        <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}" />
+
+        <!--Javascript-->
+        <script src="https://code.jquery.com/jquery-2.2.4.js" integrity="sha256-iT6Q9iMJYuQiMWNd9lDyBUStIq/8PuOW33aOqmvFpqI=" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+        <!--jQuery-->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+
+    </head>
+
+    <body>
+
+        <div class="container">
+
+            <h1>
+                Protocol Tool
+            </h1>
+
+            <div class="row"> <!--Buttons-->
+                <div class="col-md-12">
+                    <div class="pull-right">
+                        <button type="button" id="addDataset" onclick="window.location.assign('/project/form/')" class="btn btn-xs btn-primary">Add protocol</button>
+                    </div>
+                </div>
+            </div> <!--END Buttons-->
+            <div class="row"> <!--Datasets table-->
+
+                <form id="dataset_action_form" action="" method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="dataset_id" id="datasetID" value="">
+                    <input type="hidden" name="dataset_action" id="datasetActionID" value="">
+                </form>
+
+                <div class="col-md-12">
+                    <table id="datasettable" class="table table-striped">
+                        <colgroup>
+                            <col style="width:19%">
+                            <col style="width:12%">
+                            <col style="width:44%">
+                            <col style="width:8%">
+                            <col style="width:17%">
+                        </colgroup>
+                        <thead>
+                            <tr>
+                                <th>Protocol</th>
+                                <th>Last update</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for dataset in dataset_list  %}
+                                {% if dataset.checked %}
+                                <tr>
+                                    <td>{{ dataset.title }}</td>
+                                    <td class="textcenter">{{ dataset.dateLastUpdate | date:'d-m-Y' }}</td>
+                                    <td> {% if dataset.published %}
+                                        Published
+                                        {% else %}
+                                        In progress
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if dataset.published %}
+                                        <button type="button" class="btn btn-xs btn-default" value="{{ dataset.id }}" name="Show PDF" onclick="exportProtocol(this)">Export</button>
+                                        {% else %}
+                                        <button type="button" class="btn btn-xs btn-default" value="{{ dataset.id }}" name="edit" onclick="editProtocol(this)">Edit</button>
+                                        <button type="button" class="btn btn-xs btn-default" value="{{ dataset.id }}" name="publish" onclick="publishProtocol(this)">Publish</button>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% endif %}
+                            {% empty %}
+                            <tr>
+                                <td>No protocols defined</td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div> <!--END Datasets table-->
+        </div> <!--END Container-->
+    </body>
+</html>
+
 <script>
-    <!--
+
+    function exportProtocol(instance){
+        console.log("export button pushed");
+        $('#datasetActionID').val("export");
+        $('#datasetID').val(instance.value);
+        $('#dataset_action_form').submit();
+    }
+
+    function editProtocol(instance){
+        console.log("edit button pushed");
+        $('#datasetActionID').val("edit");
+        $('#datasetID').val(instance.value);
+        $('#dataset_action_form').submit();
+    }
+
+    function publishProtocol(instance){
+        $('#datasetActionID').val("publish");
+        $('#datasetID').val(instance.value);
+        $('#dataset_action_form').submit();
+    }
+
     function submit_dataset_action(instance) {
         document.getElementsByName('dataset_id')[0].value = instance.value;
         var ds_action = document.getElementsByName('dataset_action')[0];
@@ -89,6 +131,9 @@
         if (instance.name == 'unpublish' && confirm('You are about to unpublish the protocol. \nDo you want to continue anyway?')) {
             ds_action.value = 'unpublish';
         }
+        if (instance.name == 'export') {
+            ds_action.value = 'export';
+        }
         if (instance.name == 'refresh') {
             ds_action.value = 'refresh';
         }
@@ -97,6 +142,5 @@
             console.log('Form submitted');
         }
     }
-    //-->
+
 </script>
-{% endblock %}
