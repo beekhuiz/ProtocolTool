@@ -36,47 +36,34 @@
             </div> <!--END Buttons-->
             <div class="row"> <!--Datasets table-->
 
-                <form id="dataset_action_form" action="" method="post">
-                    {% csrf_token %}
-                    <input type="hidden" name="dataset_id" id="datasetID" value="">
-                    <input type="hidden" name="dataset_action" id="datasetActionID" value="">
-                </form>
-
                 <div class="col-md-12">
                     <table id="datasettable" class="table table-striped">
-                        <colgroup>
-                            <col style="width:19%">
-                            <col style="width:12%">
-                            <col style="width:44%">
-                            <col style="width:8%">
-                            <col style="width:17%">
-                        </colgroup>
                         <thead>
                             <tr>
-                                <th>Protocol</th>
-                                <th>Last update</th>
-                                <th>Status</th>
-                                <th>Actions</th>
+                                <th class="col-md-5">Protocol</th>
+                                <th class="col-md-2">Last update</th>
+                                <th class="col-md-2">Status</th>
+                                <th class="col-md-3">Actions</th>
                             </tr>
                         </thead>
                         <tbody>
                             {% for dataset in dataset_list  %}
                                 {% if dataset.checked %}
                                 <tr>
-                                    <td>{{ dataset.title }}</td>
-                                    <td class="textcenter">{{ dataset.dateLastUpdate | date:'d-m-Y' }}</td>
-                                    <td> {% if dataset.published %}
+                                    <td class="col-md-5">{{ dataset.title }}</td>
+                                    <td class="col-md-2">{{ dataset.dateLastUpdate | date:'d-m-Y' }}</td>
+                                    <td class="col-md-2"> {% if dataset.published %}
                                         Published
                                         {% else %}
                                         In progress
                                         {% endif %}
                                     </td>
-                                    <td>
+                                    <td class="col-md-3">
                                         {% if dataset.published %}
-                                        <button type="button" class="btn btn-xs btn-default" value="{{ dataset.id }}" name="Show PDF" onclick="exportProtocol(this)">Export</button>
+                                        <button type="button" class="btn btn-xs btn-default" value="{{ dataset.id }}" name="Show PDF" onclick="exportProtocol(this)">Download PDF</button>
                                         {% else %}
                                         <button type="button" class="btn btn-xs btn-default" value="{{ dataset.id }}" name="edit" onclick="editProtocol(this)">Edit</button>
-                                        <button type="button" class="btn btn-xs btn-default" value="{{ dataset.id }}" name="publish" onclick="publishProtocol(this)">Publish</button>
+                                        <button type="button" class="btn btn-xs btn-default" value="{{ dataset.id }}" name="publish" onclick="publishProtocol(this)">Non-editable</button>
                                         {% endif %}
                                     </td>
                                 </tr>
@@ -93,6 +80,12 @@
                 </div>
             </div> <!--END Datasets table-->
         </div> <!--END Container-->
+
+        <form id="dataset_action_form" action="" method="post">
+            {% csrf_token %}
+            <input type="hidden" name="dataset_id" id="datasetID" value="">
+            <input type="hidden" name="dataset_action" id="datasetActionID" value="">
+        </form>
     </body>
 </html>
 
@@ -113,9 +106,11 @@
     }
 
     function publishProtocol(instance){
-        $('#datasetActionID').val("publish");
-        $('#datasetID').val(instance.value);
-        $('#dataset_action_form').submit();
+        if (confirm('No more changes can be made after publishing. Are you sure you wish to publish the protocol?')) {
+            $('#datasetActionID').val("publish");
+            $('#datasetID').val(instance.value);
+            $('#dataset_action_form').submit();
+        }
     }
 
     function submit_dataset_action(instance) {
