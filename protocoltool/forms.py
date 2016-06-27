@@ -1,6 +1,6 @@
 from django import forms
 from .models import BasicDataset, Partner, DataReq, ExpStep, Reporting
-from django.forms.widgets import DateInput, CheckboxInput, NumberInput, Select, Textarea, TextInput, EmailInput
+from django.forms.widgets import DateInput, Textarea, TextInput, EmailInput
 
 class BasicDatasetForm(forms.ModelForm):
     class Meta:

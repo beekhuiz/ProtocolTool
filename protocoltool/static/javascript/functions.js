@@ -85,7 +85,7 @@ function refreshReqs(){
     $('#id_done').prop('checked', false)
     $('.reqdesc').val("")
     $('.reqprop').val("")
-    $('.reqdeadline').val("1970-01-01")
+    //$('.reqdeadline').val("1970-01-01")
 
     $("#partnerDataReq").empty();
     var arrayLength = existingPartners.length;
@@ -99,7 +99,6 @@ function refreshReqs(){
     $('#updateReqID').prop( "disabled", true);
     $('#deleteReqID').removeClass( "active" ).addClass( "disabled" );
     $('#deleteReqID').prop( "disabled", true);
-
 
     var arrayLength = existingReqs.length;
     $("#reqTableID tbody tr").remove();
@@ -123,7 +122,7 @@ function refreshExpSteps(){
 
     $('.expstepdesc').val("")
     $('.expstepproperties').val("")
-    $('.expstepdeadline').val("1970-01-01")
+    //$('.expstepdeadline').val("1970-01-01")
 
     $("#partnerExpStep").empty();
     var arrayLength = existingPartners.length;
@@ -155,7 +154,7 @@ function refreshReporting(){
 
     $('.reportingdesc').val("")
     $('.reportingproperties').val("")
-    $('.reportingdeadline').val("1970-01-01")
+    //$('.reportingdeadline').val("1970-01-01")
 
     $("#partnerReporting").empty();
     var arrayLength = existingPartners.length;
@@ -170,15 +169,10 @@ function refreshReporting(){
     $('#deleteReportingID').removeClass( "active" ).addClass( "disabled" );
     $('#deleteReportingID').prop( "disabled", true);
 
-
     var arrayLength = existingReportings.length;
     $("#reportingTableID tbody tr").remove();
 
-    console.log("refresh reproting table")
-    console.log(existingReportings)
-
     for (i = 0; i < arrayLength; i++) {
-        console.log("add row")
         $("#reportingTableID > tbody").append(
             '<tr class="reportingRow" id = ' +  existingReportings[i].id + '>' +
             '<td class="col-md-8">' + existingReportings[i].description + '</td>' +
@@ -223,8 +217,6 @@ function sendPartnerInfoToServer(update){
         dataToSend['partnerID'] = partnerID;
     }
 
-    console.log(dataToSend);
-
     $.ajax({
         url: url,
         type: "POST",
@@ -267,8 +259,6 @@ function sendReqInfoToServer(update){
         url = "/project/updatereq/"
         dataToSend['reqID'] = $('#selectedReqID').val();
     }
-
-    console.log(dataToSend)
 
     $.ajax({
         url: url,

@@ -2,6 +2,12 @@ __author__ = 'beekhuiz'
 from .models import BasicDataset, Partner, DataReq, ExpStep, Reporting
 
 def createPartnerModelFromClient(postDict, update):
+    '''
+    Creates a new data Partner model object using an AJAX call from the client
+    :param postDict: information of the Partner from the client
+    :param update: boolean indicating whether it is an update or an addition
+    :return: none
+    '''
 
     # get the foreign key of the protocol dataset of this partner
     dataset = BasicDataset.objects.get(id=postDict['datasetID'])
@@ -30,7 +36,12 @@ def createPartnerModelFromClient(postDict, update):
 
 
 def getPartnersList(datasetID):
-    # reload all partner information as a array list
+    '''
+    Store all partner information in an array list
+    :param datasetID: id of the dataset for which the partners are retrieved
+    :return: list with all partners
+    '''
+
     existingPartners = Partner.objects.filter(dataset__id=datasetID)
 
     existingPartnersList = []
@@ -49,6 +60,13 @@ def getPartnersList(datasetID):
 
 
 def createReqModelFromClient(postDict, update):
+
+    '''
+    Creates a new data preparation model object using an AJAX call from the client
+    :param postDict: information of the Data&Method preparation part from the client
+    :param update: boolean indicating whether it is an update or an addition
+    :return: none
+    '''
 
     # get the ID of the protocol of this DataRequest
     dataset = BasicDataset.objects.get(id=postDict['datasetID'])
@@ -83,8 +101,13 @@ def createReqModelFromClient(postDict, update):
 
 
 def createExpStepModelFromClient(postDict, update):
+    '''
+    Creates a new data Experiment step model object using an AJAX call from the client
+    :param postDict: information of the Experiment Execution step from the client
+    :param update: boolean indicating whether it is an update or an addition
+    :return: none
+    '''
 
-    # get the ID of the protocol of this Exp Step
     dataset = BasicDataset.objects.get(id=postDict['datasetID'])
     partner = Partner.objects.get(id=postDict['partnerID'])
 
@@ -111,8 +134,13 @@ def createExpStepModelFromClient(postDict, update):
 
 
 def createReportingModelFromClient(postDict, update):
+    '''
+    Creates a new Result Reporting  model object using an AJAX call from the client
+    :param postDict: information of the Result Reporting step from the client
+    :param update: boolean indicating whether it is an update or an addition
+    :return: none
+    '''
 
-    # get the ID of the protocol of this Exp Step
     dataset = BasicDataset.objects.get(id=postDict['datasetID'])
     partner = Partner.objects.get(id=postDict['partnerID'])
 
@@ -138,8 +166,12 @@ def createReportingModelFromClient(postDict, update):
 
 
 def getReqsList(datasetID):
+    '''
+    Store all data preparation information in an array list
+    :param datasetID: id of the dataset for which the info are retrieved
+    :return: list with all data preparation information
+    '''
 
-    # reload all request information as a array list
     existingReqs = DataReq.objects.filter(dataset__id=datasetID)
 
     existingReqsList = []
@@ -158,8 +190,11 @@ def getReqsList(datasetID):
 
 
 def getExpStepsList(datasetID):
-
-    # reload all exp step information as a array list
+    '''
+    Store all Experiment Step information in an array list
+    :param datasetID: id of the dataset for which the info are retrieved
+    :return: list with all Experiment Step information
+    '''
     existingExpSteps = ExpStep.objects.filter(dataset__id=datasetID)
 
     existingExpStepsList = []
@@ -177,8 +212,11 @@ def getExpStepsList(datasetID):
 
 
 def getReportingsList(datasetID):
-
-    # reload all exp step information as a array list
+    '''
+    Store all Result Reporting information in an array list
+    :param datasetID: id of the dataset for which the info are retrieved
+    :return: list with all Result Reporting information
+    '''
     existingReportings = Reporting.objects.filter(dataset__id=datasetID)
 
     existingReportingsList = []

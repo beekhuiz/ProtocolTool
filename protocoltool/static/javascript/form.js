@@ -5,10 +5,7 @@ $(document).ready(function(){
 
     $('#partnerTable').on('click', 'tr', function(){
 
-        console.log("partnerList clicked");
-
         selectedPartner = $(this).find(".partnername").text();
-
         var arrayLength = existingPartners.length;
 
         for (i = 0; i < arrayLength; i++) {
@@ -49,9 +46,8 @@ $(document).ready(function(){
 
         var partnerID = $('#selectedPartnerID').val();
 
-        partnerUsed = false
-
         // check if all the partner is not used in the reqs
+        partnerUsed = false
         var nrReqs = existingReqs.length;
         for (i = 0; i < nrReqs; i++) {
             if (existingReqs[i].partnerID == partnerID){
@@ -79,8 +75,6 @@ $(document).ready(function(){
 
                 // handle a successful response
                 success : function(json) {
-                    console.log("success"); // another sanity check
-                    console.log(json['existingPartnersJSON']); // another sanity check
                     existingPartners = JSON.parse(json['existingPartnersJSON']);
                     refreshPartners();
                 },
@@ -99,10 +93,7 @@ $(document).ready(function(){
 
     $('#reqTableID').on('click', 'tr', function(){
 
-        console.log("req Table clicked");
-
         selectedReqID = $(this).closest("tr").attr('id');
-        console.log(selectedReqID);
 
         var nrReqs = existingReqs.length;
 
@@ -121,7 +112,6 @@ $(document).ready(function(){
                 }
 
                 contrPartner = getPartnerByID(existingReqs[i].partnerID);
-                console.log(contrPartner)
 
                 $('#partnerDataReq').val(contrPartner.id);
                 $('#selectedReqID').val(selectedReqID);
@@ -137,8 +127,6 @@ $(document).ready(function(){
     }); // end on reqTable clicked
 
     $('#addReqID').on('click', function(){
-
-        console.log($("#partnerDataReq").val())
 
         // check if a partner is selected
         if($("#partnerDataReq").val()){
@@ -156,7 +144,6 @@ $(document).ready(function(){
     $('#deleteReqID').on('click', function(){
 
         var reqID = $('#selectedReqID').val();
-        console.log(reqID)
 
         $.ajax({
             url: "/project/deletereq/",
@@ -196,7 +183,6 @@ $(document).ready(function(){
                 $('.expstepdeadline').val(existingExpSteps[i].deadline);
 
                 contrPartner = getPartnerByID(existingExpSteps[i].partnerID);
-                console.log(contrPartner)
 
                 $('#partnerExpStep').val(contrPartner.id);
                 $('#selectedExpStepID').val(selectedExpStepID);
@@ -271,7 +257,6 @@ $(document).ready(function(){
                 $('.reportingdeadline').val(existingReportings[i].deadline);
 
                 contrPartner = getPartnerByID(existingReportings[i].partnerID);
-                console.log(contrPartner)
 
                 $('#partnerReporting').val(contrPartner.id);
                 $('#selectedReportingID').val(selectedReportingID);

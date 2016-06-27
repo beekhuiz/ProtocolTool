@@ -1,15 +1,9 @@
-import os
-# Imports for responding
 from django.core.urlresolvers import reverse
 from django.http import Http404, HttpResponseRedirect
 from django.shortcuts import render
-# Imports of models
 from .forms import BasicDatasetForm, PartnerForm, DataReqForm, ExpStepForm, ReportingForm
 from .models import BasicDataset, Partner, DataReq, ExpStep, Reporting
 import json
-# from django.core.serializers.json import DjangoJSONEncoder
-from django.core import serializers
-from django.utils.safestring import mark_safe
 from django.http import JsonResponse
 import datetime
 import functions, PDFexport
@@ -20,7 +14,12 @@ import pdb
 from django.core.exceptions import ObjectDoesNotExist
 
 
-def detail(request):
+def protocolOverview(request):
+    '''
+    Show a table with all the protocols. From this table, protocols can be added, edited or published.
+    :param request:
+    :return: html page with protocoloverview
+    '''
 
     context = {}
 
@@ -52,13 +51,10 @@ def detail(request):
             return response
 
         elif action == 'edit':
-            # Get core model data
-            # core_data = BasicDataset.objects.get(id=dataset_id)
-            # return HttpResponseRedirect(reverse('protocoltool:edit_dataset', kwargs={'dataset_id': dataset_id}))
             url = '/form/%s/' % dataset_obj.id
             return HttpResponseRedirect(url)
 
-        return HttpResponseRedirect(reverse('protocoltool:detail'))
+        return HttpResponseRedirect(reverse('protocoltool:protocoloverview'))
 
     elif request.method == 'GET':
         try:
@@ -69,10 +65,10 @@ def detail(request):
         except ObjectDoesNotExist:
             raise Http404
 
-    return render(request, 'protocoltool/detail.html', context)
+    return render(request, 'protocoltool/protocoloverview.html', context)
 
 
-def formBasic(request):
+def createProtocol(request):
 
     # Create empty dataset
     core_obj = BasicDataset(
@@ -86,9 +82,15 @@ def formBasic(request):
     return HttpResponseRedirect(url)
 
 
+
 def formAll(request, dataset_id="0"):
 
-    #pdb.set_trace()
+    '''
+    Show the form with all fields for the protocol
+    :param request:
+    :param dataset_id: id of the dataset to show the form
+    :return:
+    '''
 
     dataset_id = int(dataset_id)
 
@@ -112,13 +114,18 @@ def formAll(request, dataset_id="0"):
         )
         core_obj.save()
 
-        return HttpResponseRedirect(
-            reverse('protocoltool:detail'))
+        return HttpResponseRedirect(reverse('protocoltool:protocoloverview'))
 
-    return HttpResponseRedirect(reverse('protocoltool:detail'))
+    return HttpResponseRedirect(reverse('protocoltool:protocoloverview'))
 
 
 def getAllProtocolInfo(datasetID):
+
+    '''
+    Retrieve all info of a protocol
+    :param datasetID: ID of the dataset (protocol) to get all information from
+    :return: dictionary with all information of the dataset
+    '''
 
     coreData = BasicDataset.objects.get(id=datasetID)
     formCore = BasicDatasetForm(instance=coreData, auto_id='id_basic_%s')
@@ -150,7 +157,7 @@ def getAllProtocolInfo(datasetID):
     context.update({
         'edit': True,
         'dataset_id': datasetID,
-        'existingPartnersJSON': json.dumps(existingPartnersList), #mark_safe(existingPartnersJSON),#json.dumps(list(existingPartners), cls=DjangoJSONEncoder),
+        'existingPartnersJSON': json.dumps(existingPartnersList),
         'existingReqsJSON': json.dumps(existingReqsList),
         'existingExpStepsJSON': json.dumps(existingExpStepsList),
         'existingReportingsJSON': json.dumps(existingReportingsList),
@@ -230,7 +237,6 @@ def updateReq(request):
 def deleteReq(request):
 
     postDict = request.POST.dict()
-
     DataReq.objects.filter(id=postDict['reqID']).delete()
 
     # send back the new Request model as a list to use client side

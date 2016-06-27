@@ -113,29 +113,4 @@
         }
     }
 
-    function submit_dataset_action(instance) {
-        document.getElementsByName('dataset_id')[0].value = instance.value;
-        var ds_action = document.getElementsByName('dataset_action')[0];
-        if (instance.name == 'edit') {
-            ds_action.value = 'edit';
-        }
-        if (instance.name == 'publish' && confirm('No more changes can be made after publishing. Are you sure you wish to publish the protocol?')) {
-            ds_action.value = 'publish';
-            console.log("Publish");
-        }
-        if (instance.name == 'unpublish' && confirm('You are about to unpublish the protocol. \nDo you want to continue anyway?')) {
-            ds_action.value = 'unpublish';
-        }
-        if (instance.name == 'export') {
-            ds_action.value = 'export';
-        }
-        if (instance.name == 'refresh') {
-            ds_action.value = 'refresh';
-        }
-        if (ds_action.value == 'edit' || ds_action.value == 'publish' || ds_action.value == 'unpublish' || ds_action.value == 'delete' || ds_action.value == 'refresh') {
-            document.getElementById('dataset_action_form').submit();
-            console.log('Form submitted');
-        }
-    }
-
 </script>
