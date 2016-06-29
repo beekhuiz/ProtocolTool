@@ -22,13 +22,13 @@ class BasicDatasetForm(forms.ModelForm):
                 attrs={'class': 'form-control input-sm', 'autofocus': 'autofocus'}
             ),
             'experimentIdea': Textarea(
-                attrs={'rows':2, 'class': 'form-control input-sm'}
+                attrs={'rows':3, 'style':'resize:vertical;', 'class': 'form-control input-sm'}
             ),
             'hypothesis': Textarea(
-                attrs={'rows':2, 'class': 'form-control input-sm'}
+                attrs={'rows':3, 'style':'resize:vertical;', 'class': 'form-control input-sm'}
             ),
             'researchObjective': Textarea(
-                attrs={'rows':2, 'class': 'form-control input-sm'}
+                attrs={'rows':3, 'style':'resize:vertical;', 'class': 'form-control input-sm'}
             )
         }
 
@@ -74,10 +74,10 @@ class DataReqForm(forms.ModelForm):
         }
         widgets = {
             'description': Textarea(
-                attrs={'rows':2, 'class': 'form-control input-sm reqdesc', 'placeholder': 'Short description of the protocol'}
+                attrs={'rows':3, 'style':'resize:vertical;', 'class': 'form-control input-sm reqdesc', 'placeholder': 'Short description of the protocol'}
             ),
             'properties': Textarea(
-                attrs={'rows':2, 'class': 'form-control input-sm reqprop', 'placeholder': 'e.g. time period, domain, etc.'}
+                attrs={'rows':3, 'style':'resize:vertical;', 'class': 'form-control input-sm reqprop', 'placeholder': 'e.g. time period, domain, etc.'}
             ),
             'deadline': DateInput(
                 attrs={'class': 'form-control input-sm reqdeadline', 'type': 'date', 'placeholder': 'yyyy-mm-dd'}
@@ -99,10 +99,10 @@ class ExpStepForm(forms.ModelForm):
         }
         widgets = {
             'description': Textarea(
-                attrs={'rows':2, 'class': 'form-control input-sm expstepdesc', 'placeholder': 'e.g. transform data, createinput files, run model'}
+                attrs={'rows':3, 'style':'resize:vertical;', 'class': 'form-control input-sm expstepdesc', 'placeholder': 'e.g. transform data, createinput files, run model'}
             ),
             'properties': Textarea(
-                attrs={'rows':2, 'class': 'form-control input-sm expstepproperties', 'placeholder': 'e.g. variables, formats, etc.'}
+                attrs={'rows':3, 'style':'resize:vertical;', 'class': 'form-control input-sm expstepproperties', 'placeholder': 'e.g. variables, formats, etc.'}
             ),
             'deadline': DateInput(
                 attrs={'class': 'form-control input-sm expstepdeadline', 'type': 'date', 'placeholder': 'yyyy-mm-dd'}
@@ -124,10 +124,10 @@ class ReportingForm(forms.ModelForm):
         }
         widgets = {
             'description': Textarea(
-                attrs={'rows':2, 'class': 'form-control input-sm reportingdesc', 'placeholder': 'e.g. findings, '}
+                attrs={'rows':3, 'style':'resize:vertical;', 'class': 'form-control input-sm reportingdesc', 'placeholder': 'e.g. findings, '}
             ),
             'properties': Textarea(
-                attrs={'rows':2, 'class': 'form-control input-sm reportingproperties', 'placeholder': 'e.g. graphs, maps, etc.'}
+                attrs={'rows':3, 'style':'resize:vertical;', 'class': 'form-control input-sm reportingproperties', 'placeholder': 'e.g. graphs, maps, etc.'}
             ),
             'deadline': DateInput(
                 attrs={'class': 'form-control input-sm reportingdeadline', 'type': 'date', 'placeholder': 'yyyy-mm-dd'}

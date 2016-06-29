@@ -131,8 +131,7 @@
 
                             <div class="col-md-7">
 
-                                <h4>2) Data & Method preparation </h4>
-                                <p>(e.g. data collection, scripts, models, tools)</p>
+                                <h4>2) Data & Method preparation steps </h4>
 
                                 {% for field in form.1 %}
                                 <div id="{{ field.label }}" class="form-group">
@@ -341,9 +340,9 @@
                 <div class="row">
                     <div class="col-md-12"> <!--Form submission button-->
                         {% if edit %}
-                            <button type="button" class="btn btn-primary pull-right" onclick="checkform()">Submit</button>
+                            <button type="button" class="btn btn-primary pull-right" onclick="checkform()">Save</button>
                         {% else %}
-                            <button type="button" class="btn btn-primary pull-right" onclick="checkform()">Submit</button>
+                            <button type="button" class="btn btn-primary pull-right" onclick="checkform()">Save</button>
                         {% endif %}
                     </div> <!--END Form submission button-->
                 </div>
