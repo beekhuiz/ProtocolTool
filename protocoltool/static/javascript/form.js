@@ -101,8 +101,8 @@ $(document).ready(function(){
 
             if (existingReqs[i].id == selectedReqID){
 
+                $('.reqtask').val(existingReqs[i].task);
                 $('.reqdesc').val(existingReqs[i].description);
-                $('.reqprop').val(existingReqs[i].properties);
                 $('.reqdeadline').val(existingReqs[i].deadline);
                  if(existingReqs[i].done == 'True'){
                     $('#id_done').prop('checked', true);
@@ -178,7 +178,7 @@ $(document).ready(function(){
 
             if (existingExpSteps[i].id == selectedExpStepID){
 
-                $('.expstepdesc').val(existingExpSteps[i].description);
+                $('.expsteptask').val(existingExpSteps[i].task);
                 $('.expstepprop').val(existingExpSteps[i].properties);
                 $('.expstepdeadline').val(existingExpSteps[i].deadline);
 
@@ -252,7 +252,7 @@ $(document).ready(function(){
 
             if (existingReportings[i].id == selectedReportingID){
 
-                $('.reportingdesc').val(existingReportings[i].description);
+                $('.reportingtask').val(existingReportings[i].task);
                 $('.reportingprop').val(existingReportings[i].properties);
                 $('.reportingdeadline').val(existingReportings[i].deadline);
 

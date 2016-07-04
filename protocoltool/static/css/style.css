@@ -6,6 +6,25 @@ tbody tr.highlight td {
   background-color: #fcf8e3;
 }*/
 
+a, a:link, a:visited, a:hover, a:active {
+	color:inherit;
+	text-decoration: none;
+ }
+
+.switchon-header {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 35px;
+    margin-top: 30px;
+    text-align: center;
+}
+
+.switchon-header h1 {
+     display:inline;
+         margin-left: 15px;
+}
+
 .row {
     margin-top: 8px;
     margin-bottom: 8px;
@@ -71,4 +90,16 @@ thead {
     text-align: center;
     top: 0;
     width: 100%;
+}
+
+.alert .glyphicon {
+    display:table-cell;
+    vertical-align: middle;
+    padding-right: 15px;
+}
+
+.alert div {
+	height: 50px;
+    display:table-cell;
+    vertical-align: middle;
 }

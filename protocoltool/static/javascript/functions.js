@@ -2,15 +2,27 @@
 function checkform() {
 
     var expTitle = $('#id_basic_title').val();
-    console.log(expTitle);
+    var shortname = $('#id_basic_shortname').val();
+    console.log(shortname);
     //var okName = /[^a-zA-Z0-9]/.test(expTitle);
 
-    if (expTitle == ""){
-        alert("Please give a valid experiment title");
+    if (expTitle == "" || shortname == ""){
+        alert("Please give a valid full and short experiment title");
     }
     else{
         document.getElementById('dataset_form').submit();
     }
+}
+
+function setMessage(messagetype, messagefa, messagetext){
+	try {
+		$('#messagetype').removeClass().addClass(messagetype);
+		$('#messagefa').removeClass().addClass(messagefa);
+		$('#messagetext').text(messagetext);
+	}
+		catch(err) {
+			console.log(err.message);
+	}
 }
 
 
@@ -112,7 +124,7 @@ function refreshReqs(){
 
         $("#reqTableID > tbody").append(
             '<tr class="reqRow" id = ' +  existingReqs[i].id + '>' +
-            '<td class="col-md-7">' + existingReqs[i].description + '</td>' +
+            '<td class="col-md-7">' + existingReqs[i].task + '</td>' +
             '<td class="col-md-3">' + existingReqs[i].deadline + '</td>' +
             '<td class="col-md-2">' + reqDone + '</td></tr>')
     }
@@ -145,7 +157,7 @@ function refreshExpSteps(){
 
         $("#expStepTableID > tbody").append(
             '<tr class="expStepRow" id = ' +  existingExpSteps[i].id + '>' +
-            '<td class="col-md-8">' + existingExpSteps[i].description + '</td>' +
+            '<td class="col-md-8">' + existingExpSteps[i].task + '</td>' +
             '<td class="col-md-4">' + existingExpSteps[i].deadline + '</td></tr>')
     }
 }
@@ -175,7 +187,7 @@ function refreshReporting(){
     for (i = 0; i < arrayLength; i++) {
         $("#reportingTableID > tbody").append(
             '<tr class="reportingRow" id = ' +  existingReportings[i].id + '>' +
-            '<td class="col-md-8">' + existingReportings[i].description + '</td>' +
+            '<td class="col-md-8">' + existingReportings[i].task + '</td>' +
             '<td class="col-md-4">' + existingReportings[i].deadline + '</td></tr>')
     }
 }
@@ -248,8 +260,8 @@ function sendReqInfoToServer(update){
 
     dataToSend = {
         datasetID: datasetID,
-        description: $('.reqdesc').val(),    // use the class set in the widget in 'forms.py' to identify the field
-        properties: $('.reqprop').val(),
+        task: $('.reqtask').val(),    // use the class set in the widget in 'forms.py' to identify the field
+        description: $('.reqdesc').val(),
         partnerID: $("#partnerDataReq").val(),
         deadline: $('.reqdeadline').val(),
         done: done,
@@ -286,7 +298,7 @@ function sendExpStepInfoToServer(update){
      // get all filled in data
     dataToSend = {
         datasetID: datasetID,
-        description: $('.expstepdesc').val(),    // use the class set in the widget in 'forms.py' to identify the field
+        task: $('.expsteptask').val(),    // use the class set in the widget in 'forms.py' to identify the field
         properties: $('.expstepproperties').val(),
         partnerID: $("#partnerExpStep").val(),
         deadline: $('.expstepdeadline').val(),
@@ -323,7 +335,7 @@ function sendReportingInfoToServer(update){
      // get all filled in data
     dataToSend = {
         datasetID: datasetID,
-        description: $('.reportingdesc').val(),    // use the class set in the widget in 'forms.py' to identify the field
+        task: $('.reportingtask').val(),    // use the class set in the widget in 'forms.py' to identify the field
         properties: $('.reportingproperties').val(),
         partnerID: $("#partnerReporting").val(),
         deadline: $('.reportingdeadline').val(),

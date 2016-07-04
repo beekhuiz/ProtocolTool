@@ -80,8 +80,8 @@ def createReqModelFromClient(postDict, update):
     if update:
         DataReq.objects.filter(id=postDict['reqID']).update(
             dataset = dataset,
+            task=postDict['task'],
             description=postDict['description'],
-            properties=postDict['properties'],
             partner = partner,
             deadline=postDict['deadline'],
             done=done
@@ -90,8 +90,8 @@ def createReqModelFromClient(postDict, update):
         # create new request object
         reqObj = DataReq(
             dataset = dataset,
+            task=postDict['task'],
             description=postDict['description'],
-            properties=postDict['properties'],
             partner = partner,
             deadline=postDict['deadline'],
             done=done
@@ -114,7 +114,7 @@ def createExpStepModelFromClient(postDict, update):
     if update:
         ExpStep.objects.filter(id=postDict['expStepID']).update(
             dataset = dataset,
-            description=postDict['description'],
+            task=postDict['task'],
             properties=postDict['properties'],
             partner = partner,
             deadline=postDict['deadline'],
@@ -123,7 +123,7 @@ def createExpStepModelFromClient(postDict, update):
         # create new exp step object
         expStepObj = ExpStep(
             dataset = dataset,
-            description=postDict['description'],
+            task=postDict['task'],
             properties=postDict['properties'],
             partner = partner,
             deadline=postDict['deadline'],
@@ -147,7 +147,7 @@ def createReportingModelFromClient(postDict, update):
     if update:
         Reporting.objects.filter(id=postDict['reportingID']).update(
             dataset = dataset,
-            description=postDict['description'],
+            task=postDict['task'],
             properties=postDict['properties'],
             partner = partner,
             deadline=postDict['deadline'],
@@ -156,7 +156,7 @@ def createReportingModelFromClient(postDict, update):
         # create new exp step object
         reportingObj = Reporting(
             dataset = dataset,
-            description=postDict['description'],
+            task=postDict['task'],
             properties=postDict['properties'],
             partner = partner,
             deadline=postDict['deadline'],
@@ -178,8 +178,8 @@ def getReqsList(datasetID):
     for req in existingReqs:
         reqDict = {
             "id": req.id,
+            "task": req.task,
             "description": req.description,
-            "properties": req.properties,
             "partnerID": req.partner.id,
             "deadline": str(req.deadline),
             "done": str(req.done),
@@ -201,7 +201,7 @@ def getExpStepsList(datasetID):
     for expStep in existingExpSteps:
         expStepDict = {
             "id": expStep.id,
-            "description": expStep.description,
+            "task": expStep.task,
             "properties": expStep.properties,
             "partnerID": expStep.partner.id,
             "deadline": str(expStep.deadline),
@@ -223,7 +223,7 @@ def getReportingsList(datasetID):
     for reporting in existingReportings:
         reportingDict = {
             "id": reporting.id,
-            "description": reporting.description,
+            "task": reporting.task,
             "properties": reporting.properties,
             "partnerID": reporting.partner.id,
             "deadline": str(reporting.deadline),

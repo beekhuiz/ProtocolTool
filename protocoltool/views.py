@@ -73,6 +73,7 @@ def createProtocol(request):
     # Create empty dataset
     core_obj = BasicDataset(
         title='',
+        shortname='',
         dateLastUpdate = str(datetime.date.today())
         )
 
@@ -106,6 +107,7 @@ def formAll(request, dataset_id="0"):
         core_obj = BasicDataset(
             id=dataset_id,
             title=content['title'],
+            shortname=content['shortname'],
             experimentIdea = content['experimentIdea'],
             hypothesis = content['hypothesis'],
             researchObjective = content['researchObjective'],

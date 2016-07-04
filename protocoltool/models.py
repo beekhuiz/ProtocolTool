@@ -8,6 +8,7 @@ class BasicDataset(models.Model):
         return self.title
 
     title = models.CharField(max_length=200)
+    shortname = models.CharField(max_length=100)
     experimentIdea = models.TextField(blank=True)
     hypothesis = models.TextField(blank=True)
     researchObjective = models.TextField(blank=True)
@@ -29,8 +30,8 @@ class Partner(models.Model):
 
 
 class DataReq(models.Model):
+    task = models.TextField(blank=True)
     description = models.TextField(blank=True)
-    properties = models.TextField(blank=True)
     partner = models.ForeignKey(Partner)
     deadline = models.DateField(blank=True, default=datetime.date.today)
     done = models.BooleanField(default=False)
@@ -38,7 +39,7 @@ class DataReq(models.Model):
 
 
 class ExpStep(models.Model):
-    description = models.TextField(blank=True)
+    task = models.TextField(blank=True)
     properties = models.TextField(blank=True)
     partner = models.ForeignKey(Partner)
     deadline = models.DateField(blank=True, default=datetime.date.today)
@@ -46,7 +47,7 @@ class ExpStep(models.Model):
 
 
 class Reporting(models.Model):
-    description = models.TextField(blank=True)
+    task = models.TextField(blank=True)
     properties = models.TextField(blank=True)
     partner = models.ForeignKey(Partner)
     deadline = models.DateField(blank=True, default=datetime.date.today)

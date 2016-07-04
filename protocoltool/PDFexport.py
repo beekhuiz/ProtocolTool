@@ -110,9 +110,9 @@ def createPDF(datasetID):
 
     story = []
 
-    story.append(Paragraph('Protocol: {}'.format(basicInfo.title), styles['title1']))
-
+    story.append(Paragraph('Protocol: {}'.format(basicInfo.shortname), styles['title1']))
     story.append(Paragraph('General Information', styles['title2']))
+    story.append(Paragraph('Full experiment name: {}'.format(basicInfo.title), styles['default']))
     story.append(Paragraph('Experiment Idea: {}'.format(basicInfo.experimentIdea), styles['default']))
     story.append(Paragraph('Hypothesis: {}'.format(basicInfo.hypothesis), styles['default']))
     story.append(Paragraph('Research objective: {}'.format(basicInfo.researchObjective), styles['default']))
@@ -139,8 +139,8 @@ def createPDF(datasetID):
     story.append(Paragraph('Data & Method Preparation', styles['title2']))
 
     for req in reqInfo:
+        story.append(Paragraph('Task: {}'.format(req.task), styles['default']))
         story.append(Paragraph('Description: {}'.format(req.description), styles['default']))
-        story.append(Paragraph('Properties: {}'.format(req.properties), styles['default']))
         story.append(Paragraph('Contributing partner: {}'.format(req.partner.name), styles['default']))
         story.append(Paragraph('Deadline: {}'.format(req.deadline), styles['default']))
 
@@ -157,7 +157,7 @@ def createPDF(datasetID):
     story.append(Paragraph('Experiment Analysis Steps', styles['title2']))
 
     for step in stepInfo:
-        story.append(Paragraph('Description: {}'.format(step.description), styles['default']))
+        story.append(Paragraph('Task: {}'.format(step.task), styles['default']))
         story.append(Paragraph('Output: {}'.format(step.properties), styles['default']))
         story.append(Paragraph('Contributing partner: {}'.format(step.partner.name), styles['default']))
         story.append(Paragraph('Deadline: {}'.format(step.deadline), styles['default']))
@@ -170,7 +170,7 @@ def createPDF(datasetID):
     story.append(Paragraph('Result Reporting', styles['title2']))
 
     for reporting in reportingInfo:
-        story.append(Paragraph('Description: {}'.format(reporting.description), styles['default']))
+        story.append(Paragraph('Task: {}'.format(reporting.task), styles['default']))
         story.append(Paragraph('Output: {}'.format(reporting.properties), styles['default']))
         story.append(Paragraph('Contributing partner: {}'.format(reporting.partner.name), styles['default']))
         story.append(Paragraph('Deadline: {}'.format(reporting.deadline), styles['default']))

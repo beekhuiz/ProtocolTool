@@ -7,18 +7,23 @@ class BasicDatasetForm(forms.ModelForm):
         model = BasicDataset
         fields = [
             'title',
+            'shortname',
             'experimentIdea',
             'hypothesis',
             'researchObjective',
         ]
         labels = {
-            'title': 'Protocol name',
+            'title': 'Full experiment name',
+            'shortname': 'Short name',
             'experimentIdea': 'Experiment Idea',
             'hypothesis' : 'Hypothesis',
             'researchObjective': 'Research Objective',
         }
         widgets = {
             'title': TextInput(
+                attrs={'class': 'form-control input-sm', 'autofocus': 'autofocus'}
+            ),
+            'shortname': TextInput(
                 attrs={'class': 'form-control input-sm', 'autofocus': 'autofocus'}
             ),
             'experimentIdea': Textarea(
@@ -61,23 +66,23 @@ class DataReqForm(forms.ModelForm):
     class Meta:
         model = DataReq
         fields = [
+            'task',
             'description',
-            'properties',
             'deadline',
             'done',
         ]
         labels = {
+            'task': 'Task',
             'description': 'Description',
-            'properties': 'Properties',
             'deadline': 'Deadline',
             'done': 'Done',
         }
         widgets = {
-            'description': Textarea(
-                attrs={'rows':3, 'style':'resize:vertical;', 'class': 'form-control input-sm reqdesc', 'placeholder': 'Short description of the protocol'}
+            'task': Textarea(
+                attrs={'rows':3, 'style':'resize:vertical;', 'class': 'form-control input-sm reqtask', 'placeholder': 'Short description of the protocol'}
             ),
-            'properties': Textarea(
-                attrs={'rows':3, 'style':'resize:vertical;', 'class': 'form-control input-sm reqprop', 'placeholder': 'e.g. time period, domain, etc.'}
+            'description': Textarea(
+                attrs={'rows':3, 'style':'resize:vertical;', 'class': 'form-control input-sm reqdesc', 'placeholder': 'e.g. time period, domain, etc.'}
             ),
             'deadline': DateInput(
                 attrs={'class': 'form-control input-sm reqdeadline', 'type': 'date', 'placeholder': 'yyyy-mm-dd'}
@@ -88,18 +93,18 @@ class ExpStepForm(forms.ModelForm):
     class Meta:
         model = ExpStep
         fields = [
-            'description',
+            'task',
             'properties',
             'deadline'
         ]
         labels = {
-            'description': 'Description',
+            'task': 'Task',
             'properties': 'Output',
             'deadline': 'Deadline'
         }
         widgets = {
-            'description': Textarea(
-                attrs={'rows':3, 'style':'resize:vertical;', 'class': 'form-control input-sm expstepdesc', 'placeholder': 'e.g. transform data, createinput files, run model'}
+            'task': Textarea(
+                attrs={'rows':3, 'style':'resize:vertical;', 'class': 'form-control input-sm expsteptask', 'placeholder': 'e.g. transform data, createinput files, run model'}
             ),
             'properties': Textarea(
                 attrs={'rows':3, 'style':'resize:vertical;', 'class': 'form-control input-sm expstepproperties', 'placeholder': 'e.g. variables, formats, etc.'}
@@ -113,18 +118,18 @@ class ReportingForm(forms.ModelForm):
     class Meta:
         model = Reporting
         fields = [
-            'description',
+            'task',
             'properties',
             'deadline'
         ]
         labels = {
-            'description': 'Description',
+            'task': 'Task',
             'properties': 'Output',
             'deadline': 'Deadline'
         }
         widgets = {
-            'description': Textarea(
-                attrs={'rows':3, 'style':'resize:vertical;', 'class': 'form-control input-sm reportingdesc', 'placeholder': 'e.g. findings, '}
+            'task': Textarea(
+                attrs={'rows':3, 'style':'resize:vertical;', 'class': 'form-control input-sm reportingtask', 'placeholder': 'e.g. findings, '}
             ),
             'properties': Textarea(
                 attrs={'rows':3, 'style':'resize:vertical;', 'class': 'form-control input-sm reportingproperties', 'placeholder': 'e.g. graphs, maps, etc.'}

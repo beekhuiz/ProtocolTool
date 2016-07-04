@@ -5,6 +5,7 @@ from .models import BasicDataset, Partner, DataReq, ExpStep, Reporting
 
 class BasicDatasetAdmin(admin.ModelAdmin):
     list_display = ('title',
+            'shortname',
             'experimentIdea',
             'hypothesis',
             'researchObjective',
@@ -15,13 +16,13 @@ class PartnerAdmin(admin.ModelAdmin):
     list_display = ('id', 'name', 'email', 'organisation', 'lead')
 
 class DataReqAdmin(admin.ModelAdmin):
-    list_display = ('description', 'properties', 'partner', 'deadline', 'done')
+    list_display = ('task', 'description', 'partner', 'deadline', 'done')
 
 class ExpStepAdmin(admin.ModelAdmin):
-    list_display = ('description', 'properties', 'partner', 'deadline')
+    list_display = ('task', 'properties', 'partner', 'deadline')
 
 class ReportingAdmin(admin.ModelAdmin):
-    list_display = ('description', 'properties', 'partner', 'deadline')
+    list_display = ('task', 'properties', 'partner', 'deadline')
 
 admin.site.register(BasicDataset, BasicDatasetAdmin)
 admin.site.register(Partner, PartnerAdmin)

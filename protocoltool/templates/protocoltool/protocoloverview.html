@@ -5,8 +5,9 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        <!--CSS/Bootstrap-->
+        <!--CSS/Bootstrap/FontAwesome-->
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
 
         {% load staticfiles %}
         <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}" />
@@ -14,8 +15,8 @@
         <!--Javascript-->
         <script src="https://code.jquery.com/jquery-2.2.4.js" integrity="sha256-iT6Q9iMJYuQiMWNd9lDyBUStIq/8PuOW33aOqmvFpqI=" crossorigin="anonymous"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
-        <!--jQuery-->
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+        <script src="{% static 'javascript/functions.js' %}"></script>
 
     </head>
 
@@ -23,62 +24,91 @@
 
         <div class="container">
 
-            <h1>
-                Protocol Tool
-            </h1>
+            <div class="switchon-header">
+                <span><img src="{% static 'img/sologo_white.png' %}" alt=""/></span>
+                <h1>Protocol Tool</h1>
+            </div>
 
-            <div class="row"> <!--Buttons-->
-                <div class="col-md-12">
-                    <div class="pull-right">
-                        <button type="button" id="addDataset" onclick="window.location.assign('/project/form/')" class="btn btn-xs btn-primary">Add protocol</button>
-                    </div>
-                </div>
-            </div> <!--END Buttons-->
-            <div class="row"> <!--Datasets table-->
 
-                <div class="col-md-12">
-                    <table id="datasettable" class="table table-striped">
-                        <thead>
-                            <tr>
-                                <th class="col-md-5">Protocol</th>
-                                <th class="col-md-2">Last update</th>
-                                <th class="col-md-2">Status</th>
-                                <th class="col-md-3">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for dataset in dataset_list  %}
-                                {% if dataset.checked %}
-                                <tr>
-                                    <td class="col-md-5">{{ dataset.title }}</td>
-                                    <td class="col-md-2">{{ dataset.dateLastUpdate | date:'d-m-Y' }}</td>
-                                    <td class="col-md-2"> {% if dataset.published %}
-                                        Published
-                                        {% else %}
-                                        In progress
-                                        {% endif %}
-                                    </td>
-                                    <td class="col-md-3">
-                                        {% if dataset.published %}
-                                        <button type="button" class="btn btn-xs btn-default" value="{{ dataset.id }}" name="Show PDF" onclick="exportProtocol(this)">Download PDF</button>
-                                        {% else %}
-                                        <button type="button" class="btn btn-xs btn-default" value="{{ dataset.id }}" name="edit" onclick="editProtocol(this)">Edit</button>
-                                        <button type="button" class="btn btn-xs btn-default" value="{{ dataset.id }}" name="publish" onclick="publishProtocol(this)">Make Non Editable</button>
-                                        {% endif %}
-                                    </td>
-                                </tr>
-                                {% endif %}
-                            {% empty %}
-                            <tr>
-                                <td>No protocols defined</td>
-                                <td></td>
-                                <td></td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
+            <div id="messagetype">
+                <span id="messagefa"></span>
+                <div id="messagetext"></div>
+            </div>
+
+            <script>
+                var message = "Welcome to the protocol tool. Here you can edit existing experiment protocols or create new protocols."
+                setMessage("alert alert-success", "fa fa-4x fa-fw fa-pull-left fa-info-circle", message);
+            </script>
+
+
+            <div class="panel panel-primary">
+                <div class="panel-heading">
+                    Select protocol
                 </div>
-            </div> <!--END Datasets table-->
+
+                <div class="panel-body">
+
+                    <div class="row"> <!--Buttons-->
+                        <div class="col-md-12">
+                            <div class="pull-right">
+                                <button type="button" id="addDataset" onclick="window.location.assign('/project/form/')" class="btn btn-xs btn-primary">Add protocol</button>
+                            </div>
+                        </div>
+                    </div> <!--END Buttons-->
+                    <div class="row"> <!--Datasets table-->
+
+                        <div class="col-md-12">
+                            <table id="datasettable" class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th class="col-md-5">Protocol</th>
+                                        <th class="col-md-2">Last update</th>
+                                        <th class="col-md-2">Status</th>
+                                        <th class="col-md-3">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for dataset in dataset_list  %}
+                                        {% if dataset.checked %}
+                                        <tr>
+                                            <td class="col-md-5">{{ dataset.shortname }}</td>
+                                            <td class="col-md-2">{{ dataset.dateLastUpdate | date:'d-m-Y' }}</td>
+                                            <td class="col-md-2"> {% if dataset.published %}
+                                                Published
+                                                {% else %}
+                                                In progress
+                                                {% endif %}
+                                            </td>
+                                            <td class="col-md-3">
+                                                {% if dataset.published %}
+                                                <button type="button" class="btn btn-xs btn-default" value="{{ dataset.id }}" name="Show PDF" onclick="exportProtocol(this)">Download PDF</button>
+                                                {% else %}
+                                                <button type="button" class="btn btn-xs btn-default" value="{{ dataset.id }}" name="edit" onclick="editProtocol(this)">Edit</button>
+                                                <button type="button" class="btn btn-xs btn-default" value="{{ dataset.id }}" name="publish" onclick="publishProtocol(this)">Make Non Editable</button>
+                                                {% endif %}
+                                            </td>
+                                        </tr>
+                                        {% endif %}
+                                    {% empty %}
+                                    <tr>
+                                        <td>No protocols defined</td>
+                                        <td></td>
+                                        <td></td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div> <!--END Datasets table-->
+                </div> <!--END Panel body-->
+
+                <div class="panel-footer clearfix">
+                    <button type="button" class="btn btn-primary pull-left">
+                        <i class="glyphicon glyphicon-envelope"></i>
+                        <span><a href="mailto:switchon.wm@gmail.com?subject=Data Upload Tool">Feedback</a></span>
+                    </button>
+                </div>
+            </div> <!-- End Panel-->
         </div> <!--END Container-->
 
         <form id="dataset_action_form" action="" method="post">
