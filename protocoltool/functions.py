@@ -231,3 +231,24 @@ def getReportingsList(datasetID):
         existingReportingsList.append(reportingDict)
 
     return existingReportingsList
+
+
+# def viewDataset(datasetID):
+#
+#     # Get all the information of this protocol
+#     basicInfo = BasicDataset.objects.get(id=datasetID)
+#     partnerInfo = Partner.objects.filter(dataset_id=datasetID)
+#     reqInfo = DataReq.objects.filter(dataset_id=datasetID)
+#     stepInfo = ExpStep.objects.filter(dataset_id=datasetID)
+#     reportingInfo = Reporting.objects.filter(dataset_id=datasetID)
+#
+#     context.update({
+#         'dataset_id': datasetID,
+#         'existingPartnersJSON': json.dumps(existingPartnersList),
+#         'existingReqsJSON': json.dumps(existingReqsList),
+#         'existingExpStepsJSON': json.dumps(existingExpStepsList),
+#         'existingReportingsJSON': json.dumps(existingReportingsList),
+#         'forms_list': formList
+#     })
+#
+#     return context

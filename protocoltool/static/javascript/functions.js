@@ -1,16 +1,42 @@
+
+function checkValidField(item){
+   if(item.val() === null || item.val() === "" ){
+       item.addClass('error');
+       return false;
+   }
+   else {
+        item.removeClass('error');
+        return true;
+   }
+}
+
+function warningPopup(messageText){
+   BootstrapDialog.show({
+      type: BootstrapDialog.TYPE_WARNING,
+      message: messageText,
+      buttons: [{
+            label: 'Close',
+            action: function(dialogItself){
+                dialogItself.close();
+            }
+        }]
+   });
+}
+
+
 // Validate form (client side) TODO: Make validation checks for all fields -->
 function checkform() {
 
-    var expTitle = $('#id_basic_title').val();
-    var shortname = $('#id_basic_shortname').val();
-    console.log(shortname);
+    validShortname = checkValidField($('#id_basic_shortname'));
+    validTitle = checkValidField($('#id_basic_title'));
+
     //var okName = /[^a-zA-Z0-9]/.test(expTitle);
 
-    if (expTitle == "" || shortname == ""){
-        alert("Please give a valid full and short experiment title");
+    if (validShortname && validTitle){
+       document.getElementById('dataset_form').submit();
     }
     else{
-        document.getElementById('dataset_form').submit();
+        warningPopup('Please fill in a full experiment name and a short name')
     }
 }
 
@@ -95,8 +121,8 @@ function refreshPartners(){
 function refreshReqs(){
 
     $('#id_done').prop('checked', false)
+    $('.reqtask').val("")
     $('.reqdesc').val("")
-    $('.reqprop').val("")
     //$('.reqdeadline').val("1970-01-01")
 
     $("#partnerDataReq").empty();
@@ -132,7 +158,7 @@ function refreshReqs(){
 
 function refreshExpSteps(){
 
-    $('.expstepdesc').val("")
+    $('.expsteptask').val("")
     $('.expstepproperties').val("")
     //$('.expstepdeadline').val("1970-01-01")
 
@@ -164,7 +190,7 @@ function refreshExpSteps(){
 
 function refreshReporting(){
 
-    $('.reportingdesc').val("")
+    $('.reportingtask').val("")
     $('.reportingproperties').val("")
     //$('.reportingdeadline').val("1970-01-01")
 

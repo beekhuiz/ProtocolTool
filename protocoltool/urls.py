@@ -14,6 +14,7 @@ urlpatterns = patterns('',
     url(r'^$', views.protocolOverview, name='protocoloverview'),
     url(r'^form/$', views.createProtocol, name='createprotocol'),
     url(r'^form/(?P<dataset_id>\d*)/$', views.formAll, name='formall'),
+    url(r'^view/(?P<dataset_id>\d*)/$', views.viewProtocol, name='viewprotocol'),
 
     url(r'^addpartner/$', views.addPartner, name='add_partner'),
     url(r'^updatepartner/$', views.updatePartner, name='update_partner'),

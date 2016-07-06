@@ -62,6 +62,12 @@ thead {
     height: 100px;
   }
 
+
+.error {
+    background-color : Bisque;
+    border: 2px solid Crimson;
+}
+
 #addButton {
     vertical-align: bottom;
 }

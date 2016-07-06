@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <body>
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1">
+
+            <!--CSS/Bootstrap-->
+
+            <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+
+            {% load staticfiles %}
+            <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}" />
+
+            <!--Javascript-->
+            <script src="https://code.jquery.com/jquery-2.2.4.js" integrity="sha256-iT6Q9iMJYuQiMWNd9lDyBUStIq/8PuOW33aOqmvFpqI=" crossorigin="anonymous"></script>
+            <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+            <!--jQuery-->
+            <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+        </head>
+
+
+        <div class="container">
+
+            <h1>
+                Protocol: {{ basic.shortname }}
+            </h1>
+
+            <hr>
+            <h3> General information </h3>
+            <p>Full experiment name: {{ basic.title }} <br>
+                Experiment Idea: {{ basic.experimentIdea }} <br>
+                Hypothesis: {{ basic.hypothesis }} <br>
+                Research objective: {{ basic.researchObjective }} <br>
+                Date last update: {{ basic.dateLastUpdate }}
+            </p>
+
+            <hr>
+            <h3> Partners </h3>
+            {% for partner in partners %}
+            <p>Name: {{ partner.name }}{% if partner.lead %}   (lead){% endif %} <br>
+                E-mail: {{partner.email }} <br>
+                Organisation: {{ partner.organisation }}
+            </p>
+            {% endfor %}
+
+            <hr>
+            <h3> Data & Method Preparation </h3>
+            {% for method in methods %}
+            <p>Task: {{ method.task }} <br>
+                Description: {{ method.description }} <br>
+                Contributing partner: {{ method.partner.name }} <br>
+                Deadline: {{ method.deadline }}
+            </p>
+            {% endfor %}
+
+            <hr>
+            <h3> Experiment Analysis Steps </h3>
+            {% for step in steps %}
+            <p>Task: {{ step.task }} <br>
+                Output: {{ step.properties }} <br>
+                Contributing partner: {{ step.partner.name }} <br>
+                Deadline: {{ step.deadline }}
+            </p>
+            {% endfor %}
+
+            <hr>
+            <h3> Result Reporting </h3>
+            {% for result in results %}
+            <p>Task: {{ result.task }} <br>
+                Output: {{ result.properties }} <br>
+                Contributing partner: {{ result.partner.name }} <br>
+                Deadline: {{ result.deadline }}
+            </p>
+            {% endfor %}
+
+        </div> <!--END CONTAINER -->
+    </body>
+</html>

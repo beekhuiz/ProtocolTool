@@ -83,6 +83,7 @@
                                                 {% if dataset.published %}
                                                 <button type="button" class="btn btn-xs btn-default" value="{{ dataset.id }}" name="Show PDF" onclick="exportProtocol(this)">Download PDF</button>
                                                 {% else %}
+                                                <button type="button" class="btn btn-xs btn-default" value="{{ dataset.id }}" name="view" onclick="viewProtocol(this)">View</button>
                                                 <button type="button" class="btn btn-xs btn-default" value="{{ dataset.id }}" name="edit" onclick="editProtocol(this)">Edit</button>
                                                 <button type="button" class="btn btn-xs btn-default" value="{{ dataset.id }}" name="publish" onclick="publishProtocol(this)">Make Non Editable</button>
                                                 {% endif %}
@@ -122,14 +123,18 @@
 <script>
 
     function exportProtocol(instance){
-        console.log("export button pushed");
         $('#datasetActionID').val("export");
         $('#datasetID').val(instance.value);
         $('#dataset_action_form').submit();
     }
 
+    function viewProtocol(instance){
+        $('#datasetActionID').val("view");
+        $('#datasetID').val(instance.value);
+        $('#dataset_action_form').submit();
+    }
+
     function editProtocol(instance){
-        console.log("edit button pushed");
         $('#datasetActionID').val("edit");
         $('#datasetID').val(instance.value);
         $('#dataset_action_form').submit();

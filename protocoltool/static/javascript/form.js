@@ -11,6 +11,14 @@ $(document).ready(function(){
         for (i = 0; i < arrayLength; i++) {
 
             if(existingPartners[i].name == selectedPartner){
+
+                // set fields to valid
+                $('#id_name').removeClass('error');
+                $('#id_email').removeClass('error');
+                $('#id_organisation').removeClass('error');
+
+                $('#id_lead').prop('checked', false);
+
                 $('#id_name').val(existingPartners[i].name);
                 $('#id_email').val(existingPartners[i].email);
                 $('#id_organisation').val(existingPartners[i].organisation);
@@ -35,11 +43,32 @@ $(document).ready(function(){
     });
 
     $('#addPartnerID').on('click', function(){
-        sendPartnerInfoToServer(false);
+
+        // check if all values are valid
+        validName = checkValidField($('#id_name'));
+        validEmail = checkValidField($('#id_email'));
+        validOrganisation = checkValidField($('#id_organisation'));
+
+        if(validName === true && validEmail === true && validOrganisation === true){
+            sendPartnerInfoToServer(false);
+        }
+        else{
+            warningPopup("One or more fields are filled in incorrectly");
+        }
     });
 
     $('#updatePartnerID').on('click', function(){
-        sendPartnerInfoToServer(true);
+        // check if all values are valid
+        validName = checkValidField($('#id_name'));
+        validEmail = checkValidField($('#id_email'));
+        validOrganisation = checkValidField($('#id_organisation'));
+
+        if(validName === true && validEmail === true && validOrganisation === true){
+            sendPartnerInfoToServer(true);
+        }
+        else{
+            warningPopup("One or more fields are filled in incorrectly");
+        }
     });
 
     $('#deletePartnerID').on('click', function(){
@@ -52,7 +81,7 @@ $(document).ready(function(){
         for (i = 0; i < nrReqs; i++) {
             if (existingReqs[i].partnerID == partnerID){
                 partnerUsed = true;
-                alert("This partner is a contributing partner in the data&method preparation, removal is therefore not allowed.")
+                warningPopup("This partner is a contributing partner in the data&method preparation, removal is therefore not allowed.");
             }
         }
 
@@ -61,7 +90,7 @@ $(document).ready(function(){
         for (i = 0; i < nrExpSteps; i++) {
             if (existingExpSteps[i].partnerID == partnerID){
                 partnerUsed = true;
-                alert("This partner is a contributing partner in the experiment steps, removal is therefore not allowed.")
+                warningPopup("This partner is a contributing partner in the experiment steps, removal is therefore not allowed.")
             }
         }
 
@@ -101,6 +130,11 @@ $(document).ready(function(){
 
             if (existingReqs[i].id == selectedReqID){
 
+                // remove all error classes
+                $('.reqtask').removeClass('error');
+                $('.reqdesc').removeClass('error');
+                $('#partnerDataReq').removeClass('error');
+
                 $('.reqtask').val(existingReqs[i].task);
                 $('.reqdesc').val(existingReqs[i].description);
                 $('.reqdeadline').val(existingReqs[i].deadline);
@@ -128,17 +162,31 @@ $(document).ready(function(){
 
     $('#addReqID').on('click', function(){
 
-        // check if a partner is selected
-        if($("#partnerDataReq").val()){
+        // check if all values are valid
+        validTask = checkValidField($('.reqtask'));
+        validDesc = checkValidField($('.reqdesc'));
+        validPartner = checkValidField($('#partnerDataReq'));
+
+        if(validTask === true && validDesc === true && validPartner === true){
             sendReqInfoToServer(false);
         }
         else{
-            alert("Please add a partner");
+            warningPopup("One or more fields are filled in incorrectly");
         }
     });
 
     $('#updateReqID').on('click', function(){
-        sendReqInfoToServer(true);
+        // check if all values are valid
+        validTask = checkValidField($('.reqtask'));
+        validDesc = checkValidField($('.reqdesc'));
+        validPartner = checkValidField($('#partnerDataReq'));
+
+        if(validTask === true && validDesc === true && validPartner === true){
+            sendReqInfoToServer(true);
+        }
+        else{
+            warningPopup("One or more fields are filled in incorrectly");
+        }
     });
 
     $('#deleteReqID').on('click', function(){
@@ -178,8 +226,13 @@ $(document).ready(function(){
 
             if (existingExpSteps[i].id == selectedExpStepID){
 
+                // remove all error classes
+                $('.expsteptask').removeClass('error');
+                $('.expstepproperties').removeClass('error');
+                $('#partnerExpStep').removeClass('error');
+
                 $('.expsteptask').val(existingExpSteps[i].task);
-                $('.expstepprop').val(existingExpSteps[i].properties);
+                $('.expstepproperties').val(existingExpSteps[i].properties);
                 $('.expstepdeadline').val(existingExpSteps[i].deadline);
 
                 contrPartner = getPartnerByID(existingExpSteps[i].partnerID);
@@ -199,19 +252,31 @@ $(document).ready(function(){
 
     $('#addExpStepID').on('click', function(){
 
-        console.log($("#partnerExpStep").val())
+        // check if all values are valid
+        validTask = checkValidField($('.expsteptask'));
+        validOutput = checkValidField($('.expstepproperties'));
+        validPartner = checkValidField($('#partnerExpStep'));
 
-        // check if a partner is selected
-        if($("#partnerExpStep").val()){
+        if(validTask === true && validOutput === true && validPartner === true){
             sendExpStepInfoToServer(false);
         }
         else{
-            alert("Please add a partner");
+            warningPopup("One or more fields are filled in incorrectly");
         }
     });
 
     $('#updateExpStepID').on('click', function(){
-        sendExpStepInfoToServer(true);
+        // check if all values are valid
+        validTask = checkValidField($('.expsteptask'));
+        validOutput = checkValidField($('.expstepproperties'));
+        validPartner = checkValidField($('#partnerExpStep'));
+
+        if(validTask === true && validOutput === true && validPartner === true){
+            sendExpStepInfoToServer(true);
+        }
+        else{
+            warningPopup("One or more fields are filled in incorrectly");
+        }
     });
 
     $('#deleteExpStepID').on('click', function(){
@@ -252,8 +317,13 @@ $(document).ready(function(){
 
             if (existingReportings[i].id == selectedReportingID){
 
+                // remove all error classes
+                $('.reportingtask').removeClass('error');
+                $('.reportingproperties').removeClass('error');
+                $('#partnerReporting').removeClass('error');
+
                 $('.reportingtask').val(existingReportings[i].task);
-                $('.reportingprop').val(existingReportings[i].properties);
+                $('.reportingproperties').val(existingReportings[i].properties);
                 $('.reportingdeadline').val(existingReportings[i].deadline);
 
                 contrPartner = getPartnerByID(existingReportings[i].partnerID);
@@ -273,17 +343,31 @@ $(document).ready(function(){
 
     $('#addReportingID').on('click', function(){
 
-        // check if a partner is selected
-        if($("#partnerReporting").val()){
+        // check if all values are valid
+        validTask = checkValidField($('.reportingtask'));
+        validOutput = checkValidField($('.reportingproperties'));
+        validPartner = checkValidField($('#partnerReporting'));
+
+        if(validTask === true && validDesc === true && validPartner === true){
             sendReportingInfoToServer(false);
         }
         else{
-            alert("Please add a partner");
+            warningPopup("One or more fields are filled in incorrectly");
         }
     });
 
     $('#updateReportingID').on('click', function(){
-        sendReportingInfoToServer(true);
+        // check if all values are valid
+        validTask = checkValidField($('.reportingtask'));
+        validOutput = checkValidField($('.reportingproperties'));
+        validPartner = checkValidField($('#partnerReporting'));
+
+        if(validTask === true && validOutput === true && validPartner === true){
+            sendReportingInfoToServer(true);
+        }
+        else{
+            warningPopup("One or more fields are filled in incorrectly");
+        }
     });
 
     $('#deleteReportingID').on('click', function(){

@@ -31,6 +31,11 @@ def protocolOverview(request):
 
         dataset_obj = BasicDataset.objects.get(id=dataset_id)
 
+        if action == 'view':
+            # go to URL that shows HTML page with all form info
+            url = '/view/%s/' % dataset_obj.id
+            return HttpResponseRedirect(url)
+
         if action == 'delete':
             # Remove metadata in database
             BasicDataset.objects.filter(id=dataset_id).delete()
@@ -83,11 +88,32 @@ def createProtocol(request):
     return HttpResponseRedirect(url)
 
 
+def viewProtocol(request, dataset_id):
+    '''
+    Show all information of the protocol
+    :param request:
+    :param dataset_id: id of the protocol from the post request
+    :return:
+    '''
+
+    datasetID = int(dataset_id)
+    # context = getAllProtocolInfo(dataset_id)
+
+    context = {}
+    context['basic'] = BasicDataset.objects.get(id=datasetID)
+    context['partners'] = Partner.objects.filter(dataset_id=datasetID)
+    context['methods'] = DataReq.objects.filter(dataset_id=datasetID)
+    context['steps'] = ExpStep.objects.filter(dataset_id=datasetID)
+    context['results'] = Reporting.objects.filter(dataset_id=datasetID)
+
+    return render(request, 'protocoltool/viewprotocol.html', context)
+
+
 
 def formAll(request, dataset_id="0"):
 
     '''
-    Show the form with all fields for the protocol
+    Open the form for editing
     :param request:
     :param dataset_id: id of the dataset to show the form
     :return:
