@@ -35,12 +35,15 @@
                 </tbody>
             </table>
 
+
+
             <script>
-            writeLabelLine("#experimentTable > tbody", "Full experiment name:", "{{ basic.title }}");
-            writeLabelLine("#experimentTable > tbody", "Experiment Idea:", "{{ basic.experimentIdea }}");
-            writeLabelLine("#experimentTable > tbody", "Hypothesis:", "{{ basic.hypothesis }}");
-            writeLabelLine("#experimentTable > tbody", "Research objective:", "{{ basic.researchObjective }}");
-            writeLabelLine("#experimentTable > tbody", "Date last update:", "{{ basic.dateLastUpdate }}");
+            console.log("{{ basic.researchObjective|escapejs }}")
+            writeLabelLine("#experimentTable > tbody", "Full experiment name:", "{{ basic.title|escapejs }}");
+            writeLabelLine("#experimentTable > tbody", "Experiment Idea:", "{{ basic.experimentIdea|escapejs }}");
+            writeLabelLine("#experimentTable > tbody", "Hypothesis:", "{{ basic.hypothesis|escapejs }}");
+            writeLabelLine("#experimentTable > tbody", "Research objective:", "{{ basic.researchObjective|escapejs }}");
+            writeLabelLine("#experimentTable > tbody", "Date last update:", "{{ basic.dateLastUpdate|escapejs }}");
             </script>
 
 
@@ -63,7 +66,7 @@
 
             {% for partner in partners %}
             <script>
-            writePartnerLine("{{ partner.name }}", "{{partner.email }}", "{{ partner.organisation }}", "{{ partner.lead }}");
+            writePartnerLine("{{ partner.name|escapejs }}", "{{partner.email|escapejs }}", "{{ partner.organisation|escapejs }}", "{{ partner.lead }}");
             </script>
             {% endfor %}
 
@@ -77,9 +80,9 @@
 
             {% for method in methods %}
             <script>
-            writeLabelLine("#methodTable > tbody", "Description:", "{{ method.description }}");
-            writeLabelLine("#methodTable > tbody", "Contributing partner:", "{{ method.partner.name }}");
-            writeLabelLine("#methodTable > tbody", "Deadline:", "{{ method.deadline }}");
+            writeLabelLine("#methodTable > tbody", "Description:", "{{ method.description|escapejs }}");
+            writeLabelLine("#methodTable > tbody", "Contributing partner:", "{{ method.partner.name|escapejs }}");
+            writeLabelLine("#methodTable > tbody", "Deadline:", "{{ method.deadline|escapejs }}");
             writeLabelLine("#methodTable > tbody", "", "");
             writeLabelLine("#methodTable > tbody", "", "");
             </script>
@@ -96,9 +99,9 @@
 
             {% for step in steps %}
             <script>
-            writeLabelLine("#stepTable > tbody", "Output:", "{{ step.properties }}");
-            writeLabelLine("#stepTable > tbody", "Contributing partner:", "{{ step.partner.name }}");
-            writeLabelLine("#stepTable > tbody", "Deadline:", "{{ step.deadline }}");
+            writeLabelLine("#stepTable > tbody", "Output:", "{{ step.properties|escapejs }}");
+            writeLabelLine("#stepTable > tbody", "Contributing partner:", "{{ step.partner.name|escapejs }}");
+            writeLabelLine("#stepTable > tbody", "Deadline:", "{{ step.deadline|escapejs }}");
             writeLabelLine("#stepTable > tbody", "", "");
             writeLabelLine("#stepTable > tbody", "", "");
             </script>
@@ -114,9 +117,9 @@
 
             {% for result in results %}
             <script>
-            writeLabelLine("#resultTable > tbody", "Output:", "{{ result.properties }}");
-            writeLabelLine("#resultTable > tbody", "Contributing partner:", "{{ result.partner.name }}");
-            writeLabelLine("#resultTable > tbody", "Deadline:", "{{ result.deadline }}");
+            writeLabelLine("#resultTable > tbody", "Output:", "{{ result.properties|escapejs }}");
+            writeLabelLine("#resultTable > tbody", "Contributing partner:", "{{ result.partner.name|escapejs }}");
+            writeLabelLine("#resultTable > tbody", "Deadline:", "{{ result.deadline|escapejs }}");
             writeLabelLine("#resultTable > tbody", "", "");
             writeLabelLine("#resultTable > tbody", "", "");
             </script>
