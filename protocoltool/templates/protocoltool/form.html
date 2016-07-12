@@ -10,6 +10,7 @@
             <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
             <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">
             <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap3-dialog/1.34.7/css/bootstrap-dialog.min.css">
+		    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
 
             {% load staticfiles %}
             <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}" />
@@ -28,10 +29,12 @@
 
         <div class="container">
 
-            <h1>
-                Protocol Tool
-            </h1>
+            <div class="switchon-header">
+                <span><img src="{% static 'img/sologo_white.png' %}" alt=""/></span>
+                <h1>Protocol Tool</h1>
+            </div>
 
+            <hr>
 
             <form role="form" id="dataset_form" class="form-horizontal" action="/project/form/{% if edit %}{{ dataset_id }}/{% endif %}" method="post">
 
@@ -49,8 +52,7 @@
 
                                 <!--Set subtitles-->
                                 {% if field.name == 'title' %}
-                                <hr>
-                                <h4>General information</h4>
+                                <h4>Experiment information</h4>
                                 {% endif %}
 
                                 <div id="{{ field.label }}" class="form-group">
@@ -88,16 +90,23 @@
                             </div>
                             {% endfor %}
 
-                            <div class="btn-group btn-group-justified" role="group" aria-label="...">
-                              <div class="btn-group" role="group">
-                                <button type="button" id="addPartnerID" class="btn btn-default active">Add</button>
-                              </div>
-                              <div class="btn-group" role="group">
-                                <button type="button" id="updatePartnerID" class="btn btn-default disabled">Update</button>
-                              </div>
-                              <div class="btn-group" role="group">
-                                <button type="button" id="deletePartnerID" class="btn btn-default disabled">Delete</button>
-                              </div>
+                            <div class="col-md-6">
+                            </div>
+                            <div class="col-md-6">
+                                <div class="btn-group btn-group-justified" role="group" aria-label="...">
+                                      <div class="btn-group" role="group">
+                                        <button type="button" id="addPartnerID" class="btn btn-primary active">
+                                          <i class="fa fa-plus fa-lg"></i>&nbsp&nbspAdd</button>
+                                      </div>
+                                      <div class="btn-group" role="group">
+                                        <button type="button" id="updatePartnerID" class="btn btn-primary disabled">
+                                          <i class="fa fa-repeat fa-lg"></i>&nbsp&nbspUpdate</button>
+                                      </div>
+                                      <div class="btn-group" role="group">
+                                        <button type="button" id="deletePartnerID" class="btn btn-primary disabled">
+                                          <i class="fa fa-trash-o fa-lg"></i>&nbsp&nbspDelete</button>
+                                      </div>
+                                </div>
                             </div>
                         </div>
 
@@ -108,7 +117,7 @@
                             <!--<input type="hidden" id="selectedPartnerID" value="-99">-->
                              <h4>Current partners:</h4>
 
-                            <table id="partnerTable" class="table table-hover table-bordered">
+                            <table id="partnerTable" class="table table-hover table-striped">
                                 <thead>
                                     <tr>
                                         <th class="col-md-5"><strong>Name</strong></th>
@@ -134,42 +143,51 @@
 
                             <div class="col-md-7">
 
-                                <h4>2) Data & Method preparation steps </h4>
+                            <h4>2) Data & Method preparation steps </h4>
 
-                                {% for field in form.1 %}
-                                <div id="{{ field.label }}" class="form-group">
-                                    <label for="{{ field.id_for_label }}" class="col-md-3 control-label">{{ field.label }}:</label>
-                                    <div id="{{ field.label }}_field" class="col-md-9">
-                                        {{ field }}
-                                        {{ field.errors }}
-                                    </div>
+                            {% for field in form.1 %}
+                            <div id="{{ field.label }}" class="form-group">
+                                <label for="{{ field.id_for_label }}" class="col-md-3 control-label">{{ field.label }}:</label>
+                                <div id="{{ field.label }}_field" class="col-md-9">
+                                    {{ field }}
+                                    {{ field.errors }}
                                 </div>
-                                {% endfor %}
+                            </div>
+                            {% endfor %}
 
 
-                                <!--select the partner-->
-                                <div class="form-group">
-                                    <!--<input type="text" id="contrPartnerDataReqID" value="-99">-->
-                                    <label class="col-md-3 control-label">Contributing partner</label>
-                                    <div class="col-md-9">
-                                        <select class="form-control" id="partnerDataReq">
-                                            <!--Contents of select box are added with javascript-->
-                                        </select>
-                                    </div>
+                            <!--select the partner-->
+                            <div class="form-group">
+                                <!--<input type="text" id="contrPartnerDataReqID" value="-99">-->
+                                <label class="col-md-3 control-label">Contributing partner</label>
+                                <div class="col-md-9">
+                                    <select class="form-control" id="partnerDataReq">
+                                        <!--Contents of select box are added with javascript-->
+                                    </select>
                                 </div>
+                            </div>
 
 
+
+                            <div class="col-md-6">
+                            </div>
+                            <div class="col-md-6">
                                 <div class="btn-group btn-group-justified" role="group" aria-label="...">
-                                  <div class="btn-group" role="group">
-                                    <button type="button" id="addReqID" class="btn btn-default active">Add</button>
-                                  </div>
-                                  <div class="btn-group" role="group">
-                                    <button type="button" id="updateReqID" class="btn btn-default disabled">Update</button>
-                                  </div>
-                                  <div class="btn-group" role="group">
-                                    <button type="button" id="deleteReqID" class="btn btn-default disabled">Delete</button>
-                                  </div>
+                                      <div class="btn-group" role="group">
+                                        <button type="button" id="addReqID" class="btn btn-primary active">
+                                          <i class="fa fa-plus fa-lg"></i>&nbsp&nbspAdd</button>
+                                      </div>
+                                      <div class="btn-group" role="group">
+                                        <button type="button" id="updateReqID" class="btn btn-primary disabled">
+                                          <i class="fa fa-repeat fa-lg"></i>&nbsp&nbspUpdate</button>
+                                      </div>
+                                      <div class="btn-group" role="group">
+                                        <button type="button" id="deleteReqID" class="btn btn-primary disabled">
+                                          <i class="fa fa-trash-o fa-lg"></i>&nbsp&nbspDelete</button>
+                                      </div>
                                 </div>
+                            </div>
+
                         </div>
 
 
@@ -178,7 +196,7 @@
                             <input type="hidden" id="selectedReqID" value="-99">
                              <h4>Current requirements:</h4>
 
-                            <table id="reqTableID" class="table table-hover table-bordered">
+                            <table id="reqTableID" class="table table-hover table-striped">
                                 <thead>
                                     <tr>
                                         <th class="col-md-7"><strong>Task</strong></th>
@@ -226,17 +244,26 @@
                             </div>
 
 
-                            <div class="btn-group btn-group-justified" role="group" aria-label="...">
-                              <div class="btn-group" role="group">
-                                <button type="button" id="addExpStepID" class="btn btn-default active">Add</button>
-                              </div>
-                              <div class="btn-group" role="group">
-                                <button type="button" id="updateExpStepID" class="btn btn-default disabled">Update</button>
-                              </div>
-                              <div class="btn-group" role="group">
-                                <button type="button" id="deleteExpStepID" class="btn btn-default disabled">Delete</button>
-                              </div>
+
+                            <div class="col-md-6">
                             </div>
+                            <div class="col-md-6">
+                                <div class="btn-group btn-group-justified" role="group" aria-label="...">
+                                      <div class="btn-group" role="group">
+                                        <button type="button" id="addExpStepID" class="btn btn-primary active">
+                                          <i class="fa fa-plus fa-lg"></i>&nbsp&nbspAdd</button>
+                                      </div>
+                                      <div class="btn-group" role="group">
+                                        <button type="button" id="updateExpStepID" class="btn btn-primary disabled">
+                                          <i class="fa fa-repeat fa-lg"></i>&nbsp&nbspUpdate</button>
+                                      </div>
+                                      <div class="btn-group" role="group">
+                                        <button type="button" id="deleteExpStepID" class="btn btn-primary disabled">
+                                          <i class="fa fa-trash-o fa-lg"></i>&nbsp&nbspDelete</button>
+                                      </div>
+                                </div>
+                            </div>
+
                         </div>
 
 
@@ -245,7 +272,7 @@
                             <input type="hidden" id="selectedExpStepID" value="-99">
                              <h4>Current experiment steps:</h4>
 
-                            <table id="expStepTableID" class="table table-hover table-bordered">
+                            <table id="expStepTableID" class="table table-hover table-striped">
                                 <thead>
                                     <tr>
                                         <th class="col-md-8"><strong>Task</strong></th>
@@ -292,16 +319,23 @@
                             </div>
 
 
-                            <div class="btn-group btn-group-justified" role="group" aria-label="...">
-                              <div class="btn-group" role="group">
-                                <button type="button" id="addReportingID" class="btn btn-default active">Add</button>
-                              </div>
-                              <div class="btn-group" role="group">
-                                <button type="button" id="updateReportingID" class="btn btn-default disabled">Update</button>
-                              </div>
-                              <div class="btn-group" role="group">
-                                <button type="button" id="deleteReportingID" class="btn btn-default disabled">Delete</button>
-                              </div>
+                            <div class="col-md-6">
+                            </div>
+                            <div class="col-md-6">
+                                <div class="btn-group btn-group-justified" role="group" aria-label="...">
+                                      <div class="btn-group" role="group">
+                                        <button type="button" id="addReportingID" class="btn btn-primary active">
+                                          <i class="fa fa-plus fa-lg"></i>&nbsp&nbspAdd</button>
+                                      </div>
+                                      <div class="btn-group" role="group">
+                                        <button type="button" id="updateReportingID" class="btn btn-primary disabled">
+                                          <i class="fa fa-repeat fa-lg"></i>&nbsp&nbspUpdate</button>
+                                      </div>
+                                      <div class="btn-group" role="group">
+                                        <button type="button" id="deleteReportingID" class="btn btn-primary disabled">
+                                          <i class="fa fa-trash-o fa-lg"></i>&nbsp&nbspDelete</button>
+                                      </div>
+                                </div>
                             </div>
                         </div>
 
@@ -328,25 +362,30 @@
                     </div>  <!-- end row with Result reporting information-->
                     {% endif %} <!--end if form is reportingForm-->
 
-
-
                 </div>  <!--End div overall form-->
                 {% endfor %}
 
-
+                <hr>
                 <div class="row">
                     <div class="col-md-12"> <!--Form submission button-->
                         {% if edit %}
-                            <button type="button" class="btn btn-primary pull-right" onclick="checkform()">Save</button>
+                            <button type="button" class="btn-lg btn-primary pull-right" onclick="checkform()">Save</button>
                         {% else %}
-                            <button type="button" class="btn btn-primary pull-right" onclick="checkform()">Save</button>
+                            <button type="button" class="btn-lg btn-primary pull-right" onclick="checkform()">Save</button>
                         {% endif %}
-                    </div> <!--END Form submission button-->
+                    </div>
                 </div>
 
             </form>
 
         </div> <!--END CONTAINER -->
+
+        <br>
+
+        <footer class="switchonfooter">
+            <img class="switchonfooterimage" src="{% static 'img/switchonfooter_adjusted.png' %}" alt=""/>
+        </footer>
+
     </body>
 </html>
 

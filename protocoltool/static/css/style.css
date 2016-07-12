@@ -1,5 +1,9 @@
-tbody tr.highlight td {
-    background-color: #ddd;
+/*tbody tr.highlight td {
+    background-color: rgb(255,255,0);
+}*/
+
+tr:hover td {
+    background:rgb(250,250,180)
 }
 
 /*.table-hover tbody tr:hover td, .table-hover tbody tr:hover th {
@@ -43,7 +47,8 @@ thead, tbody tr {
 }
 
 thead {
-    background-color: #ddd;
+    background-color: rgb(38,90,136);
+    color: white;
 }
 
 
@@ -74,6 +79,16 @@ thead {
 
 #meta_table th {
     text-align: right;
+}
+
+.switchonfooter {
+    box-shadow: 0 -4px 0 rgb(0,200,0);
+    background: black;
+}
+
+.switchonfooterimage {
+    display: block;
+    margin: auto;
 }
 
 /* form css */

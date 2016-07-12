@@ -36,7 +36,7 @@
             </div>
 
             <script>
-                var message = "Welcome to the protocol tool. Here you can edit existing experiment protocols or create new protocols."
+                var message = "Welcome to the protocol tool. Here you can create new protocols, edit existing experiment protocols, or view on-going and completed protocols."
                 setMessage("alert alert-success", "fa fa-4x fa-fw fa-pull-left fa-info-circle", message);
             </script>
 
@@ -58,7 +58,10 @@
                     <div class="row"> <!--Datasets table-->
 
                         <div class="col-md-12">
-                            <table id="datasettable" class="table table-striped">
+
+                            <h4>Participate in defining a protocol</h4>
+
+                            <table id="participatetable" class="table table-striped">
                                 <thead>
                                     <tr>
                                         <th class="col-md-5">Protocol</th>
@@ -70,25 +73,19 @@
                                 <tbody>
                                     {% for dataset in dataset_list  %}
                                         {% if dataset.checked %}
-                                        <tr>
-                                            <td class="col-md-5">{{ dataset.shortname }}</td>
-                                            <td class="col-md-2">{{ dataset.dateLastUpdate | date:'d-m-Y' }}</td>
-                                            <td class="col-md-2"> {% if dataset.published %}
-                                                Published
-                                                {% else %}
-                                                In progress
-                                                {% endif %}
-                                            </td>
-                                            <td class="col-md-3">
-                                                {% if dataset.published %}
-                                                <button type="button" class="btn btn-xs btn-default" value="{{ dataset.id }}" name="Show PDF" onclick="exportProtocol(this)">Download PDF</button>
-                                                {% else %}
-                                                <button type="button" class="btn btn-xs btn-default" value="{{ dataset.id }}" name="view" onclick="viewProtocol(this)">View</button>
-                                                <button type="button" class="btn btn-xs btn-default" value="{{ dataset.id }}" name="edit" onclick="editProtocol(this)">Edit</button>
-                                                <button type="button" class="btn btn-xs btn-default" value="{{ dataset.id }}" name="publish" onclick="publishProtocol(this)">Make Non Editable</button>
-                                                {% endif %}
-                                            </td>
-                                        </tr>
+                                            {% if not dataset.published  %}
+                                            <tr>
+                                                <td class="col-md-5">{{ dataset.shortname }}</td>
+                                                <td class="col-md-2">{{ dataset.dateLastUpdate | date:'d-m-Y' }}</td>
+                                                <td class="col-md-2">Participate</td>
+                                                <td class="col-md-3">
+                                                    <button type="button" class="btn btn-xs btn-default" value="{{ dataset.id }}" name="view" onclick="viewProtocol(this)">View</button>
+                                                    <button type="button" class="btn btn-xs btn-default" value="{{ dataset.id }}" name="edit" onclick="editProtocol(this)">Edit</button>
+                                                    <button type="button" class="btn btn-xs btn-default" value="{{ dataset.id }}" name="publish" onclick="publishProtocol(this)">Make Non Editable</button>
+
+                                                </td>
+                                            </tr>
+                                            {% endif %}
                                         {% endif %}
                                     {% empty %}
                                     <tr>
@@ -99,6 +96,48 @@
                                     {% endfor %}
                                 </tbody>
                             </table>
+
+                            <hr>
+
+                            <h4>Repeat or review experiments</h4>
+
+                            <table id="reviewtable" class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th class="col-md-5">Protocol</th>
+                                        <th class="col-md-2">Last update</th>
+                                        <th class="col-md-2">Status</th>
+                                        <th class="col-md-3">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for dataset in dataset_list  %}
+                                        {% if dataset.checked %}
+                                            {% if dataset.published %}
+                                            <tr>
+                                                <td class="col-md-5">{{ dataset.shortname }}</td>
+                                                <td class="col-md-2">{{ dataset.dateLastUpdate | date:'d-m-Y' }}</td>
+                                                <td class="col-md-2">
+                                                    Review or repeat
+                                                </td>
+                                                <td class="col-md-3">
+                                                    <button type="button" class="btn btn-xs btn-default" value="{{ dataset.id }}" name="viewprotocol" onclick="exportProtocol(this)">View protocol</button>
+
+                                                </td>
+                                            </tr>
+                                            {% endif %}
+                                        {% endif %}
+                                    {% empty %}
+                                    <tr>
+                                        <td>No protocols defined</td>
+                                        <td></td>
+                                        <td></td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+
+
                         </div>
                     </div> <!--END Datasets table-->
                 </div> <!--END Panel body-->
@@ -106,7 +145,7 @@
                 <div class="panel-footer clearfix">
                     <button type="button" class="btn btn-primary pull-left">
                         <i class="glyphicon glyphicon-envelope"></i>
-                        <span><a href="mailto:switchon.wm@gmail.com?subject=Data Upload Tool">Feedback</a></span>
+                        <span><a href="mailto:switchon.wm@gmail.com?subject=Protocol Tool">Feedback</a></span>
                     </button>
                 </div>
             </div> <!-- End Panel-->
@@ -117,7 +156,16 @@
             <input type="hidden" name="dataset_id" id="datasetID" value="">
             <input type="hidden" name="dataset_action" id="datasetActionID" value="">
         </form>
+
+        <br>
+
+        <footer class="switchonfooter">
+            <img class="switchonfooterimage" src="{% static 'img/switchonfooter_adjusted.png' %}" alt=""/>
+        </footer>
+
     </body>
+
+
 </html>
 
 <script>

@@ -111,7 +111,7 @@ def createPDF(datasetID):
     story = []
 
     story.append(Paragraph('Protocol: {}'.format(basicInfo.shortname), styles['title1']))
-    story.append(Paragraph('General Information', styles['title2']))
+    story.append(Paragraph('Experiment Information', styles['title2']))
     story.append(Paragraph('Full experiment name: {}'.format(basicInfo.title), styles['default']))
     story.append(Paragraph('Experiment Idea: {}'.format(basicInfo.experimentIdea), styles['default']))
     story.append(Paragraph('Hypothesis: {}'.format(basicInfo.hypothesis), styles['default']))
