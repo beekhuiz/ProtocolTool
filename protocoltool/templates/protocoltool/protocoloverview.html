@@ -22,6 +22,7 @@
 
     <body>
 
+
         <div class="container">
 
             <div class="switchon-header">
@@ -55,9 +56,13 @@
                             </div>
                         </div>
                     </div> <!--END Buttons-->
+
+
                     <div class="row"> <!--Datasets table-->
 
                         <div class="col-md-12">
+
+                        {% if show_participate %}
 
                             <h4>Participate in defining a protocol</h4>
 
@@ -97,7 +102,9 @@
                                 </tbody>
                             </table>
 
-                            <hr>
+                        {% endif %}
+
+                        {% if show_review %}
 
                             <h4>Repeat or review experiments</h4>
 
@@ -137,8 +144,9 @@
                                 </tbody>
                             </table>
 
-
+                        {% endif %}
                         </div>
+
                     </div> <!--END Datasets table-->
                 </div> <!--END Panel body-->
 
@@ -147,12 +155,34 @@
                         <i class="glyphicon glyphicon-envelope"></i>
                         <span><a href="mailto:switchon.wm@gmail.com?subject=Protocol Tool">Feedback</a></span>
                     </button>
+
+                    {% if show_review %}
+                    <form action="../participate/" method="POST" class="form-inline">
+                        {% csrf_token %}
+                        <button type="submit" name="changeList" class="btn btn-primary pull-right">
+                            Show participate protocols
+                        </button>
+                    </form>
+                    {% endif %}
+
+                    {% if show_participate %}
+                    <form action="../review/" method="POST" class="form-inline">
+                        {% csrf_token %}
+                        <button type="submit" name="changeList" class="btn btn-primary pull-right">
+                            Show review protocols
+                        </button>
+                    </form>
+                    {% endif %}
+
                 </div>
             </div> <!-- End Panel-->
         </div> <!--END Container-->
 
-        <form id="dataset_action_form" action="" method="post">
+        <form id="dataset_action_form" action="../overviewaction/" method="post">
             {% csrf_token %}
+
+            <input type="hidden" name="show_review" value="{{ show_review }}">
+            <input type="hidden" name="show_participate" value="{{ show_participate }}">
             <input type="hidden" name="dataset_id" id="datasetID" value="">
             <input type="hidden" name="dataset_action" id="datasetActionID" value="">
         </form>

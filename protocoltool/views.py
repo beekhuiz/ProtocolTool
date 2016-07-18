@@ -14,7 +14,85 @@ import pdb
 from django.core.exceptions import ObjectDoesNotExist
 
 
-def protocolOverview(request):
+
+def participate(request):
+
+    try:
+        dataset_list = BasicDataset.objects.all()
+
+        context = {
+            'dataset_list': dataset_list,
+            'show_participate': True,
+            'show_review': False,
+        }
+
+        return render(request, 'protocoltool/protocoloverview.html', context)
+
+    except ObjectDoesNotExist:
+        raise Http404
+
+
+def review(request):
+
+    try:
+        dataset_list = BasicDataset.objects.all()
+
+        context = {
+            'dataset_list': dataset_list,
+            'show_participate': False,
+            'show_review': True,
+        }
+
+        return render(request, 'protocoltool/protocoloverview.html', context)
+
+    except ObjectDoesNotExist:
+        raise Http404
+
+
+def protocolOverviewAction(request):
+
+    postDict = request.POST.dict()
+
+    dataset_id = postDict['dataset_id']
+    action = postDict['dataset_action']
+
+    dataset_obj = BasicDataset.objects.get(id=dataset_id)
+
+    if action == 'view':
+        # go to URL that shows HTML page with all form info
+        url = '/view/%s/' % dataset_obj.id
+        return HttpResponseRedirect(url)
+
+    if action == 'delete':
+        # Remove metadata in database
+        BasicDataset.objects.filter(id=dataset_id).delete()
+
+    elif action == 'publish':
+        # Fill in dataset published field
+        dataset_obj.published = True
+        dataset_obj.save()
+
+    elif action == 'unpublish':
+        # Empty the dataset published field
+        if dataset_obj.published is not None:
+            dataset_obj.published = False
+            dataset_obj.save()
+
+    elif action == 'export':
+        response = PDFexport.createPDF(dataset_id)
+        return response
+
+    elif action == 'edit':
+        url = '/form/%s/' % dataset_obj.id
+        return HttpResponseRedirect(url)
+
+    return HttpResponseRedirect(reverse('protocoltool:protocoloverview_review'))
+
+
+
+
+
+def protocolOverview(request, kwargs):
     '''
     Show a table with all the protocols. From this table, protocols can be added, edited or published.
     :param request:
@@ -64,9 +142,15 @@ def protocolOverview(request):
     elif request.method == 'GET':
         try:
             dataset_list = BasicDataset.objects.all()
+
+            #pdb.set_trace()
+
             context.update({
                 'dataset_list': dataset_list,
+                'show_participate': kwargs['showParticipate'],
+                'show_review': kwargs['showReview'],
             })
+
         except ObjectDoesNotExist:
             raise Http404
 
