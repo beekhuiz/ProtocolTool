@@ -58,7 +58,6 @@ class PartnerForm(forms.ModelForm):
             'organisation': TextInput(
                 attrs={'class': 'form-control input-sm'}
             ),
-
         }
 
 

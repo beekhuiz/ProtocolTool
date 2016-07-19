@@ -12,9 +12,7 @@ urlpatterns = patterns('',
 
     #url(r'^form/$', views.formBasic, name='formbasic'),
     url(r'^$', views.review, name='protocoloverview_review'),
-    #url(r'^participate/$', views.protocolOverview, kwargs={'showParticipate': True, 'showReview': False}, name='protocoloverview_participate'),
     url(r'^participate/$', views.participate, name='protocoloverview_participate'),
-    #url(r'^review/$', views.protocolOverview, kwargs={'showParticipate': False, 'showReview': True}, name='protocoloverview_review'),
     url(r'^review/$', views.review, name='protocoloverview_review'),
 
     url(r'^overviewaction/$', views.protocolOverviewAction, name='protocoloverview_action'),

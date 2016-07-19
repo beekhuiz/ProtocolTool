@@ -16,11 +16,11 @@
             <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}" />
 
             <!--Javascript-->
-            <script src="//code.jquery.com/jquery-1.11.3.min.js"></script>
-            <script src="//code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
+            <script src="https://code.jquery.com/jquery-2.2.4.js" integrity="sha256-iT6Q9iMJYuQiMWNd9lDyBUStIq/8PuOW33aOqmvFpqI=" crossorigin="anonymous"></script>
             <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
 
             <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap3-dialog/1.34.7/js/bootstrap-dialog.min.js"></script>
+            <script src="{% static 'javascript/bootbox.min.js' %}"></script>
             <script src="{% static 'javascript/form.js' %}"></script>
             <script src="{% static 'javascript/functions.js' %}"></script>
 
@@ -30,7 +30,7 @@
         <div class="container">
 
             <div class="switchon-header">
-                <span><img src="{% static 'img/sologo_white.png' %}" alt=""/></span>
+                <span><img src="{% static 'img/sologo_new_cropped.png' %}" alt=""/></span>
                 <h1>Protocol Tool</h1>
             </div>
 
@@ -79,7 +79,7 @@
                     <div class="row">
                         <hr>
                         <div class="col-md-7">
-                            <h4>1) Partners</h4>
+                            <h4>A) Partners</h4>
                             {% for field in form.1 %}
                             <div id="{{ field.label }}" class="form-group">
                                 <label for="{{ field.id_for_label }}" class="col-md-3 control-label">{{ field.label }}:</label>
@@ -143,7 +143,7 @@
 
                             <div class="col-md-7">
 
-                            <h4>2) Data & Method preparation steps </h4>
+                            <h4>B) Data & Method preparation steps </h4>
 
                             {% for field in form.1 %}
                             <div id="{{ field.label }}" class="form-group">
@@ -221,7 +221,7 @@
 
                         <div class="col-md-7">
 
-                            <h4>3) Experiment Analysis Steps </h4>
+                            <h4>C) Experiment Analysis Steps </h4>
 
                             {% for field in form.1 %}
                             <div id="{{ field.label }}" class="form-group">
@@ -280,10 +280,8 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-
                                 </tbody>
                             </table>
-
                         </div>
 
                     </div>  <!-- end row with Exp Step information-->
@@ -296,7 +294,7 @@
 
                         <div class="col-md-7">
 
-                            <h4>4) Result reporting </h4>
+                            <h4>D) Result reporting </h4>
 
                             {% for field in form.1 %}
                             <div id="{{ field.label }}" class="form-group">

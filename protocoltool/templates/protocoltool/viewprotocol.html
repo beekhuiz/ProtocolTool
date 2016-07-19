@@ -11,21 +11,24 @@
             <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
 
             {% load staticfiles %}
+            <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}" />
             <link rel="stylesheet" type="text/css" href="{% static 'css/viewprotocol.css' %}" />
 
             <!--Javascript-->
             <script src="https://code.jquery.com/jquery-2.2.4.js" integrity="sha256-iT6Q9iMJYuQiMWNd9lDyBUStIq/8PuOW33aOqmvFpqI=" crossorigin="anonymous"></script>
             <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
-            <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+            <script src="{% static 'javascript/bootbox.min.js' %}"></script>
             <script src="{% static 'javascript/viewprotocol.js' %}"></script>
         </head>
 
 
         <div class="container">
 
-            <h1>
-                Protocol: {{ basic.shortname }}
-            </h1>
+            <div class="switchon-header">
+                <span><img src="{% static 'img/sologo_new_cropped.png' %}" alt=""/></span>
+                <h1>Protocol: {{ basic.shortname }}</h1>
+            </div>
+
 
             <hr>
             <h3> Experiment information </h3>
@@ -36,16 +39,14 @@
             </table>
 
 
-
             <script>
-            console.log("{{ basic.researchObjective|escapejs }}")
-            writeLabelLine("#experimentTable > tbody", "Full experiment name:", "{{ basic.title|escapejs }}");
-            writeLabelLine("#experimentTable > tbody", "Experiment Idea:", "{{ basic.experimentIdea|escapejs }}");
-            writeLabelLine("#experimentTable > tbody", "Hypothesis:", "{{ basic.hypothesis|escapejs }}");
-            writeLabelLine("#experimentTable > tbody", "Research objective:", "{{ basic.researchObjective|escapejs }}");
-            writeLabelLine("#experimentTable > tbody", "Date last update:", "{{ basic.dateLastUpdate|escapejs }}");
+            console.log("{{ basic.researchObjective|linebreaks }}")
+            writeLabelLine("#experimentTable > tbody", "Full experiment name:", "{{ basic.title|linebreaks }}");
+            writeLabelLine("#experimentTable > tbody", "Experiment Idea:", "{{ basic.experimentIdea|linebreaks }}");
+            writeLabelLine("#experimentTable > tbody", "Hypothesis:", "{{ basic.hypothesis|linebreaks }}");
+            writeLabelLine("#experimentTable > tbody", "Research objective:", "{{ basic.researchObjective|linebreaks }}");
+            writeLabelLine("#experimentTable > tbody", "Date last update:", "{{ basic.dateLastUpdate|linebreaks }}");
             </script>
-
 
             <hr>
             <h3> Partners </h3>
@@ -55,20 +56,25 @@
                     <table id="partnerTable" class="table-condensed" table-border="0">
                         <th class="col-md-2"><strong>Name</strong></th>
                         <th class="col-md-2"><strong>E-mail</strong></th>
-                        <th class="col-md-2"><strong>Organisation</strong></th>
+                        <th class="col-md-3"><strong>Organisation</strong></th>
                         <tbody>
-
+                         {% for partner in partners %}
+                            <tr><td class="col-md-2">{{ partner.name }} {% if partner.lead %}(lead){% endif %}</td>
+                            <td class="col-md-2">{{ partner.email }}</td>
+                            <td class="col-md-3">{{ partner.organisation}}</td></tr>
+                         {% endfor %}
                         </tbody>
                     </table>
                 </div>
             </div>
 
+            <!--{% for partner in partners %}-->
+            <!--<script>-->
+            <!--console.log("{{partner.email}}")-->
+            <!--writePartnerLine("#partnerTable > tbody", "{{ partner.name|linebreaks }}", "{{partner.email|linebreaks }}", "{{ partner.organisation|linebreaks }}", "{{ partner.lead }}");-->
+            <!--</script>-->
+            <!--{% endfor %}-->
 
-            {% for partner in partners %}
-            <script>
-            writePartnerLine("{{ partner.name|escapejs }}", "{{partner.email|escapejs }}", "{{ partner.organisation|escapejs }}", "{{ partner.lead }}");
-            </script>
-            {% endfor %}
 
             <hr>
             <h3> Data & Method Preparation </h3>
@@ -80,9 +86,10 @@
 
             {% for method in methods %}
             <script>
-            writeLabelLine("#methodTable > tbody", "Description:", "{{ method.description|escapejs }}");
-            writeLabelLine("#methodTable > tbody", "Contributing partner:", "{{ method.partner.name|escapejs }}");
-            writeLabelLine("#methodTable > tbody", "Deadline:", "{{ method.deadline|escapejs }}");
+            writeLabelLine("#methodTable > tbody", "Task:", "{{ method.task|linebreaks }}");
+            writeLabelLine("#methodTable > tbody", "Description:", "{{ method.description|linebreaks }}");
+            writeLabelLine("#methodTable > tbody", "Contributing partner:", "{{ method.partner.name|linebreaks }}");
+            writeLabelLine("#methodTable > tbody", "Deadline:", "{{ method.deadline|linebreaks }}");
             writeLabelLine("#methodTable > tbody", "", "");
             writeLabelLine("#methodTable > tbody", "", "");
             </script>
@@ -99,9 +106,10 @@
 
             {% for step in steps %}
             <script>
-            writeLabelLine("#stepTable > tbody", "Output:", "{{ step.properties|escapejs }}");
-            writeLabelLine("#stepTable > tbody", "Contributing partner:", "{{ step.partner.name|escapejs }}");
-            writeLabelLine("#stepTable > tbody", "Deadline:", "{{ step.deadline|escapejs }}");
+            writeLabelLine("#stepTable > tbody", "Task:", "{{ step.task|linebreaks }}");
+            writeLabelLine("#stepTable > tbody", "Output:", "{{ step.properties|linebreaks }}");
+            writeLabelLine("#stepTable > tbody", "Contributing partner:", "{{ step.partner.name|linebreaks }}");
+            writeLabelLine("#stepTable > tbody", "Deadline:", "{{ step.deadline|linebreaks }}");
             writeLabelLine("#stepTable > tbody", "", "");
             writeLabelLine("#stepTable > tbody", "", "");
             </script>
@@ -117,14 +125,21 @@
 
             {% for result in results %}
             <script>
-            writeLabelLine("#resultTable > tbody", "Output:", "{{ result.properties|escapejs }}");
-            writeLabelLine("#resultTable > tbody", "Contributing partner:", "{{ result.partner.name|escapejs }}");
-            writeLabelLine("#resultTable > tbody", "Deadline:", "{{ result.deadline|escapejs }}");
+            writeLabelLine("#resultTable > tbody", "Output:", "{{ result.properties|linebreaks }}");
+            writeLabelLine("#resultTable > tbody", "Contributing partner:", "{{ result.partner.name|linebreaks }}");
+            writeLabelLine("#resultTable > tbody", "Deadline:", "{{ result.deadline|linebreaks }}");
             writeLabelLine("#resultTable > tbody", "", "");
             writeLabelLine("#resultTable > tbody", "", "");
             </script>
             {% endfor %}
 
         </div> <!--END CONTAINER -->
+
+        <br>
+
+        <footer class="switchonfooter">
+            <img class="switchonfooterimage" src="{% static 'img/switchonfooter_adjusted.png' %}" alt=""/>
+        </footer>
+
     </body>
 </html>

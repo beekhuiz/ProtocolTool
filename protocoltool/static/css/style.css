@@ -1,19 +1,35 @@
-/*tbody tr.highlight td {
-    background-color: rgb(255,255,0);
-}*/
+html {
+    position: relative;
+    min-height: 100%;
+}
+body {
+    margin: 0 0 100px; /* bottom = footer height */
+}
 
 tr:hover td {
     background:rgb(250,250,180)
 }
 
-/*.table-hover tbody tr:hover td, .table-hover tbody tr:hover th {
-  background-color: #fcf8e3;
-}*/
+.row {
+    margin-top: 8px;
+    margin-bottom: 8px;
+}
 
+.table-hover {
+    display:block;
+    max-height:560px;
+    overflow-y:auto;
+}
 a, a:link, a:visited, a:hover, a:active {
 	color:inherit;
 	text-decoration: none;
  }
+
+thead, tbody tr {
+    display:table;
+    width:100%;
+    table-layout:fixed;
+}
 
 .switchon-header {
     display: block;
@@ -29,59 +45,22 @@ a, a:link, a:visited, a:hover, a:active {
          margin-left: 15px;
 }
 
-.row {
-    margin-top: 8px;
-    margin-bottom: 8px;
-}
-
-.table-hover {
-    display:block;
-    max-height:560px;
-    overflow-y:auto;
-}
-
-thead, tbody tr {
-    display:table;
-    width:100%;
-    table-layout:fixed;
-}
-
 thead {
     background-color: rgb(38,90,136);
     color: white;
 }
-
-
-#sidebar {
-    border-left-style: dashed;
-    border-color: #b2cbe5;
-}
-
-#not-active {
-    color: #9dabb9;
-    cursor: default;
-    pointer-events: none;
-}
-
-#footer {
-    height: 100px;
-  }
-
 
 .error {
     background-color : Bisque;
     border: 2px solid Crimson;
 }
 
-#addButton {
-    vertical-align: bottom;
-}
-
-#meta_table th {
-    text-align: right;
-}
-
 .switchonfooter {
+    position:absolute;
+    bottom:0;
+    left:0;
+    height: 100px;
+    width: 100%;
     box-shadow: 0 -4px 0 rgb(0,200,0);
     background: black;
 }
@@ -89,28 +68,6 @@ thead {
 .switchonfooterimage {
     display: block;
     margin: auto;
-}
-
-/* form css */
-.meta_table th {
-    text-align: right;
-}
-
-#noscript-padding {
-    padding-top: 1.9em;
-}
-
-#noscript-warning {
-    background-color: #ae0000;
-    color: #fff;
-    font-size: 120%;
-    font-weight: bold;
-    left: 0;
-    padding: 5px 0;
-    position: fixed;
-    text-align: center;
-    top: 0;
-    width: 100%;
 }
 
 .alert .glyphicon {

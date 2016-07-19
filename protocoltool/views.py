@@ -89,74 +89,6 @@ def protocolOverviewAction(request):
     return HttpResponseRedirect(reverse('protocoltool:protocoloverview_review'))
 
 
-
-
-
-def protocolOverview(request, kwargs):
-    '''
-    Show a table with all the protocols. From this table, protocols can be added, edited or published.
-    :param request:
-    :return: html page with protocoloverview
-    '''
-
-    context = {}
-
-    if request.method == 'POST':
-        postDict = request.POST.dict()
-
-        dataset_id = postDict['dataset_id']
-        action = postDict['dataset_action']
-
-        dataset_obj = BasicDataset.objects.get(id=dataset_id)
-
-        if action == 'view':
-            # go to URL that shows HTML page with all form info
-            url = '/view/%s/' % dataset_obj.id
-            return HttpResponseRedirect(url)
-
-        if action == 'delete':
-            # Remove metadata in database
-            BasicDataset.objects.filter(id=dataset_id).delete()
-
-        elif action == 'publish':
-            # Fill in dataset published field
-            dataset_obj.published = True
-            dataset_obj.save()
-
-        elif action == 'unpublish':
-            # Empty the dataset published field
-            if dataset_obj.published is not None:
-                dataset_obj.published = False
-                dataset_obj.save()
-
-        elif action == 'export':
-            response = PDFexport.createPDF(dataset_id)
-            return response
-
-        elif action == 'edit':
-            url = '/form/%s/' % dataset_obj.id
-            return HttpResponseRedirect(url)
-
-        return HttpResponseRedirect(reverse('protocoltool:protocoloverview'))
-
-    elif request.method == 'GET':
-        try:
-            dataset_list = BasicDataset.objects.all()
-
-            #pdb.set_trace()
-
-            context.update({
-                'dataset_list': dataset_list,
-                'show_participate': kwargs['showParticipate'],
-                'show_review': kwargs['showReview'],
-            })
-
-        except ObjectDoesNotExist:
-            raise Http404
-
-    return render(request, 'protocoltool/protocoloverview.html', context)
-
-
 def createProtocol(request):
 
     # Create empty dataset
@@ -226,9 +158,9 @@ def formAll(request, dataset_id="0"):
         )
         core_obj.save()
 
-        return HttpResponseRedirect(reverse('protocoltool:protocoloverview'))
+        return HttpResponseRedirect(reverse('protocoltool:protocoloverview_participate'))
 
-    return HttpResponseRedirect(reverse('protocoltool:protocoloverview'))
+    return HttpResponseRedirect(reverse('protocoltool:protocoloverview_participate'))
 
 
 def getAllProtocolInfo(datasetID):

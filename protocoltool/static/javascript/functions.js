@@ -11,16 +11,20 @@ function checkValidField(item){
 }
 
 function warningPopup(messageText){
-   BootstrapDialog.show({
-      type: BootstrapDialog.TYPE_WARNING,
-      message: messageText,
-      buttons: [{
-            label: 'Close',
-            action: function(dialogItself){
-                dialogItself.close();
-            }
-        }]
-   });
+//   BootstrapDialog.show({
+//      type: BootstrapDialog.TYPE_WARNING,
+//      message: messageText,
+//      buttons: [{
+//            label: 'Close',
+//            action: function(dialogItself){
+//                dialogItself.close();
+//            }
+//        }]
+//   });
+
+     bootbox.alert(messageText, function() {
+         console.log("Alert Callback");
+     });
 }
 
 

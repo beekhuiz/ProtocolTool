@@ -15,7 +15,7 @@
         <!--Javascript-->
         <script src="https://code.jquery.com/jquery-2.2.4.js" integrity="sha256-iT6Q9iMJYuQiMWNd9lDyBUStIq/8PuOW33aOqmvFpqI=" crossorigin="anonymous"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+        <script src="{% static 'javascript/bootbox.min.js' %}"></script>
         <script src="{% static 'javascript/functions.js' %}"></script>
 
     </head>
@@ -26,7 +26,7 @@
         <div class="container">
 
             <div class="switchon-header">
-                <span><img src="{% static 'img/sologo_white.png' %}" alt=""/></span>
+                <span><img src="{% static 'img/sologo_new_cropped.png' %}" alt=""/></span>
                 <h1>Protocol Tool</h1>
             </div>
 
@@ -86,7 +86,7 @@
                                                 <td class="col-md-3">
                                                     <button type="button" class="btn btn-xs btn-default" value="{{ dataset.id }}" name="view" onclick="viewProtocol(this)">View</button>
                                                     <button type="button" class="btn btn-xs btn-default" value="{{ dataset.id }}" name="edit" onclick="editProtocol(this)">Edit</button>
-                                                    <button type="button" class="btn btn-xs btn-default" value="{{ dataset.id }}" name="publish" onclick="publishProtocol(this)">Make Non Editable</button>
+                                                    <button type="button" class="btn btn-xs btn-default" value="{{ dataset.id }}" name="publish" onclick="publishProtocol(this)">Send to 'review or repeat'</button>
 
                                                 </td>
                                             </tr>
@@ -106,7 +106,7 @@
 
                         {% if show_review %}
 
-                            <h4>Repeat or review experiments</h4>
+                            <h4>Review or Repeat experiments</h4>
 
                             <table id="reviewtable" class="table table-striped">
                                 <thead>
@@ -219,11 +219,14 @@
     }
 
     function publishProtocol(instance){
-        if (confirm('No more changes can be made after publishing. Are you sure you wish to publish the protocol?')) {
-            $('#datasetActionID').val("publish");
-            $('#datasetID').val(instance.value);
-            $('#dataset_action_form').submit();
-        }
+
+        bootbox.confirm('The protocol will be made non-editable. Are you sure you wish to continue?', function(result){
+            if(result){
+                $('#datasetActionID').val("publish");
+                $('#datasetID').val(instance.value);
+                $('#dataset_action_form').submit();
+            }
+        });
     }
 
 </script>
