@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import BasicDataset, Partner, DataReq, ExpStep, Reporting
+from .models import BasicDataset, Partner, DataReq, ExpStep, Reporting, ExternalProtocol
 
 # Register your models here.
 
@@ -24,8 +24,12 @@ class ExpStepAdmin(admin.ModelAdmin):
 class ReportingAdmin(admin.ModelAdmin):
     list_display = ('task', 'properties', 'partner', 'deadline')
 
+class ExternalProtocolAdmin(admin.ModelAdmin):
+    list_display = ('shortname', 'url', 'dateLastUpdate')
+
 admin.site.register(BasicDataset, BasicDatasetAdmin)
 admin.site.register(Partner, PartnerAdmin)
 admin.site.register(DataReq, DataReqAdmin)
 admin.site.register(ExpStep, ExpStepAdmin)
 admin.site.register(Reporting, ReportingAdmin)
+admin.site.register(ExternalProtocol, ExternalProtocolAdmin)

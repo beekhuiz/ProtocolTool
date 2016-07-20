@@ -2,7 +2,7 @@ from django.core.urlresolvers import reverse
 from django.http import Http404, HttpResponseRedirect
 from django.shortcuts import render
 from .forms import BasicDatasetForm, PartnerForm, DataReqForm, ExpStepForm, ReportingForm
-from .models import BasicDataset, Partner, DataReq, ExpStep, Reporting
+from .models import BasicDataset, Partner, DataReq, ExpStep, Reporting, ExternalProtocol
 import json
 from django.http import JsonResponse
 import datetime
@@ -36,9 +36,11 @@ def review(request):
 
     try:
         dataset_list = BasicDataset.objects.all()
+        externalProtocol_list = ExternalProtocol.objects.all()
 
         context = {
             'dataset_list': dataset_list,
+            'external_protocol_list': externalProtocol_list,
             'show_participate': False,
             'show_review': True,
         }

@@ -141,6 +141,27 @@
                                         <td></td>
                                     </tr>
                                     {% endfor %}
+
+                                    <!--List the other protocols, created externally!-->
+                                    {% for external_protocol in external_protocol_list  %}
+
+                                    <tr>
+                                        <td class="col-md-5">{{ external_protocol.shortname }}</td>
+                                        <td class="col-md-2"></td>
+                                        <td class="col-md-2">
+                                            Review or repeat
+                                        </td>
+                                        <td class="col-md-3">
+                                            <button type="button" class="btn btn-xs btn-default"
+                                                    name="viewprotocol"
+                                                    onclick="window.open(
+                                                      '{{ external_protocol.url }}',
+                                                      '_blank');">View protocol</button>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+
+
                                 </tbody>
                             </table>
 

@@ -52,3 +52,9 @@ class Reporting(models.Model):
     partner = models.ForeignKey(Partner)
     deadline = models.DateField(blank=True, default=datetime.date.today)
     dataset = models.ForeignKey(BasicDataset)
+
+
+class ExternalProtocol(models.Model):
+    shortname = models.CharField(max_length=200)
+    url = models.URLField(max_length=200)
+    dateLastUpdate = models.DateField(blank=True, default=datetime.date.today)
