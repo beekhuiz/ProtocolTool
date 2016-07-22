@@ -48,6 +48,7 @@ class ExpStep(models.Model):
 
 class Reporting(models.Model):
     task = models.TextField(blank=True)
+    taskNr = models.IntegerField(default=1)
     properties = models.TextField(blank=True)
     partner = models.ForeignKey(Partner)
     deadline = models.DateField(blank=True, default=datetime.date.today)

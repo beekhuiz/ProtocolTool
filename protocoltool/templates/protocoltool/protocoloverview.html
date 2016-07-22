@@ -44,7 +44,12 @@
 
             <div class="panel panel-primary">
                 <div class="panel-heading">
-                    Select protocol
+                    {% if show_review %}
+                    Review or Repeat experiments
+                    {% endif %}
+                    {% if show_participate %}
+                    Participate in defining a protocol
+                    {% endif %}
                 </div>
 
                 <div class="panel-body">
@@ -52,7 +57,8 @@
                     <div class="row"> <!--Buttons-->
                         <div class="col-md-12">
                             <div class="pull-right">
-                                <button type="button" id="addDataset" onclick="window.location.assign('/project/form/')" class="btn btn-xs btn-primary">Add protocol</button>
+                                <!--<button type="button" id="addDataset" onclick="window.location.assign('/project/form/')" class="btn btn-xs btn-primary">Add protocol</button>-->
+                                <!--<button type="button" id="addDataset" onclick="createprotocol" class="btn btn-xs btn-primary">Add protocol</button>-->
                             </div>
                         </div>
                     </div> <!--END Buttons-->
@@ -63,8 +69,6 @@
                         <div class="col-md-12">
 
                         {% if show_participate %}
-
-                            <h4>Participate in defining a protocol</h4>
 
                             <table id="participatetable" class="table table-striped">
                                 <thead>
@@ -106,13 +110,11 @@
 
                         {% if show_review %}
 
-                            <h4>Review or Repeat experiments</h4>
-
                             <table id="reviewtable" class="table table-striped">
                                 <thead>
                                     <tr>
                                         <th class="col-md-5">Protocol</th>
-                                        <th class="col-md-2">Last update</th>
+                                        <th class="col-md-2">Date completed</th>
                                         <th class="col-md-2">Status</th>
                                         <th class="col-md-3">Actions</th>
                                     </tr>
@@ -128,8 +130,8 @@
                                                     Review or repeat
                                                 </td>
                                                 <td class="col-md-3">
-                                                    <button type="button" class="btn btn-xs btn-default" value="{{ dataset.id }}" name="viewprotocol" onclick="exportProtocol(this)">View protocol</button>
-
+                                                    <button type="button" class="btn btn-xs btn-default" value="{{ dataset.id }}" name="view" onclick="viewProtocol(this)">View web page</button>
+                                                    <button type="button" class="btn btn-xs btn-default" value="{{ dataset.id }}" name="viewprotocol" onclick="exportProtocol(this)">Download PDF</button>
                                                 </td>
                                             </tr>
                                             {% endif %}
@@ -147,7 +149,7 @@
 
                                     <tr>
                                         <td class="col-md-5">{{ external_protocol.shortname }}</td>
-                                        <td class="col-md-2"></td>
+                                        <td class="col-md-2">{{ external_protocol.dateLastUpdate | date:'d-m-Y' }}</td>
                                         <td class="col-md-2">
                                             Review or repeat
                                         </td>
@@ -156,7 +158,7 @@
                                                     name="viewprotocol"
                                                     onclick="window.open(
                                                       '{{ external_protocol.url }}',
-                                                      '_blank');">View protocol</button>
+                                                      '_blank');">View web page</button>
                                         </td>
                                     </tr>
                                     {% endfor %}

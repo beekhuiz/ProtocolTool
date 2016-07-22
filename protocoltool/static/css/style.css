@@ -2,12 +2,34 @@ html {
     position: relative;
     min-height: 100%;
 }
+
 body {
     margin: 0 0 100px; /* bottom = footer height */
 }
 
+.highlight {
+    background-color: rgb(250,250,180);
+}
+
+/* supersede bootstrap at the row level by being annoyingly specific
+*/
+.table-striped > tbody > tr:nth-child(odd).highlight > td {
+    background-color: rgb(250,250,180);
+}
+
+/* supersede bootstrap at the cell level by being annoyingly specific */
+.table-striped > tbody > tr:nth-child(odd) > td.highlight {
+	background-color:rgb(250,250,180);
+}
+
+
+.col-md-1.btnupdown {
+    padding: 0px;
+    text-align: right;
+}
+
 tr:hover td {
-    background:rgb(250,250,180)
+    background:rgb(250,250,180);
 }
 
 .row {
@@ -20,6 +42,7 @@ tr:hover td {
     max-height:560px;
     overflow-y:auto;
 }
+
 a, a:link, a:visited, a:hover, a:active {
 	color:inherit;
 	text-decoration: none;

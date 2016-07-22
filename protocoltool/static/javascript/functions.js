@@ -190,9 +190,22 @@ function refreshExpSteps(){
             '<td class="col-md-8">' + existingExpSteps[i].task + '</td>' +
             '<td class="col-md-4">' + existingExpSteps[i].deadline + '</td></tr>')
     }
+
+// Code for small increase/decrease buttons on the table row
+//            '<td class="col-md-1 btnupdown"><div class = "btn-group-vertical btn-group-xs">' +
+//                '<button type="button" id="increaseNrExpStep" class="btn btn-default">' +
+//                '<i class="fa fa-sort-asc fa-lg"></i></button>' +
+//                '<button type="button" id="decreaseNrExpStep" class="btn btn-default">' +
+//                '<i class="fa fa-sort-desc fa-lg"></i></button>' +
+//            '</div></td></tr>')
+
 }
 
-function refreshReporting(){
+function refreshReporting(existingList=existingReportings){
+
+    // use the existingreportings by default; however, if a new list is given to the refresh function
+    // by updating, deleting, etc. in this way the new list can be passed to the refresh function
+    existingReportings = existingList
 
     $('.reportingtask').val("")
     $('.reportingproperties').val("")
@@ -210,6 +223,9 @@ function refreshReporting(){
     $('#updateReportingID').prop( "disabled", true);
     $('#deleteReportingID').removeClass( "active" ).addClass( "disabled" );
     $('#deleteReportingID').prop( "disabled", true);
+    $('#incrTaskNrReportingID').removeClass( "active" ).addClass( "disabled" );
+    $('#decrTaskNrReportingID').prop( "disabled", true);
+
 
     var arrayLength = existingReportings.length;
     $("#reportingTableID tbody tr").remove();
@@ -217,8 +233,9 @@ function refreshReporting(){
     for (i = 0; i < arrayLength; i++) {
         $("#reportingTableID > tbody").append(
             '<tr class="reportingRow" id = ' +  existingReportings[i].id + '>' +
+            '<td class="col-md-1">' + existingReportings[i].taskNr + '</td>' +
             '<td class="col-md-8">' + existingReportings[i].task + '</td>' +
-            '<td class="col-md-4">' + existingReportings[i].deadline + '</td></tr>')
+            '<td class="col-md-3">' + existingReportings[i].deadline + '</td></tr>')
     }
 }
 
@@ -376,20 +393,26 @@ function sendReportingInfoToServer(update){
         dataToSend['reportingID'] = $('#selectedReportingID').val();
     }
 
+    sendInfoToServer(dataToSend, url, existingReportings, refreshReporting)
+
+} // end sendreportingInfoToServer
+
+
+function sendInfoToServer(dataToSend, urlToSend, existingList, refreshFunction){
+
     $.ajax({
-        url: url,
+        url: urlToSend,
         type: "POST",
         data: dataToSend,
 
         // handle a successful response
         success : function(json) {
-            existingReportings = JSON.parse(json['existingReportingsJSON']);
-            refreshReporting();
+            existingList = JSON.parse(json['existingListJSON']);
+            refreshFunction(existingList);
         },
         // handle a non-successful response
         error : function(xhr,errmsg,err) {
             console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
         }
     });
-
-} // end sendreportingInfoToServer
+}

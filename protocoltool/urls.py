@@ -18,7 +18,7 @@ urlpatterns = patterns('',
     url(r'^overviewaction/$', views.protocolOverviewAction, name='protocoloverview_action'),
 
 
-    url(r'^form/$', views.createProtocol, name='createprotocol'),
+    url(r'^createprotocol/$', views.createProtocol, name='createprotocol'),
     url(r'^form/(?P<dataset_id>\d*)/$', views.formAll, name='formall'),
     url(r'^view/(?P<dataset_id>\d*)/$', views.viewProtocol, name='viewprotocol'),
 
@@ -37,4 +37,6 @@ urlpatterns = patterns('',
     url(r'^addreporting/$', views.addReporting, name='add_reporting'),
     url(r'^updatereporting/$', views.updateReporting, name='update_reporting'),
     url(r'^deletereporting/$', views.deleteReporting, name='delete_reporting'),
+    url(r'^increasereporting/$', views.increaseReporting, name='increase_reporting'),
+    url(r'^decreasereporting/$', views.decreaseReporting, name='decrease_reporting'),
 )

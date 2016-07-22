@@ -79,7 +79,7 @@
                     <div class="row">
                         <hr>
                         <div class="col-md-7">
-                            <h4>A) Partners</h4>
+                            <h4>Partners</h4>
                             {% for field in form.1 %}
                             <div id="{{ field.label }}" class="form-group">
                                 <label for="{{ field.id_for_label }}" class="col-md-3 control-label">{{ field.label }}:</label>
@@ -143,7 +143,7 @@
 
                             <div class="col-md-7">
 
-                            <h4>B) Data & Method preparation steps </h4>
+                            <h4>A) Data & Method preparation steps </h4>
 
                             {% for field in form.1 %}
                             <div id="{{ field.label }}" class="form-group">
@@ -221,7 +221,7 @@
 
                         <div class="col-md-7">
 
-                            <h4>C) Experiment Analysis Steps </h4>
+                            <h4>B) Experiment Analysis Steps </h4>
 
                             {% for field in form.1 %}
                             <div id="{{ field.label }}" class="form-group">
@@ -242,7 +242,6 @@
                                     </select>
                                 </div>
                             </div>
-
 
 
                             <div class="col-md-6">
@@ -294,7 +293,7 @@
 
                         <div class="col-md-7">
 
-                            <h4>D) Result reporting </h4>
+                            <h4>C) Result reporting </h4>
 
                             {% for field in form.1 %}
                             <div id="{{ field.label }}" class="form-group">
@@ -317,21 +316,30 @@
                             </div>
 
 
-                            <div class="col-md-6">
+                            <div class="col-md-4">
                             </div>
-                            <div class="col-md-6">
+                            <div class="col-md-8">
                                 <div class="btn-group btn-group-justified" role="group" aria-label="...">
-                                      <div class="btn-group" role="group">
+                                      <div class="btn-group" style="width: 25%;" role="group">
                                         <button type="button" id="addReportingID" class="btn btn-primary active">
                                           <i class="fa fa-plus fa-lg"></i>&nbsp&nbspAdd</button>
                                       </div>
-                                      <div class="btn-group" role="group">
+                                      <div class="btn-group" style="width: 25%;" role="group">
                                         <button type="button" id="updateReportingID" class="btn btn-primary disabled">
                                           <i class="fa fa-repeat fa-lg"></i>&nbsp&nbspUpdate</button>
                                       </div>
-                                      <div class="btn-group" role="group">
+                                      <div class="btn-group" style="width: 25%;" role="group">
                                         <button type="button" id="deleteReportingID" class="btn btn-primary disabled">
                                           <i class="fa fa-trash-o fa-lg"></i>&nbsp&nbspDelete</button>
+                                      </div>
+
+                                      <div class="btn-group" style="width: 15%;" role="group">
+                                          <button type="button" id="incrTaskNrReportingID" class="btn btn-primary disabled">
+                                          <i class="glyphicon glyphicon-triangle-top"></i></button>
+                                      </div>
+                                     <div class="btn-group" style="width: 15%;" role="group">
+                                          <button type="button" id="decrTaskNrReportingID" class="btn btn-primary disabled">
+                                          <i class="glyphicon glyphicon-triangle-bottom"></i></button>
                                       </div>
                                 </div>
                             </div>
@@ -343,11 +351,12 @@
                             <input type="hidden" id="selectedReportingID" value="-99">
                              <h4>Current result reporting:</h4>
 
-                            <table id="reportingTableID" class="table table-hover table-bordered">
+                            <table id="reportingTableID" class="table table-hover table-striped">
                                 <thead>
                                     <tr>
+                                        <th class="col-md-1"><strong>Nr.</strong></th>
                                         <th class="col-md-8"><strong>Task</strong></th>
-                                        <th class="col-md-4"><strong>Deadline</strong></th>
+                                        <th class="col-md-3"><strong>Deadline</strong></th>
                                     </tr>
                                 </thead>
                                 <tbody>

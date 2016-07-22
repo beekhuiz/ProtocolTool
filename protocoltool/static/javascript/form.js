@@ -308,9 +308,11 @@ $(document).ready(function(){
     // FUNCTIONS FOR THE REPORTING
     //
 
-    $('#reportingTableID').on('click', 'tr', function(){
+    $('#reportingTableID').on('click', 'tbody tr', function(){
 
         selectedReportingID = $(this).closest("tr").attr('id');
+        $(this).closest("tr").addClass("highlight").siblings().removeClass("highlight");
+
         var nrReportings = existingReportings.length;
 
         for (i = 0; i < nrReportings; i++) {
@@ -336,6 +338,10 @@ $(document).ready(function(){
                 $('#updateReportingID').prop( "disabled", false);
                 $('#deleteReportingID').removeClass( "disabled" ).addClass( "active" );
                 $('#deleteReportingID').prop( "disabled", false);
+                $('#incrTaskNrReportingID').removeClass( "disabled" ).addClass( "active" );
+                $('#incrTaskNrReportingID').prop( "disabled", false);
+                $('#decrTaskNrReportingID').removeClass( "disabled" ).addClass( "active" );
+                $('#decrTaskNrReportingID').prop( "disabled", false);
             }
         } // end for
 
@@ -348,7 +354,7 @@ $(document).ready(function(){
         validOutput = checkValidField($('.reportingproperties'));
         validPartner = checkValidField($('#partnerReporting'));
 
-        if(validTask === true && validDesc === true && validPartner === true){
+        if(validTask === true && validOutput === true && validPartner === true){
             sendReportingInfoToServer(false);
         }
         else{
@@ -372,26 +378,28 @@ $(document).ready(function(){
 
     $('#deleteReportingID').on('click', function(){
 
-        var reportingID = $('#selectedReportingID').val();
-        console.log(reportingID)
-
-        $.ajax({
-            url: "/project/deletereporting/",
-            type: "POST",
-            data: {reportingID: reportingID,
+        var dataToSend = {reportingID: $('#selectedReportingID').val(),
                    datasetID: datasetID,
-                   csrfmiddlewaretoken: csrfmiddlewaretoken},
+                   csrfmiddlewaretoken: csrfmiddlewaretoken}
 
-            // handle a successful response
-            success : function(json) {
-                existingReportings = JSON.parse(json['existingReportingsJSON']);
-                refreshReporting();
-            },
-            // handle a non-successful response
-            error : function(xhr,errmsg,err) {
-                console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
-            }
-        });
-    });    
+        sendInfoToServer(dataToSend, "/project/deletereporting/", existingReportings, refreshReporting)
+
+    });
+
+    $('#incrTaskNrReportingID').on('click', function(){
+        var dataToSend = {reportingID: $('#selectedReportingID').val(),
+                   datasetID: datasetID,
+                   csrfmiddlewaretoken: csrfmiddlewaretoken}
+
+        sendInfoToServer(dataToSend, "/project/increasereporting/", existingReportings, refreshReporting)
+    });
+
+    $('#decrTaskNrReportingID').on('click', function(){
+        var dataToSend = {reportingID: $('#selectedReportingID').val(),
+                   datasetID: datasetID,
+                   csrfmiddlewaretoken: csrfmiddlewaretoken}
+
+        sendInfoToServer(dataToSend, "/project/decreasereporting/", existingReportings, refreshReporting)
+    });
 
 });

@@ -22,7 +22,7 @@ class ExpStepAdmin(admin.ModelAdmin):
     list_display = ('task', 'properties', 'partner', 'deadline')
 
 class ReportingAdmin(admin.ModelAdmin):
-    list_display = ('task', 'properties', 'partner', 'deadline')
+    list_display = ('task', 'taskNr', 'properties', 'partner', 'deadline')
 
 class ExternalProtocolAdmin(admin.ModelAdmin):
     list_display = ('shortname', 'url', 'dateLastUpdate')

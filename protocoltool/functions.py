@@ -157,6 +157,7 @@ def createReportingModelFromClient(postDict, update):
         reportingObj = Reporting(
             dataset = dataset,
             task=postDict['task'],
+            taskNr=getNewTaskNr(postDict['datasetID'], Reporting),
             properties=postDict['properties'],
             partner = partner,
             deadline=postDict['deadline'],
@@ -223,6 +224,7 @@ def getReportingsList(datasetID):
     for reporting in existingReportings:
         reportingDict = {
             "id": reporting.id,
+            "taskNr": reporting.taskNr,
             "task": reporting.task,
             "properties": reporting.properties,
             "partnerID": reporting.partner.id,
@@ -230,4 +232,82 @@ def getReportingsList(datasetID):
         }
         existingReportingsList.append(reportingDict)
 
-    return existingReportingsList
+    # sort on taskNr for better visualisation
+    existingReportingsListSorted = sorted(existingReportingsList, key=lambda k: k['taskNr'])
+
+    return existingReportingsListSorted
+
+
+def getNewTaskNr(datasetID, allObjects):
+    '''
+    Gets a new task number when a new object is added to the list
+    :param datasetID:
+    :param allObjects:
+    :return: highest task number + 1
+    '''
+    datasetObjects = allObjects.objects.filter(dataset__id=datasetID)
+
+    taskNrs = []
+
+    for datasetObject in datasetObjects:
+        taskNrs.append(datasetObject.taskNr)
+
+    # check if there are already tasks defined; if not, task nr is 1
+    if len(taskNrs) > 0:
+        return max(taskNrs) + 1
+    else:
+        return 1
+
+
+def updateTaskNrs(datasetID, objectID, allObjects):
+
+    datasetObjects = allObjects.objects.filter(dataset__id=datasetID)
+    deletedObject = allObjects.objects.get(pk=objectID)
+
+    taskNrToDel = deletedObject.taskNr
+
+    # shift the number of the tasks that come after the task to delete one place up
+    for datasetObject in datasetObjects:
+        if datasetObject.taskNr > taskNrToDel:
+            datasetObject.taskNr -= 1
+            datasetObject.save()
+
+
+def increaseTaskNr(datasetID, objectID, allObjects):
+
+    objectToIncr = allObjects.objects.get(pk=objectID)
+    origTaskNr = objectToIncr.taskNr
+
+    if origTaskNr > 1:
+
+        objectToDecr = allObjects.objects.filter(taskNr=origTaskNr-1, dataset__id = datasetID)[0]
+
+        objectToIncr.taskNr = origTaskNr - 1
+        objectToIncr.save()
+
+        objectToDecr.taskNr = origTaskNr
+        objectToDecr.save()
+
+
+
+def decreaseTaskNr(datasetID, objectID, allObjects):
+
+    objectToDecr = allObjects.objects.get(pk=objectID)
+    origTaskNr = objectToDecr.taskNr
+
+    # get all tasknrs to check if it is the lowest task
+    datasetObjects = allObjects.objects.filter(dataset__id=datasetID)
+    taskNrs = []
+
+    for datasetObject in datasetObjects:
+        taskNrs.append(datasetObject.taskNr)
+
+    if origTaskNr < max(taskNrs):
+
+        objectToIncr = allObjects.objects.filter(taskNr=origTaskNr+1, dataset__id = datasetID)[0]
+
+        objectToDecr.taskNr = origTaskNr + 1
+        objectToDecr.save()
+
+        objectToIncr.taskNr = origTaskNr
+        objectToIncr.save()
