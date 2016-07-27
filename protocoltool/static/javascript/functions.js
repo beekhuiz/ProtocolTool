@@ -1,3 +1,29 @@
+function isEven(n) {
+   return n % 2 == 0;
+}
+
+function writeLabelLine(tablebody, index=1, label, text){
+    /*
+    write a line of text with a label to a table. The index is deprecated and was used to create
+    a potential striped table
+    */
+    var trclass = ""
+    if(isEven(index)){
+        //trclass = "trdark";
+        trclass = "";
+    }
+
+    $(tablebody).append(
+          '<tr class="' + trclass + '">' +
+          '<td class="col-md-2 infotext"><strong>' + label + '</strong></td>' +
+          '<td class="col-md-10 infotext">' + text + '</td></tr>')
+}
+
+function writeLabelTwoLines(tablebody, label, text){
+    $(tablebody).append(
+          '<tr><td class="infotext"><strong>' + label + '</strong><br>' + text + '</td></tr>')
+}
+
 
 function checkValidField(item){
    if(item.val() === null || item.val() === "" ){
@@ -44,6 +70,29 @@ function checkform() {
     }
 }
 
+
+function back() {
+
+    validShortname = checkValidField($('#id_basic_shortname'));
+    validTitle = checkValidField($('#id_basic_title'));
+
+    if (validShortname && validTitle){
+        bootbox.confirm('Data in the form fields on the left that are not added or saved will be lost. Are you sure you wish to go back to the participate tool?', function(result){
+            if(result){
+                $('#dataset_form').submit();
+            }
+        });
+    }
+    else{
+        bootbox.confirm('No valid full experiment name or short name, the new protocol will not be stored. Are you sure you wish to go back to the participate tool?', function(result){
+            if(result){
+                $('#dataset_form').submit();
+            }
+        });
+    }
+}
+
+
 function setMessage(messagetype, messagefa, messagetext){
 	try {
 		$('#messagetype').removeClass().addClass(messagetype);
@@ -57,6 +106,7 @@ function setMessage(messagetype, messagefa, messagetext){
 
 
 function refreshAll(){
+    refreshExperimentInfo();
     refreshPartners();
     refreshReqs();
     refreshExpSteps();
@@ -64,13 +114,32 @@ function refreshAll(){
 }
 
 
+function refreshExperimentInfo(){
+
+//    writeLabelLine("#experimentTable > tbody", 2, "Full name:", "{{ existingExperimentInfo.title|linebreaks }}");
+//    writeLabelLine("#experimentTable > tbody", 2, "Short name:", "{{ existingExperimentInfo.shortname|linebreaks }}");
+//    writeLabelLine("#experimentTable > tbody", 1, "Idea:", "{{ existingExperimentInfo.experimentIdea|linebreaks }}");
+//    writeLabelLine("#experimentTable > tbody", 2, "Hypothesis:", "{{ existingExperimentInfo.hypothesis|linebreaks }}");
+//    writeLabelLine("#experimentTable > tbody", 1, "Objective:", "{{ existingExperimentInfo.researchObjective|linebreaks }}");
+//    writeLabelLine("#experimentTable > tbody", 2, "Last update:", "{{ existingExperimentInfo.dateLastUpdate|linebreaks }}");
+
+    $("#experimentTable tbody tr").remove();
+
+    writeLabelTwoLines("#experimentTable > tbody", "Full name:", existingExperimentInfo.title);
+    writeLabelTwoLines("#experimentTable > tbody", "Short name:", existingExperimentInfo.shortname);
+    writeLabelTwoLines("#experimentTable > tbody", "Idea:", existingExperimentInfo.experimentIdea);
+    writeLabelTwoLines("#experimentTable > tbody", "Hypothesis:", existingExperimentInfo.hypothesis);
+    writeLabelTwoLines("#experimentTable > tbody", "Objective:", existingExperimentInfo.researchObjective);
+}
+
+
 function refreshPartners(){
 
     // Reset all Partner stuff
-    $('#id_name').val("");
-    $('#id_email').val("");
-    $('#id_organisation').val("");
-    $('#id_lead').prop('checked', false);
+    $('#id_partner_name').val("");
+    $('#id_partner_email').val("");
+    $('#id_partner_organisation').val("");
+    $('#id_partner_lead').prop('checked', false);
 
     // update buttons
     $('#updatePartnerID').removeClass( "active" ).addClass( "disabled" );
@@ -122,11 +191,13 @@ function refreshPartners(){
 }
 
 
-function refreshReqs(){
+function refreshReqs(existingList=existingReqs){
 
-    $('#id_done').prop('checked', false)
-    $('.reqtask').val("")
-    $('.reqdesc').val("")
+    existingReqs = existingList
+
+    $('#id_req_done').prop('checked', false)
+    $('#id_req_task').val("")
+    $('#id_req_properties').val("")
     //$('.reqdeadline').val("1970-01-01")
 
     $("#partnerDataReq").empty();
@@ -141,30 +212,45 @@ function refreshReqs(){
     $('#updateReqID').prop( "disabled", true);
     $('#deleteReqID').removeClass( "active" ).addClass( "disabled" );
     $('#deleteReqID').prop( "disabled", true);
+    $('#incrTaskNrReportingID').removeClass( "active" ).addClass( "disabled" );
+    $('#incrTaskNrReportingID').prop( "disabled", true);
+    $('#decrTaskNrReportingID').removeClass( "active" ).addClass( "disabled" );
+    $('#decrTaskNrReportingID').prop( "disabled", true);
+
 
     var arrayLength = existingReqs.length;
     $("#reqTableID tbody tr").remove();
 
+    if(arrayLength == 0){
+        $("#reqTableID > tbody").append(
+            '<tr><td class="col-md-8">...</td>' +
+            '<td class="col-md-4"></td></tr>')
+    }
+
     for (i = 0; i < arrayLength; i++) {
 
-        var reqDone = 'No'
+        var taskDone = 'No'
         if (existingReqs[i].done == 'True'){
-            reqDone = 'Yes'
+            taskDone = 'Yes'
         }
 
         $("#reqTableID > tbody").append(
-            '<tr class="reqRow" id = ' +  existingReqs[i].id + '>' +
+            '<tr id = ' +  existingReqs[i].id + '>' +
+            '<td class="col-md-1">' + existingReqs[i].taskNr + '</td>' +
             '<td class="col-md-7">' + existingReqs[i].task + '</td>' +
-            '<td class="col-md-3">' + existingReqs[i].deadline + '</td>' +
-            '<td class="col-md-2">' + reqDone + '</td></tr>')
+            '<td class="col-md-2">' + existingReqs[i].deadline + '</td>' +
+            '<td class="col-md-2">' + taskDone + '</td></tr>')
     }
 }
 
-function refreshExpSteps(){
+function refreshExpSteps(existingList=existingExpSteps){
 
-    $('.expsteptask').val("")
-    $('.expstepproperties').val("")
-    //$('.expstepdeadline').val("1970-01-01")
+    // use the existingreportings by default; however, if a new list is given to the refresh function
+    // by updating, deleting, etc. in this way the new list can be passed to the refresh function
+    existingExpSteps = existingList
+
+    $('#id_exp_task').val("")
+    $('#id_exp_properties').val("")
 
     $("#partnerExpStep").empty();
     var arrayLength = existingPartners.length;
@@ -178,27 +264,35 @@ function refreshExpSteps(){
     $('#updateExpStepID').prop( "disabled", true);
     $('#deleteExpStepID').removeClass( "active" ).addClass( "disabled" );
     $('#deleteExpStepID').prop( "disabled", true);
+    $('#incrTaskNrReportingID').removeClass( "active" ).addClass( "disabled" );
+    $('#incrTaskNrReportingID').prop( "disabled", true);
+    $('#decrTaskNrReportingID').removeClass( "active" ).addClass( "disabled" );
+    $('#decrTaskNrReportingID').prop( "disabled", true);
 
 
     var arrayLength = existingExpSteps.length;
     $("#expStepTableID tbody tr").remove();
 
-    for (i = 0; i < arrayLength; i++) {
-
+    if(arrayLength == 0){
         $("#expStepTableID > tbody").append(
-            '<tr class="expStepRow" id = ' +  existingExpSteps[i].id + '>' +
-            '<td class="col-md-8">' + existingExpSteps[i].task + '</td>' +
-            '<td class="col-md-4">' + existingExpSteps[i].deadline + '</td></tr>')
+            '<tr><td class="col-md-8">...</td>' +
+            '<td class="col-md-4"></td></tr>')
     }
 
-// Code for small increase/decrease buttons on the table row
-//            '<td class="col-md-1 btnupdown"><div class = "btn-group-vertical btn-group-xs">' +
-//                '<button type="button" id="increaseNrExpStep" class="btn btn-default">' +
-//                '<i class="fa fa-sort-asc fa-lg"></i></button>' +
-//                '<button type="button" id="decreaseNrExpStep" class="btn btn-default">' +
-//                '<i class="fa fa-sort-desc fa-lg"></i></button>' +
-//            '</div></td></tr>')
+    for (i = 0; i < arrayLength; i++) {
 
+        var taskDone = 'No'
+        if (existingExpSteps[i].done == 'True'){
+            taskDone = 'Yes'
+        }
+
+        $("#expStepTableID > tbody").append(
+            '<tr id = ' +  existingExpSteps[i].id + '>' +
+            '<td class="col-md-1">' + existingExpSteps[i].taskNr + '</td>' +
+            '<td class="col-md-7">' + existingExpSteps[i].task + '</td>' +
+            '<td class="col-md-2">' + existingExpSteps[i].deadline + '</td>' +
+            '<td class="col-md-2">' + taskDone + '</td></tr>')
+    }
 }
 
 function refreshReporting(existingList=existingReportings){
@@ -207,9 +301,8 @@ function refreshReporting(existingList=existingReportings){
     // by updating, deleting, etc. in this way the new list can be passed to the refresh function
     existingReportings = existingList
 
-    $('.reportingtask').val("")
-    $('.reportingproperties').val("")
-    //$('.reportingdeadline').val("1970-01-01")
+    $('#id_reporting_task').val("")
+    $('#id_reporting_properties').val("")
 
     $("#partnerReporting").empty();
     var arrayLength = existingPartners.length;
@@ -224,18 +317,32 @@ function refreshReporting(existingList=existingReportings){
     $('#deleteReportingID').removeClass( "active" ).addClass( "disabled" );
     $('#deleteReportingID').prop( "disabled", true);
     $('#incrTaskNrReportingID').removeClass( "active" ).addClass( "disabled" );
+    $('#incrTaskNrReportingID').prop( "disabled", true);
+    $('#decrTaskNrReportingID').removeClass( "active" ).addClass( "disabled" );
     $('#decrTaskNrReportingID').prop( "disabled", true);
-
 
     var arrayLength = existingReportings.length;
     $("#reportingTableID tbody tr").remove();
 
-    for (i = 0; i < arrayLength; i++) {
+    if(arrayLength == 0){
         $("#reportingTableID > tbody").append(
-            '<tr class="reportingRow" id = ' +  existingReportings[i].id + '>' +
+            '<tr><td class="col-md-8">...</td>' +
+            '<td class="col-md-4"></td></tr>')
+    }
+
+    for (i = 0; i < arrayLength; i++) {
+
+        var taskDone = 'No'
+        if (existingReportings[i].done == 'True'){
+            taskDone = 'Yes'
+        }
+
+        $("#reportingTableID > tbody").append(
+            '<tr id = ' +  existingReportings[i].id + '>' +
             '<td class="col-md-1">' + existingReportings[i].taskNr + '</td>' +
-            '<td class="col-md-8">' + existingReportings[i].task + '</td>' +
-            '<td class="col-md-3">' + existingReportings[i].deadline + '</td></tr>')
+            '<td class="col-md-7">' + existingReportings[i].task + '</td>' +
+            '<td class="col-md-2">' + existingReportings[i].deadline + '</td>' +
+            '<td class="col-md-2">' + taskDone + '</td></tr>')
     }
 }
 
@@ -258,14 +365,31 @@ function sendPartnerInfoToServer(update){
     url = "/project/addpartner/"
 
     var lead = 'False';
-    if($('#id_lead').is(':checked')){
+    if($('#id_partner_lead').is(':checked')){
+
+        var existingLead = 'False';
+
+        // check if there is already a lead partner
+        var nrPartners = existingPartners.length;
+        for (j = 0; j < nrPartners; j++) {
+            if(existingPartners[j].lead == 'True'){
+                existingLead = 'True';
+            }
+        }
+
+        if(existingLead == 'True'){
+            warningPopup('There is already a partner in the lead; ' +
+                         'please uncheck the lead box or change the existing partner in the lead')
+            return;
+        }
+
         lead = 'True';
     }
 
     dataToSend = {datasetID: datasetID,
-       name: $('#id_name').val(),
-       email: $('#id_email').val(),
-       organisation: $('#id_organisation').val(),
+       name: $('#id_partner_name').val(),
+       email: $('#id_partner_email').val(),
+       organisation: $('#id_partner_organisation').val(),
        lead: lead,
        csrfmiddlewaretoken: csrfmiddlewaretoken
     }
@@ -301,39 +425,25 @@ function sendReqInfoToServer(update){
 
      // get all filled in data
     var done = 'False';
-    if($('#id_done').is(':checked')){
+    if($('#id_req_done').is(':checked')){
         done = 'True';
     }
 
     dataToSend = {
         datasetID: datasetID,
-        task: $('.reqtask').val(),    // use the class set in the widget in 'forms.py' to identify the field
-        description: $('.reqdesc').val(),
+        task: $('#id_req_task').val(),    // use the class set in the widget in 'forms.py' to identify the field
+        properties: $('#id_req_properties').val(),
         partnerID: $("#partnerDataReq").val(),
-        deadline: $('.reqdeadline').val(),
+        deadline: $('#id_req_deadline').val(),
         done: done,
         csrfmiddlewaretoken: csrfmiddlewaretoken}
 
     if (update == true){
         url = "/project/updatereq/"
-        dataToSend['reqID'] = $('#selectedReqID').val();
+        dataToSend['stepID'] = $('#selectedReqID').val();
     }
 
-    $.ajax({
-        url: url,
-        type: "POST",
-        data: dataToSend,
-
-        // handle a successful response
-        success : function(json) {
-            existingReqs = JSON.parse(json['existingReqsJSON']);
-            refreshReqs();
-        },
-        // handle a non-successful response
-        error : function(xhr,errmsg,err) {
-            console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
-        }
-    });
+    sendInfoToServer(dataToSend, url, existingReqs, refreshReqs)
 
 } // end sendReqInfoToServer
 
@@ -343,34 +453,27 @@ function sendExpStepInfoToServer(update){
     url = "/project/addstep/"
 
      // get all filled in data
+     var done = 'False';
+     if($('#id_exp_done').is(':checked')){
+        done = 'True';
+     }
+
     dataToSend = {
         datasetID: datasetID,
-        task: $('.expsteptask').val(),    // use the class set in the widget in 'forms.py' to identify the field
-        properties: $('.expstepproperties').val(),
+        task: $('#id_exp_task').val(),    // use the class set in the widget in 'forms.py' to identify the field
+        properties: $('#id_exp_properties').val(),
         partnerID: $("#partnerExpStep").val(),
-        deadline: $('.expstepdeadline').val(),
+        deadline: $("#id_exp_deadline").val(),
+        done: done,
         csrfmiddlewaretoken: csrfmiddlewaretoken}
 
     if (update == true){
         url = "/project/updatestep/"
-        dataToSend['expStepID'] = $('#selectedExpStepID').val();
+        dataToSend['stepID'] = $('#selectedExpStepID').val();
     }
 
-    $.ajax({
-        url: url,
-        type: "POST",
-        data: dataToSend,
 
-        // handle a successful response
-        success : function(json) {
-            existingExpSteps = JSON.parse(json['existingExpStepsJSON']);
-            refreshExpSteps();
-        },
-        // handle a non-successful response
-        error : function(xhr,errmsg,err) {
-            console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
-        }
-    });
+    sendInfoToServer(dataToSend, url, existingExpSteps, refreshExpSteps)
 
 } // end sendExpStepsInfoToServer
 
@@ -380,17 +483,23 @@ function sendReportingInfoToServer(update){
     url = "/project/addreporting/"
 
      // get all filled in data
+     var done = 'False';
+     if($('#id_reporting_done').is(':checked')){
+        done = 'True';
+     }
+
     dataToSend = {
         datasetID: datasetID,
-        task: $('.reportingtask').val(),    // use the class set in the widget in 'forms.py' to identify the field
-        properties: $('.reportingproperties').val(),
+        task: $('#id_reporting_task').val(),    // use the class set in the widget in 'forms.py' to identify the field
+        properties: $('#id_reporting_properties').val(),
         partnerID: $("#partnerReporting").val(),
-        deadline: $('.reportingdeadline').val(),
+        deadline: $('#id_reporting_deadline').val(),
+        done: done,
         csrfmiddlewaretoken: csrfmiddlewaretoken}
 
     if (update == true){
         url = "/project/updatereporting/"
-        dataToSend['reportingID'] = $('#selectedReportingID').val();
+        dataToSend['stepID'] = $('#selectedReportingID').val();
     }
 
     sendInfoToServer(dataToSend, url, existingReportings, refreshReporting)

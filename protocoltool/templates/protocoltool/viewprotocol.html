@@ -18,7 +18,7 @@
             <script src="https://code.jquery.com/jquery-2.2.4.js" integrity="sha256-iT6Q9iMJYuQiMWNd9lDyBUStIq/8PuOW33aOqmvFpqI=" crossorigin="anonymous"></script>
             <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
             <script src="{% static 'javascript/bootbox.min.js' %}"></script>
-            <script src="{% static 'javascript/viewprotocol.js' %}"></script>
+            <script src="{% static 'javascript/functions.js' %}"></script>
         </head>
 
 
@@ -40,9 +40,9 @@
 
 
             <script>
-            writeLabelLine("#experimentTable > tbody", 2, "Full experiment name:", "{{ basic.title|linebreaks }}");
-            writeLabelLine("#experimentTable > tbody", 1, "Experiment Idea:", "{{ basic.experimentIdea|linebreaks }}");
-            writeLabelLine("#experimentTable > tbody", 2, "Hypothesis:", "{{ basic.hypothesis|linebreaks }}");
+            writeLabelLine("#experimentTable > tbody", 1, "Full experiment name:", "{{ basic.title|linebreaks }}");
+            writeLabelLine("#experimentTable > tbody", 2, "Experiment Idea:", "{{ basic.experimentIdea|linebreaks }}");
+            writeLabelLine("#experimentTable > tbody", 1, "Hypothesis:", "{{ basic.hypothesis|linebreaks }}");
             writeLabelLine("#experimentTable > tbody", 1, "Research objective:", "{{ basic.researchObjective|linebreaks }}");
             writeLabelLine("#experimentTable > tbody", 2, "Date last update:", "{{ basic.dateLastUpdate|linebreaks }}");
             </script>
@@ -53,14 +53,14 @@
             <div class="row">
                 <div class="col-md-8">
                     <table id="partnerTable" table-border="0">
-                        <th class="col-md-2"><strong>Name</strong></th>
-                        <th class="col-md-2"><strong>E-mail</strong></th>
-                        <th class="col-md-3"><strong>Organisation</strong></th>
+                        <th class="col-md-2 infotext"><strong>Name</strong></th>
+                        <th class="col-md-2 infotext"><strong>E-mail</strong></th>
+                        <th class="col-md-3 infotext"><strong>Organisation</strong></th>
                         <tbody>
                          {% for partner in partners %}
-                            <tr><td class="col-md-2">{{ partner.name }} {% if partner.lead %}(lead){% endif %}</td>
-                            <td class="col-md-2">{{ partner.email }}</td>
-                            <td class="col-md-3">{{ partner.organisation}}</td></tr>
+                            <tr><td class="col-md-2 infotext">{{ partner.name }} {% if partner.lead %}(lead){% endif %}</td>
+                            <td class="col-md-2 infotext">{{ partner.email }}</td>
+                            <td class="col-md-3 infotext">{{ partner.organisation}}</td></tr>
                          {% endfor %}
                         </tbody>
                     </table>
@@ -70,18 +70,26 @@
 
             <hr>
             <h4> A) Data & Method Preparation </h4>
-
             <table id="methodTable" table-border="0">
                 <tbody>
                 </tbody>
             </table>
 
-            {% for method in methods %}
+            {% for step in methods %}
             <script>
-            writeLabelLine("#methodTable > tbody", "{{ forloop.counter }}", "Task:", "{{ method.task|linebreaks }}");
-            writeLabelLine("#methodTable > tbody", "{{ forloop.counter }}", "Description:", "{{ method.description|linebreaks }}");
-            writeLabelLine("#methodTable > tbody", "{{ forloop.counter }}", "Contributing partner:", "{{ method.partner.name|linebreaks }}");
-            writeLabelLine("#methodTable > tbody", "{{ forloop.counter }}", "Deadline:", "{{ method.deadline|linebreaks }}");
+            doneText = "Task " + "{{ step.taskNr }}"
+
+            if("{{ step.done }}" == 'True'){
+                doneText += " (Done):";
+            }
+            else {
+                doneText += " (In progress):";
+            }
+
+            writeLabelLine("#methodTable > tbody", 1, doneText, "{{ step.task }}");
+            writeLabelLine("#methodTable > tbody", 1, "Description:", "{{ step.properties|linebreaks }}");
+            writeLabelLine("#methodTable > tbody", 1, "Contributing partner:", "{{ step.partner.name|linebreaks }}");
+            writeLabelLine("#methodTable > tbody", 1, "Deadline:", "{{ step.deadline|linebreaks }}");
             writeLabelLine("#methodTable > tbody", 1, "", "");
             </script>
             {% endfor %}
@@ -97,14 +105,22 @@
 
             {% for step in steps %}
             <script>
-            writeLabelLine("#stepTable > tbody", "{{ forloop.counter }}", "Task:", "{{ step.task|linebreaks }}");
-            writeLabelLine("#stepTable > tbody", "{{ forloop.counter }}", "Output:", "{{ step.properties|linebreaks }}");
-            writeLabelLine("#stepTable > tbody", "{{ forloop.counter }}", "Contributing partner:", "{{ step.partner.name|linebreaks }}");
-            writeLabelLine("#stepTable > tbody", "{{ forloop.counter }}", "Deadline:", "{{ step.deadline|linebreaks }}");
+            doneText = "Task " + "{{ step.taskNr }}"
+
+            if("{{ step.done }}" == 'True'){
+                doneText += " (Done):";
+            }
+            else {
+                doneText += " (In progress):";
+            }
+
+            writeLabelLine("#stepTable > tbody", 1, doneText, "{{ step.task }}");
+            writeLabelLine("#stepTable > tbody", 1, "Description:", "{{ step.properties|linebreaks }}");
+            writeLabelLine("#stepTable > tbody", 1, "Contributing partner:", "{{ step.partner.name|linebreaks }}");
+            writeLabelLine("#stepTable > tbody", 1, "Deadline:", "{{ step.deadline|linebreaks }}");
             writeLabelLine("#stepTable > tbody", 1, "", "");
             </script>
             {% endfor %}
-
 
             <hr>
             <h4> C) Result Reporting </h4>
@@ -113,12 +129,21 @@
                 </tbody>
             </table>
 
-            {% for result in results %}
+            {% for step in results %}
             <script>
-            writeLabelLine("#resultTable > tbody", "{{ forloop.counter }}", "Task:", "{{ result.task|linebreaks }}");
-            writeLabelLine("#resultTable > tbody", "{{ forloop.counter }}", "Output:", "{{ result.properties|linebreaks }}");
-            writeLabelLine("#resultTable > tbody", "{{ forloop.counter }}", "Contributing partner:", "{{ result.partner.name|linebreaks }}");
-            writeLabelLine("#resultTable > tbody", "{{ forloop.counter }}", "Deadline:", "{{ result.deadline|linebreaks }}");
+            doneText = "Task " + "{{ step.taskNr }}"
+
+            if("{{ step.done }}" == 'True'){
+                doneText += " (Done):";
+            }
+            else {
+                doneText += " (In progress):";
+            }
+
+            writeLabelLine("#resultTable > tbody", 1, doneText, "{{ step.task }}");
+            writeLabelLine("#resultTable > tbody", 1, "Description:", "{{ step.properties|linebreaks }}");
+            writeLabelLine("#resultTable > tbody", 1, "Contributing partner:", "{{ step.partner.name|linebreaks }}");
+            writeLabelLine("#resultTable > tbody", 1, "Deadline:", "{{ step.deadline|linebreaks }}");
             writeLabelLine("#resultTable > tbody", 1, "", "");
             </script>
             {% endfor %}

@@ -36,11 +36,20 @@
                 <div id="messagetext"></div>
             </div>
 
+
+            {% if show_review %}
             <script>
-                var message = "Welcome to the protocol tool. Here you can create new protocols, edit existing experiment protocols, or view on-going and completed protocols."
+                var message = "Review completed protocols for experiments which can be repeated."
                 setMessage("alert alert-success", "fa fa-4x fa-fw fa-pull-left fa-info-circle", message);
             </script>
-
+            {% endif %}
+            {% if show_participate %}
+            <script>
+                var message = "View or edit existing experiment protocols, or when the protocol is complete, " +
+                              "send it to review or repeat where others can view it and repeat it."
+                setMessage("alert alert-success", "fa fa-4x fa-fw fa-pull-left fa-info-circle", message);
+            </script>
+            {% endif %}
 
             <div class="panel panel-primary">
                 <div class="panel-heading">

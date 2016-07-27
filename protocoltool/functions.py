@@ -1,5 +1,13 @@
 __author__ = 'beekhuiz'
 from .models import BasicDataset, Partner, DataReq, ExpStep, Reporting
+from django.forms.models import model_to_dict
+import datetime
+
+
+def updateLastUpdate(datasetID):
+    BasicDataset.objects.filter(id=datasetID).update(
+        dateLastUpdate=str(datetime.date.today()))
+
 
 def createPartnerModelFromClient(postDict, update):
     '''
@@ -34,6 +42,28 @@ def createPartnerModelFromClient(postDict, update):
             )
         partnerObj.save()
 
+    updateLastUpdate(postDict['datasetID'])
+
+
+def getExperimentInfoDict(datasetID):
+    '''
+    Store all experiment information in a dictionary
+    :param datasetID: id of the dataset for which the partners are retrieved
+    :return: dictionary of experiment info
+    '''
+
+    existingExpertimentInfo = BasicDataset.objects.get(id=datasetID)
+
+    existingExpertimentInfoDict = {
+            'title': existingExpertimentInfo.title,
+            'shortname': existingExpertimentInfo.shortname,
+            'experimentIdea': existingExpertimentInfo.experimentIdea,
+            'hypothesis': existingExpertimentInfo.hypothesis,
+            'researchObjective': existingExpertimentInfo.researchObjective,
+            'dateLastUpdate': str(existingExpertimentInfo.dateLastUpdate),
+    }
+    return existingExpertimentInfoDict
+
 
 def getPartnersList(datasetID):
     '''
@@ -58,82 +88,7 @@ def getPartnersList(datasetID):
     return existingPartnersList
 
 
-
-def createReqModelFromClient(postDict, update):
-
-    '''
-    Creates a new data preparation model object using an AJAX call from the client
-    :param postDict: information of the Data&Method preparation part from the client
-    :param update: boolean indicating whether it is an update or an addition
-    :return: none
-    '''
-
-    # get the ID of the protocol of this DataRequest
-    dataset = BasicDataset.objects.get(id=postDict['datasetID'])
-    partner = Partner.objects.get(id=postDict['partnerID'])
-
-    # store the 'done' checkbox as a boolean
-    done = True
-    if postDict['done'] == 'False':
-        done = False
-
-    if update:
-        DataReq.objects.filter(id=postDict['reqID']).update(
-            dataset = dataset,
-            task=postDict['task'],
-            description=postDict['description'],
-            partner = partner,
-            deadline=postDict['deadline'],
-            done=done
-            )
-    else:
-        # create new request object
-        reqObj = DataReq(
-            dataset = dataset,
-            task=postDict['task'],
-            description=postDict['description'],
-            partner = partner,
-            deadline=postDict['deadline'],
-            done=done
-            )
-
-        reqObj.save()
-
-
-def createExpStepModelFromClient(postDict, update):
-    '''
-    Creates a new data Experiment step model object using an AJAX call from the client
-    :param postDict: information of the Experiment Execution step from the client
-    :param update: boolean indicating whether it is an update or an addition
-    :return: none
-    '''
-
-    dataset = BasicDataset.objects.get(id=postDict['datasetID'])
-    partner = Partner.objects.get(id=postDict['partnerID'])
-
-    if update:
-        ExpStep.objects.filter(id=postDict['expStepID']).update(
-            dataset = dataset,
-            task=postDict['task'],
-            properties=postDict['properties'],
-            partner = partner,
-            deadline=postDict['deadline'],
-            )
-    else:
-        # create new exp step object
-        expStepObj = ExpStep(
-            dataset = dataset,
-            task=postDict['task'],
-            properties=postDict['properties'],
-            partner = partner,
-            deadline=postDict['deadline'],
-            )
-
-        expStepObj.save()
-
-
-
-def createReportingModelFromClient(postDict, update):
+def createStepModelFromClient(postDict, update, allObjects):
     '''
     Creates a new Result Reporting  model object using an AJAX call from the client
     :param postDict: information of the Result Reporting step from the client
@@ -144,98 +99,62 @@ def createReportingModelFromClient(postDict, update):
     dataset = BasicDataset.objects.get(id=postDict['datasetID'])
     partner = Partner.objects.get(id=postDict['partnerID'])
 
+    # store the 'done' checkbox as a boolean
+    done = True
+    if postDict['done'] == 'False':
+        done = False
+
     if update:
-        Reporting.objects.filter(id=postDict['reportingID']).update(
+        allObjects.objects.filter(id=postDict['stepID']).update(
             dataset = dataset,
             task=postDict['task'],
             properties=postDict['properties'],
             partner = partner,
             deadline=postDict['deadline'],
+            done=done
             )
     else:
         # create new exp step object
-        reportingObj = Reporting(
+        newObject = allObjects(
             dataset = dataset,
             task=postDict['task'],
-            taskNr=getNewTaskNr(postDict['datasetID'], Reporting),
+            taskNr=getNewTaskNr(postDict['datasetID'], allObjects),
             properties=postDict['properties'],
             partner = partner,
             deadline=postDict['deadline'],
+            done=done
             )
 
-        reportingObj.save()
+        newObject.save()
+
+    updateLastUpdate(postDict['datasetID'])
 
 
-def getReqsList(datasetID):
+def getListSteps(datasetID, allObjects):
     '''
-    Store all data preparation information in an array list
-    :param datasetID: id of the dataset for which the info are retrieved
-    :return: list with all data preparation information
-    '''
-
-    existingReqs = DataReq.objects.filter(dataset__id=datasetID)
-
-    existingReqsList = []
-    for req in existingReqs:
-        reqDict = {
-            "id": req.id,
-            "task": req.task,
-            "description": req.description,
-            "partnerID": req.partner.id,
-            "deadline": str(req.deadline),
-            "done": str(req.done),
-        }
-        existingReqsList.append(reqDict)
-
-    return existingReqsList
-
-
-def getExpStepsList(datasetID):
-    '''
-    Store all Experiment Step information in an array list
-    :param datasetID: id of the dataset for which the info are retrieved
-    :return: list with all Experiment Step information
-    '''
-    existingExpSteps = ExpStep.objects.filter(dataset__id=datasetID)
-
-    existingExpStepsList = []
-    for expStep in existingExpSteps:
-        expStepDict = {
-            "id": expStep.id,
-            "task": expStep.task,
-            "properties": expStep.properties,
-            "partnerID": expStep.partner.id,
-            "deadline": str(expStep.deadline),
-        }
-        existingExpStepsList.append(expStepDict)
-
-    return existingExpStepsList
-
-
-def getReportingsList(datasetID):
-    '''
-    Store all Result Reporting information in an array list
+    Store all information in an array list
     :param datasetID: id of the dataset for which the info are retrieved
     :return: list with all Result Reporting information
     '''
-    existingReportings = Reporting.objects.filter(dataset__id=datasetID)
+    existingObjects = allObjects.objects.filter(dataset__id=datasetID)
 
-    existingReportingsList = []
-    for reporting in existingReportings:
+    existingObjectsList = []
+    for existingObject in existingObjects:
         reportingDict = {
-            "id": reporting.id,
-            "taskNr": reporting.taskNr,
-            "task": reporting.task,
-            "properties": reporting.properties,
-            "partnerID": reporting.partner.id,
-            "deadline": str(reporting.deadline),
+            "id": existingObject.id,
+            "taskNr": existingObject.taskNr,
+            "task": existingObject.task,
+            "properties": existingObject.properties,
+            "partnerID": existingObject.partner.id,
+            "deadline": str(existingObject.deadline),
+            "done": str(existingObject.done),
         }
-        existingReportingsList.append(reportingDict)
+        existingObjectsList.append(reportingDict)
 
     # sort on taskNr for better visualisation
-    existingReportingsListSorted = sorted(existingReportingsList, key=lambda k: k['taskNr'])
+    existingObjectsListSorted = sorted(existingObjectsList, key=lambda k: k['taskNr'])
 
-    return existingReportingsListSorted
+    return existingObjectsListSorted
 
 
 def getNewTaskNr(datasetID, allObjects):
@@ -287,8 +206,6 @@ def increaseTaskNr(datasetID, objectID, allObjects):
 
         objectToDecr.taskNr = origTaskNr
         objectToDecr.save()
-
-
 
 def decreaseTaskNr(datasetID, objectID, allObjects):
 

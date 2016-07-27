@@ -140,7 +140,7 @@ def createPDF(datasetID):
 
     for req in reqInfo:
         story.append(Paragraph('Task: {}'.format(req.task), styles['default']))
-        story.append(Paragraph('Description: {}'.format(req.description), styles['default']))
+        story.append(Paragraph('Description: {}'.format(req.properties), styles['default']))
         story.append(Paragraph('Contributing partner: {}'.format(req.partner.name), styles['default']))
         story.append(Paragraph('Deadline: {}'.format(req.deadline), styles['default']))
 

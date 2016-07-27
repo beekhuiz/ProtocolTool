@@ -3,6 +3,7 @@ from django.http import Http404, HttpResponseRedirect
 from django.shortcuts import render
 from .forms import BasicDatasetForm, PartnerForm, DataReqForm, ExpStepForm, ReportingForm
 from .models import BasicDataset, Partner, DataReq, ExpStep, Reporting, ExternalProtocol
+from django.forms.models import model_to_dict
 import json
 from django.http import JsonResponse
 import datetime
@@ -113,11 +114,12 @@ def viewProtocol(request, dataset_id):
     # context = getAllProtocolInfo(dataset_id)
 
     context = {}
+
     context['basic'] = BasicDataset.objects.get(id=datasetID)
     context['partners'] = Partner.objects.filter(dataset_id=datasetID)
-    context['methods'] = DataReq.objects.filter(dataset_id=datasetID)
-    context['steps'] = ExpStep.objects.filter(dataset_id=datasetID)
-    context['results'] = Reporting.objects.filter(dataset_id=datasetID)
+    context['methods'] = DataReq.objects.filter(dataset_id=datasetID).order_by('taskNr')
+    context['steps'] = ExpStep.objects.filter(dataset_id=datasetID).order_by('taskNr')
+    context['results'] = Reporting.objects.filter(dataset_id=datasetID).order_by('taskNr')
 
     return render(request, 'protocoltool/viewprotocol.html', context)
 
@@ -137,20 +139,23 @@ def formAll(request, dataset_id="0"):
         return render(request, 'protocoltool/form.html', context)
 
     elif request.method == 'POST' and dataset_id != 0:
-        content = request.POST
+        # content = request.POST
+
+        # title = content['title']
+        # shortname = content['shortname']
 
         # update the basic information of the protocol
-        core_obj = BasicDataset(
-            id=dataset_id,
-            title=content['title'],
-            shortname=content['shortname'],
-            experimentIdea=content['experimentIdea'],
-            hypothesis=content['hypothesis'],
-            researchObjective=content['researchObjective'],
-            checked=True,
-            dateLastUpdate=str(datetime.date.today())
-        )
-        core_obj.save()
+        # core_obj = BasicDataset(
+        #     # id=dataset_id,
+        #     # title=content['title'],
+        #     # shortname=content['shortname'],
+        #     # experimentIdea=content['experimentIdea'],
+        #     # hypothesis=content['hypothesis'],
+        #     # researchObjective=content['researchObjective'],
+        #     # checked=True,
+        #     dateLastUpdate=str(datetime.date.today())
+        # )
+        # core_obj.save()
 
         return HttpResponseRedirect(reverse('protocoltool:protocoloverview_participate'))
 
@@ -168,18 +173,18 @@ def getAllProtocolInfo(datasetID):
     formCore = BasicDatasetForm(instance=coreData, auto_id='id_basic_%s')
 
     # Load in existing partners
-    existingPartnersList = functions.getPartnersList(datasetID)
-
-    formPartner = PartnerForm()
 
     # Load in data
-    existingReqsList = functions.getReqsList(datasetID)
-    existingExpStepsList = functions.getExpStepsList(datasetID)
-    existingReportingsList = functions.getReportingsList(datasetID)
+    existingExperimentInfoDict = functions.getExperimentInfoDict(datasetID)
+    existingPartnersList = functions.getPartnersList(datasetID)
+    existingReqsList = functions.getListSteps(datasetID, DataReq)
+    existingExpStepsList = functions.getListSteps(datasetID, ExpStep)
+    existingReportingsList = functions.getListSteps(datasetID, Reporting)
 
-    formDataReq = DataReqForm()
-    formExpStep = ExpStepForm()
-    formReporting = ReportingForm()
+    formPartner = PartnerForm(auto_id='id_partner_%s')
+    formDataReq = DataReqForm(auto_id='id_req_%s')
+    formExpStep = ExpStepForm(auto_id='id_exp_%s')
+    formReporting = ReportingForm(auto_id='id_reporting_%s')
 
     formList = [
         ['Basic', formCore],
@@ -194,6 +199,7 @@ def getAllProtocolInfo(datasetID):
     context.update({
         'edit': True,
         'dataset_id': datasetID,
+        'existingExperimentInfoJSON': json.dumps(existingExperimentInfoDict),
         'existingPartnersJSON': json.dumps(existingPartnersList),
         'existingReqsJSON': json.dumps(existingReqsList),
         'existingExpStepsJSON': json.dumps(existingExpStepsList),
@@ -202,6 +208,25 @@ def getAllProtocolInfo(datasetID):
     })
 
     return context
+
+
+def saveExperimentInfo(request):
+
+    postDict = request.POST.dict()
+
+    # create new partner object
+    BasicDataset.objects.filter(id=postDict['datasetID']).update(
+        title=postDict['title'],
+        shortname=postDict['shortname'],
+        experimentIdea=postDict['experimentIdea'],
+        hypothesis=postDict['hypothesis'],
+        researchObjective=postDict['researchObjective'],
+        checked=True,
+        dateLastUpdate=str(datetime.date.today()))
+
+    # convert the basic dataset (=experiment info) to a dictionary
+    existingExperimentInfoDict = functions.getExperimentInfoDict(postDict['datasetID'])
+    return JsonResponse({'existingExperimentInfoJSON': json.dumps(existingExperimentInfoDict)})
 
 
 # region PARTNERS
@@ -255,31 +280,52 @@ def addReq(request):
     postDict = request.POST.dict()
 
     # add a new Request model based on the post information from the client
-    functions.createReqModelFromClient(postDict, False)
+    functions.createStepModelFromClient(postDict, False, DataReq)
 
     # send back the new Request model as a list to use client side
-    existingReqsList = functions.getReqsList(postDict['datasetID'])
-    return JsonResponse({'existingReqsJSON': json.dumps(existingReqsList)})
+    existingReqsList = functions.getListSteps(postDict['datasetID'], DataReq)
+    return JsonResponse({'existingListJSON': json.dumps(existingReqsList)})
 
 
 def updateReq(request):
     postDict = request.POST.dict()
 
     # update the Request model based on the post information from the client
-    functions.createReqModelFromClient(postDict, True)
+    functions.createStepModelFromClient(postDict, True, DataReq)
 
     # send back the new Request model as a list to use client side
-    existingReqsList = functions.getReqsList(postDict['datasetID'])
-    return JsonResponse({'existingReqsJSON': json.dumps(existingReqsList)})
+    existingReqsList = functions.getListSteps(postDict['datasetID'], DataReq)
+    return JsonResponse({'existingListJSON': json.dumps(existingReqsList)})
 
 
 def deleteReq(request):
     postDict = request.POST.dict()
-    DataReq.objects.filter(id=postDict['reqID']).delete()
+
+    functions.updateTaskNrs(postDict['datasetID'], postDict['stepID'], DataReq)
+
+    DataReq.objects.filter(id=postDict['stepID']).delete()
 
     # send back the new Request model as a list to use client side
-    existingReqsList = functions.getReqsList(postDict['datasetID'])
-    return JsonResponse({'existingReqsJSON': json.dumps(existingReqsList)})
+    existingReqsList = functions.getListSteps(postDict['datasetID'], DataReq)
+    return JsonResponse({'existingListJSON': json.dumps(existingReqsList)})
+
+
+def increaseReq(request):
+    postDict = request.POST.dict()
+    functions.increaseTaskNr(postDict['datasetID'], postDict['reqID'], DataReq)
+
+    # send back the new Reqs model as a list to use client side
+    existingReqsList = functions.getListSteps(postDict['datasetID'], DataReq)
+    return JsonResponse({'existingListJSON': json.dumps(existingReqsList)})
+
+
+def decreaseReq(request):
+    postDict = request.POST.dict()
+    functions.decreaseTaskNr(postDict['datasetID'], postDict['reqID'], DataReq)
+
+    # send back the new Reqs model as a list to use client side
+    existingReqsList = functions.getListSteps(postDict['datasetID'], DataReq)
+    return JsonResponse({'existingListJSON': json.dumps(existingReqsList)})
 
 
 # endregion
@@ -295,32 +341,52 @@ def addExpStep(request):
     postDict = request.POST.dict()
 
     # add a new ExpStep model based on the post information from the client
-    functions.createExpStepModelFromClient(postDict, False)
+    functions.createStepModelFromClient(postDict, False, ExpStep)
 
     # send back the new ExpSteps model as a list to use client side
-    existingExpStepsList = functions.getExpStepsList(postDict['datasetID'])
-    return JsonResponse({'existingExpStepsJSON': json.dumps(existingExpStepsList)})
+    existingExpStepsList = functions.getListSteps(postDict['datasetID'], ExpStep)
+    return JsonResponse({'existingListJSON': json.dumps(existingExpStepsList)})
 
 
 def updateExpStep(request):
     postDict = request.POST.dict()
 
     # update the ExpStep model based on the post information from the client
-    functions.createExpStepModelFromClient(postDict, True)
+    functions.createStepModelFromClient(postDict, True, ExpStep)
 
     # send back the new ExpSteps model as a list to use client side
-    existingExpStepsList = functions.getExpStepsList(postDict['datasetID'])
-    return JsonResponse({'existingExpStepsJSON': json.dumps(existingExpStepsList)})
+    existingExpStepsList = functions.getListSteps(postDict['datasetID'], ExpStep)
+    return JsonResponse({'existingListJSON': json.dumps(existingExpStepsList)})
 
 
 def deleteExpStep(request):
     postDict = request.POST.dict()
 
-    ExpStep.objects.filter(id=postDict['expStepID']).delete()
+    functions.updateTaskNrs(postDict['datasetID'], postDict['stepID'], ExpStep)
+
+    ExpStep.objects.filter(id=postDict['stepID']).delete()
 
     # send back the new ExpSteps model as a list to use client side
-    existingExpStepsList = functions.getExpStepsList(postDict['datasetID'])
-    return JsonResponse({'existingExpStepsJSON': json.dumps(existingExpStepsList)})
+    existingExpStepsList = functions.getListSteps(postDict['datasetID'], ExpStep)
+    return JsonResponse({'existingListJSON': json.dumps(existingExpStepsList)})
+
+
+def increaseExpStep(request):
+    postDict = request.POST.dict()
+    functions.increaseTaskNr(postDict['datasetID'], postDict['expStepID'], ExpStep)
+
+    # send back the new ExpSteps model as a list to use client side
+    existingExpStepsList = functions.getListSteps(postDict['datasetID'], ExpStep)
+    return JsonResponse({'existingListJSON': json.dumps(existingExpStepsList)})
+
+
+def decreaseExpStep(request):
+    postDict = request.POST.dict()
+    functions.decreaseTaskNr(postDict['datasetID'], postDict['expStepID'], ExpStep)
+
+    # send back the new ExpSteps model as a list to use client side
+    existingExpStepsList = functions.getListSteps(postDict['datasetID'], ExpStep)
+    return JsonResponse({'existingListJSON': json.dumps(existingExpStepsList)})
 
 
 # endregion
@@ -336,10 +402,10 @@ def addReporting(request):
     postDict = request.POST.dict()
 
     # add a new Reporting model based on the post information from the client
-    functions.createReportingModelFromClient(postDict, False)
+    functions.createStepModelFromClient(postDict, False, Reporting)
 
     # send back the new Reportings model as a list to use client side
-    existingReportingsList = functions.getReportingsList(postDict['datasetID'])
+    existingReportingsList = functions.getListSteps(postDict['datasetID'], Reporting)
     return JsonResponse({'existingListJSON': json.dumps(existingReportingsList)})
 
 
@@ -347,21 +413,21 @@ def updateReporting(request):
     postDict = request.POST.dict()
 
     # update the Reporting model based on the post information from the client
-    functions.createReportingModelFromClient(postDict, True)
+    functions.createStepModelFromClient(postDict, True, Reporting)
 
     # send back the new Reportings model as a list to use client side
-    existingReportingsList = functions.getReportingsList(postDict['datasetID'])
+    existingReportingsList = functions.getListSteps(postDict['datasetID'], Reporting)
     return JsonResponse({'existingListJSON': json.dumps(existingReportingsList)})
 
 
 def deleteReporting(request):
     postDict = request.POST.dict()
 
-    functions.updateTaskNrs(postDict['datasetID'], postDict['reportingID'], Reporting)
-    Reporting.objects.filter(id=postDict['reportingID']).delete()
+    functions.updateTaskNrs(postDict['datasetID'], postDict['stepID'], Reporting)
+    Reporting.objects.filter(id=postDict['stepID']).delete()
 
     # send back the new Reportings model as a list to use client side
-    existingReportingsList = functions.getReportingsList(postDict['datasetID'])
+    existingReportingsList = functions.getListSteps(postDict['datasetID'], Reporting)
     return JsonResponse({'existingListJSON': json.dumps(existingReportingsList)})
 
 
@@ -370,7 +436,7 @@ def increaseReporting(request):
     functions.increaseTaskNr(postDict['datasetID'], postDict['reportingID'], Reporting)
 
     # send back the new Reportings model as a list to use client side
-    existingReportingsList = functions.getReportingsList(postDict['datasetID'])
+    existingReportingsList = functions.getListSteps(postDict['datasetID'], Reporting)
     return JsonResponse({'existingListJSON': json.dumps(existingReportingsList)})
 
 
@@ -379,7 +445,7 @@ def decreaseReporting(request):
     functions.decreaseTaskNr(postDict['datasetID'], postDict['reportingID'], Reporting)
 
     # send back the new Reportings model as a list to use client side
-    existingReportingsList = functions.getReportingsList(postDict['datasetID'])
+    existingReportingsList = functions.getListSteps(postDict['datasetID'], Reporting)
     return JsonResponse({'existingListJSON': json.dumps(existingReportingsList)})
 
 # endregion

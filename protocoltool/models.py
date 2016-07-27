@@ -31,7 +31,8 @@ class Partner(models.Model):
 
 class DataReq(models.Model):
     task = models.TextField(blank=True)
-    description = models.TextField(blank=True)
+    taskNr = models.IntegerField(default=1)
+    properties = models.TextField(blank=True)
     partner = models.ForeignKey(Partner)
     deadline = models.DateField(blank=True, default=datetime.date.today)
     done = models.BooleanField(default=False)
@@ -40,9 +41,11 @@ class DataReq(models.Model):
 
 class ExpStep(models.Model):
     task = models.TextField(blank=True)
+    taskNr = models.IntegerField(default=1)
     properties = models.TextField(blank=True)
     partner = models.ForeignKey(Partner)
     deadline = models.DateField(blank=True, default=datetime.date.today)
+    done = models.BooleanField(default=False)
     dataset = models.ForeignKey(BasicDataset)
 
 
@@ -52,6 +55,7 @@ class Reporting(models.Model):
     properties = models.TextField(blank=True)
     partner = models.ForeignKey(Partner)
     deadline = models.DateField(blank=True, default=datetime.date.today)
+    done = models.BooleanField(default=False)
     dataset = models.ForeignKey(BasicDataset)
 
 

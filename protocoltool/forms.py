@@ -13,7 +13,7 @@ class BasicDatasetForm(forms.ModelForm):
             'researchObjective',
         ]
         labels = {
-            'title': 'Full experiment name',
+            'title': 'Full name',
             'shortname': 'Short name',
             'experimentIdea': 'Experiment Idea',
             'hypothesis' : 'Hypothesis',
@@ -66,25 +66,25 @@ class DataReqForm(forms.ModelForm):
         model = DataReq
         fields = [
             'task',
-            'description',
+            'properties',
             'deadline',
             'done',
         ]
         labels = {
             'task': 'Task',
-            'description': 'Description',
+            'properties': 'Description',
             'deadline': 'Deadline',
             'done': 'Done',
         }
         widgets = {
             'task': Textarea(
-                attrs={'rows':3, 'style':'resize:vertical;', 'class': 'form-control input-sm reqtask', 'placeholder': 'Short description of the protocol'}
+                attrs={'rows':3, 'style':'resize:vertical;', 'class': 'form-control input-sm', 'placeholder': 'Short description of the protocol'}
             ),
-            'description': Textarea(
-                attrs={'rows':3, 'style':'resize:vertical;', 'class': 'form-control input-sm reqdesc', 'placeholder': 'e.g. time period, domain, etc.'}
+            'properties': Textarea(
+                attrs={'rows':3, 'style':'resize:vertical;', 'class': 'form-control input-sm', 'placeholder': 'e.g. time period, domain, etc.'}
             ),
             'deadline': DateInput(
-                attrs={'class': 'form-control input-sm reqdeadline', 'type': 'date', 'placeholder': 'yyyy-mm-dd'}
+                attrs={'class': 'form-control input-sm', 'type': 'date', 'placeholder': 'yyyy-mm-dd'}
             ),
         }
 
@@ -94,22 +94,24 @@ class ExpStepForm(forms.ModelForm):
         fields = [
             'task',
             'properties',
-            'deadline'
+            'deadline',
+            'done',
         ]
         labels = {
             'task': 'Task',
             'properties': 'Output',
-            'deadline': 'Deadline'
+            'deadline': 'Deadline',
+            'done': 'Done',
         }
         widgets = {
             'task': Textarea(
-                attrs={'rows':3, 'style':'resize:vertical;', 'class': 'form-control input-sm expsteptask', 'placeholder': 'e.g. transform data, createinput files, run model'}
+                attrs={'rows':3, 'style':'resize:vertical;', 'class': 'form-control input-sm', 'placeholder': 'e.g. transform data, createinput files, run model'}
             ),
             'properties': Textarea(
-                attrs={'rows':3, 'style':'resize:vertical;', 'class': 'form-control input-sm expstepproperties', 'placeholder': 'e.g. variables, formats, etc.'}
+                attrs={'rows':3, 'style':'resize:vertical;', 'class': 'form-control input-sm', 'placeholder': 'e.g. variables, formats, etc.'}
             ),
             'deadline': DateInput(
-                attrs={'class': 'form-control input-sm expstepdeadline', 'type': 'date', 'placeholder': 'yyyy-mm-dd'}
+                attrs={'class': 'form-control input-sm', 'type': 'date', 'placeholder': 'yyyy-mm-dd'}
             ),
         }
 
@@ -119,21 +121,23 @@ class ReportingForm(forms.ModelForm):
         fields = [
             'task',
             'properties',
-            'deadline'
+            'deadline',
+            'done',
         ]
         labels = {
             'task': 'Task',
             'properties': 'Output',
-            'deadline': 'Deadline'
+            'deadline': 'Deadline',
+            'done': 'Done',
         }
         widgets = {
             'task': Textarea(
-                attrs={'rows':3, 'style':'resize:vertical;', 'class': 'form-control input-sm reportingtask', 'placeholder': 'e.g. findings, '}
+                attrs={'rows':3, 'style':'resize:vertical;', 'class': 'form-control input-sm', 'placeholder': 'e.g. findings, '}
             ),
             'properties': Textarea(
-                attrs={'rows':3, 'style':'resize:vertical;', 'class': 'form-control input-sm reportingproperties', 'placeholder': 'e.g. graphs, maps, etc.'}
+                attrs={'rows':3, 'style':'resize:vertical;', 'class': 'form-control input-sm', 'placeholder': 'e.g. graphs, maps, etc.'}
             ),
             'deadline': DateInput(
-                attrs={'class': 'form-control input-sm reportingdeadline', 'type': 'date', 'placeholder': 'yyyy-mm-dd'}
+                attrs={'class': 'form-control input-sm', 'type': 'date', 'placeholder': 'yyyy-mm-dd'}
             ),
         }
