@@ -1,6 +1,22 @@
 from django import forms
-from .models import BasicDataset, Partner, DataReq, ExpStep, Reporting
+from .models import BasicDataset, Partner, DataReq, ExpStep, Reporting, UserProfile
 from django.forms.widgets import DateInput, Textarea, TextInput, EmailInput
+from django.contrib.auth.models import User
+
+class UserForm(forms.ModelForm):
+    password = forms.CharField(widget=forms.PasswordInput())
+
+    class Meta:
+        model = User
+        fields = ['username', 'email', 'password']
+
+
+class UserProfileForm(forms.ModelForm):
+    class Meta:
+        model = UserProfile
+        fields = ['website']
+
+
 
 class BasicDatasetForm(forms.ModelForm):
     class Meta:

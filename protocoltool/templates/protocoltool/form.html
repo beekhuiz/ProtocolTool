@@ -42,7 +42,8 @@
             <script>
                 var message = "Enter the information for your protocol in the boxes below. " +
                                "You can specify data and method steps, experiment analysis steps " +
-                               "and what results will be reported."
+                               "and what results will be reported. When describing the tasks, " +
+                               "it is required to fill in all fields."
                 setMessage("alert alert-success", "fa fa-4x fa-fw fa-pull-left fa-info-circle", message);
             </script>
 
@@ -394,10 +395,8 @@
 
 
                         <div class="col-md-6">
-
                             <input type="hidden" id="selectedReportingID" value="-99">
                              <h4>Current result reporting steps:</h4>
-
                             <table id="reportingTableID" class="table table-hover table-striped">
                                 <thead>
                                     <tr>
@@ -411,7 +410,6 @@
 
                                 </tbody>
                             </table>
-
 
                             <div class="row">
                                 <div class="col-md-10"></div>
@@ -439,7 +437,7 @@
                 <hr>
                 <div class="row">
                     <div class="col-md-12"> <!--Form back button-->
-                        <button type="button" class="btn-lg btn-primary pull-right" onclick="back()">Back</button>
+                        <button type="button" class="btn-lg btn-primary pull-right" onclick="finish()">Finish</button>
                     </div>
                 </div>
 

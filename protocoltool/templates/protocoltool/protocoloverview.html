@@ -30,7 +30,6 @@
                 <h1>Protocol Tool</h1>
             </div>
 
-
             <div id="messagetype">
                 <span id="messagefa"></span>
                 <div id="messagetext"></div>
@@ -44,11 +43,21 @@
             </script>
             {% endif %}
             {% if show_participate %}
-            <script>
-                var message = "View or edit existing experiment protocols, or when the protocol is complete, " +
-                              "send it to review or repeat where others can view it and repeat it."
-                setMessage("alert alert-success", "fa fa-4x fa-fw fa-pull-left fa-info-circle", message);
-            </script>
+                {% if user.is_authenticated %}
+                <script>
+                    var message = "Hello " + "{{user.username}}! " + "View or edit existing experiment protocols, " +
+                                   "or when the protocol is complete, " +
+                                  "send it to review or repeat where others can view it and repeat it."
+                    setMessage("alert alert-success", "fa fa-4x fa-fw fa-pull-left fa-info-circle", message);
+                </script>
+                {% else %}
+                <script>
+                    var message = "View existing experiment protocols. Please log in to edit protocols or " +
+                                  "send it to review or repeat where others can view it and repeat it."
+                    setMessage("alert alert-success", "fa fa-4x fa-fw fa-pull-left fa-info-circle", message);
+                </script>
+                {% endif %}
+
             {% endif %}
 
             <div class="panel panel-primary">
@@ -57,11 +66,42 @@
                     Review or Repeat experiments
                     {% endif %}
                     {% if show_participate %}
-                    Participate in defining a protocol
+                        {% if user.is_authenticated %}
+                            Participate in defining a protocol
+                        {% else %}
+                            View protocols in progress (login to participate)
+                        {% endif %}
                     {% endif %}
                 </div>
 
+
                 <div class="panel-body">
+
+                    {% if show_participate %}
+                        {% if user.is_authenticated %}
+                        <form class="form-inline pull-right" role="form" method="post" action="/project/logout/">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-warning btn-sm">
+                                <i class="fa fa-sign-out"></i>&nbsp&nbspLog Out
+                            </button>
+                        </form>
+                        {% else %}
+                        <form class="form-inline pull-right" role="form" autocomplete="off" method="post" action="/project/login/">
+                            {% csrf_token %}
+                            <div class="form-group form-group-sm">
+                                <input type="text" class="form-control" placeholder="username" value="" name="username" size="20">
+                            </div>
+                            <div class="form-group form-group-sm">
+                                <input type="password" class="form-control" value="" placeholder="password" name="password" size="20">
+                            </div>
+                            <button type="submit" class="btn btn-success btn-sm">
+                                <i class="fa fa-sign-in"></i>&nbsp&nbspLog In
+                            </button>
+                        </form>
+                        {% endif %}
+
+                    {% endif %}
+
 
                     <div class="row"> <!--Buttons-->
                         <div class="col-md-12">
@@ -98,9 +138,16 @@
                                                 <td class="col-md-2">Participate</td>
                                                 <td class="col-md-3">
                                                     <button type="button" class="btn btn-xs btn-default" value="{{ dataset.id }}" name="view" onclick="viewProtocol(this)">View</button>
+
+
+                                                    {% if user.is_authenticated %}
                                                     <button type="button" class="btn btn-xs btn-default" value="{{ dataset.id }}" name="edit" onclick="editProtocol(this)">Edit</button>
                                                     <button type="button" class="btn btn-xs btn-default" value="{{ dataset.id }}" name="publish" onclick="publishProtocol(this)">Send to 'review or repeat'</button>
+                                                    {% else %}
+                                                    <button type="button" class="btn btn-xs btn-default disabled" title="Please login to edit protocols" name="edit">Edit</button>
+                                                    <button type="button" class="btn btn-xs btn-default disabled" title="Please login to send a protocol to review or repeat" name="publish">Send to 'review or repeat'</button>
 
+                                                    {% endif %}
                                                 </td>
                                             </tr>
                                             {% endif %}

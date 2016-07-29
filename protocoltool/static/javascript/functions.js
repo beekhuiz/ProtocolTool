@@ -71,7 +71,7 @@ function checkform() {
 }
 
 
-function back() {
+function finish() {
 
     validShortname = checkValidField($('#id_basic_shortname'));
     validTitle = checkValidField($('#id_basic_title'));
@@ -116,13 +116,6 @@ function refreshAll(){
 
 function refreshExperimentInfo(){
 
-//    writeLabelLine("#experimentTable > tbody", 2, "Full name:", "{{ existingExperimentInfo.title|linebreaks }}");
-//    writeLabelLine("#experimentTable > tbody", 2, "Short name:", "{{ existingExperimentInfo.shortname|linebreaks }}");
-//    writeLabelLine("#experimentTable > tbody", 1, "Idea:", "{{ existingExperimentInfo.experimentIdea|linebreaks }}");
-//    writeLabelLine("#experimentTable > tbody", 2, "Hypothesis:", "{{ existingExperimentInfo.hypothesis|linebreaks }}");
-//    writeLabelLine("#experimentTable > tbody", 1, "Objective:", "{{ existingExperimentInfo.researchObjective|linebreaks }}");
-//    writeLabelLine("#experimentTable > tbody", 2, "Last update:", "{{ existingExperimentInfo.dateLastUpdate|linebreaks }}");
-
     $("#experimentTable tbody tr").remove();
 
     writeLabelTwoLines("#experimentTable > tbody", "Full name:", existingExperimentInfo.title);
@@ -131,7 +124,6 @@ function refreshExperimentInfo(){
     writeLabelTwoLines("#experimentTable > tbody", "Hypothesis:", existingExperimentInfo.hypothesis);
     writeLabelTwoLines("#experimentTable > tbody", "Objective:", existingExperimentInfo.researchObjective);
 }
-
 
 function refreshPartners(){
 
@@ -189,7 +181,6 @@ function refreshPartners(){
     }
     $("#partnerReporting").val(selectedPartnerID)
 }
-
 
 function refreshReqs(existingList=existingReqs){
 
@@ -359,7 +350,6 @@ function getPartnerByID(partnerID){
     return null;
 }
 
-
 function sendPartnerInfoToServer(update){
 
     url = "/project/addpartner/"
@@ -377,7 +367,7 @@ function sendPartnerInfoToServer(update){
             }
         }
 
-        if(existingLead == 'True'){
+        if(update == false && existingLead == 'True'){
             warningPopup('There is already a partner in the lead; ' +
                          'please uncheck the lead box or change the existing partner in the lead')
             return;
@@ -417,7 +407,6 @@ function sendPartnerInfoToServer(update){
     });
 
 } // end sendPartnerInfoToServer
-
 
 function sendReqInfoToServer(update){
 
