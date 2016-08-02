@@ -3,12 +3,6 @@ from django.conf.urls import patterns, url
 from protocoltool import views
 
 urlpatterns = patterns('',
-    # Ex: /project/ (No project selected)
-
-    # Ex: /project/1/ (Project selected)
-    #url(r'^(?P<project_id>\d*)/$', views.protocolOverview, name='detail'),
-    # Ex: /project/1/form/ (Form to choose dataset template and add dataset to project)
-    #url(r'^(?P<project_id>\d*)/form/$', views.form_dataset, name='form'),
 
     #url(r'^form/$', views.formBasic, name='formbasic'),
 
@@ -21,7 +15,6 @@ urlpatterns = patterns('',
     url(r'^review/$', views.review, name='protocoloverview_review'),
 
     url(r'^overviewaction/$', views.protocolOverviewAction, name='protocoloverview_action'),
-
 
     url(r'^createprotocol/$', views.createProtocol, name='createprotocol'),
     url(r'^form/(?P<dataset_id>\d*)/$', views.formAll, name='formall'),

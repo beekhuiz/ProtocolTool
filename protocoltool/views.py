@@ -154,6 +154,10 @@ def review(request):
 
 
 def protocolOverviewAction(request):
+    """
+    Handle the action buttons pressed on the ProtocolOverview screen
+    """
+
     postDict = request.POST.dict()
 
     dataset_id = postDict['dataset_id']
@@ -244,24 +248,6 @@ def formAll(request, dataset_id="0"):
         return render(request, 'protocoltool/form.html', context)
 
     elif request.method == 'POST' and dataset_id != 0:
-        # content = request.POST
-
-        # title = content['title']
-        # shortname = content['shortname']
-
-        # update the basic information of the protocol
-        # core_obj = BasicDataset(
-        #     # id=dataset_id,
-        #     # title=content['title'],
-        #     # shortname=content['shortname'],
-        #     # experimentIdea=content['experimentIdea'],
-        #     # hypothesis=content['hypothesis'],
-        #     # researchObjective=content['researchObjective'],
-        #     # checked=True,
-        #     dateLastUpdate=str(datetime.date.today())
-        # )
-        # core_obj.save()
-
         return HttpResponseRedirect(reverse('protocoltool:protocoloverview_participate'))
 
     return HttpResponseRedirect(reverse('protocoltool:protocoloverview_participate'))
@@ -276,8 +262,6 @@ def getAllProtocolInfo(datasetID):
 
     coreData = BasicDataset.objects.get(id=datasetID)
     formCore = BasicDatasetForm(instance=coreData, auto_id='id_basic_%s')
-
-    # Load in existing partners
 
     # Load in data
     existingExperimentInfoDict = functions.getExperimentInfoDict(datasetID)
@@ -370,7 +354,6 @@ def deletePartner(request):
     # send back the new Request model as a list to use client side
     existingPartnersList = functions.getPartnersList(postDict['datasetID'])
     return JsonResponse({'existingPartnersJSON': json.dumps(existingPartnersList)})
-
 
 # endregion
 
@@ -492,7 +475,6 @@ def decreaseExpStep(request):
     # send back the new ExpSteps model as a list to use client side
     existingExpStepsList = functions.getListSteps(postDict['datasetID'], ExpStep)
     return JsonResponse({'existingListJSON': json.dumps(existingExpStepsList)})
-
 
 # endregion
 

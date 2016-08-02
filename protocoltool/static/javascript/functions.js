@@ -1,78 +1,49 @@
-function isEven(n) {
-   return n % 2 == 0;
-}
-
-function writeLabelLine(tablebody, index=1, label, text){
+function writeLabelLine(tablebody, label, text){
     /*
-    write a line of text with a label to a table. The index is deprecated and was used to create
-    a potential striped table
+    write a line of text with a label to a table.
     */
-    var trclass = ""
-    if(isEven(index)){
-        //trclass = "trdark";
-        trclass = "";
-    }
 
     $(tablebody).append(
-          '<tr class="' + trclass + '">' +
-          '<td class="col-md-2 infotext"><strong>' + label + '</strong></td>' +
+          '<tr><td class="col-md-2 infotext"><strong>' + label + '</strong></td>' +
           '<td class="col-md-10 infotext">' + text + '</td></tr>')
 }
 
 function writeLabelTwoLines(tablebody, label, text){
+    /*
+    write a line of text with a title for the experiment info in the form
+    */
     $(tablebody).append(
           '<tr><td class="infotext"><strong>' + label + '</strong><br>' + text + '</td></tr>')
 }
 
 
 function checkValidField(item){
+    /*
+    check if a field in the form has any contents (is filled in)
+    */
    if(item.val() === null || item.val() === "" ){
-       item.addClass('error');
-       return false;
-   }
-   else {
+        item.addClass('error');
+        return false;
+    }
+    else {
         item.removeClass('error');
         return true;
-   }
+    }
 }
 
 function warningPopup(messageText){
-//   BootstrapDialog.show({
-//      type: BootstrapDialog.TYPE_WARNING,
-//      message: messageText,
-//      buttons: [{
-//            label: 'Close',
-//            action: function(dialogItself){
-//                dialogItself.close();
-//            }
-//        }]
-//   });
-
+    /*
+    Show a warning message using the bootbox library
+    */
      bootbox.alert(messageText, function() {
          console.log("Alert Callback");
      });
 }
 
-
-// Validate form (client side) TODO: Make validation checks for all fields -->
-function checkform() {
-
-    validShortname = checkValidField($('#id_basic_shortname'));
-    validTitle = checkValidField($('#id_basic_title'));
-
-    //var okName = /[^a-zA-Z0-9]/.test(expTitle);
-
-    if (validShortname && validTitle){
-       document.getElementById('dataset_form').submit();
-    }
-    else{
-        warningPopup('Please fill in a full experiment name and a short name')
-    }
-}
-
-
 function finish() {
-
+    /*
+    user presses the finish button; check if full name and short name are filled in
+    */
     validShortname = checkValidField($('#id_basic_shortname'));
     validTitle = checkValidField($('#id_basic_title'));
 
@@ -94,6 +65,12 @@ function finish() {
 
 
 function setMessage(messagetype, messagefa, messagetext){
+    /*
+    Set the message text to the box on top of the page
+    messagetype: from bootstrap; can be "alert alert-success",
+    messagefa: the class info of the font awesome icon to use
+    messagetext: string containing the text
+    */
 	try {
 		$('#messagetype').removeClass().addClass(messagetype);
 		$('#messagefa').removeClass().addClass(messagefa);
@@ -106,11 +83,14 @@ function setMessage(messagetype, messagefa, messagetext){
 
 
 function refreshAll(){
+    /*
+    Refresh all form sections
+    */
     refreshExperimentInfo();
     refreshPartners();
-    refreshReqs();
-    refreshExpSteps();
-    refreshReporting();
+    refreshReqs(existingReqs);
+    refreshExpSteps(existingExpSteps);
+    refreshReporting(existingReportings);
 }
 
 
@@ -182,14 +162,13 @@ function refreshPartners(){
     $("#partnerReporting").val(selectedPartnerID)
 }
 
-function refreshReqs(existingList=existingReqs){
+function refreshReqs(existingList){
 
-    existingReqs = existingList
+    existingReqs = existingList;
 
     $('#id_req_done').prop('checked', false)
     $('#id_req_task').val("")
     $('#id_req_properties').val("")
-    //$('.reqdeadline').val("1970-01-01")
 
     $("#partnerDataReq").empty();
     var arrayLength = existingPartners.length;
@@ -203,11 +182,10 @@ function refreshReqs(existingList=existingReqs){
     $('#updateReqID').prop( "disabled", true);
     $('#deleteReqID').removeClass( "active" ).addClass( "disabled" );
     $('#deleteReqID').prop( "disabled", true);
-    $('#incrTaskNrReportingID').removeClass( "active" ).addClass( "disabled" );
-    $('#incrTaskNrReportingID').prop( "disabled", true);
-    $('#decrTaskNrReportingID').removeClass( "active" ).addClass( "disabled" );
-    $('#decrTaskNrReportingID').prop( "disabled", true);
-
+    $('#incrTaskNrReqID').removeClass( "active" ).addClass( "disabled" );
+    $('#incrTaskNrReqID').prop( "disabled", true);
+    $('#decrTaskNrReqID').removeClass( "active" ).addClass( "disabled" );
+    $('#decrTaskNrReqID').prop( "disabled", true);
 
     var arrayLength = existingReqs.length;
     $("#reqTableID tbody tr").remove();
@@ -234,9 +212,9 @@ function refreshReqs(existingList=existingReqs){
     }
 }
 
-function refreshExpSteps(existingList=existingExpSteps){
+function refreshExpSteps(existingList){
 
-    // use the existingreportings by default; however, if a new list is given to the refresh function
+    // use the existingexpsteps by default; however, if a new list is given to the refresh function
     // by updating, deleting, etc. in this way the new list can be passed to the refresh function
     existingExpSteps = existingList
 
@@ -255,10 +233,10 @@ function refreshExpSteps(existingList=existingExpSteps){
     $('#updateExpStepID').prop( "disabled", true);
     $('#deleteExpStepID').removeClass( "active" ).addClass( "disabled" );
     $('#deleteExpStepID').prop( "disabled", true);
-    $('#incrTaskNrReportingID').removeClass( "active" ).addClass( "disabled" );
-    $('#incrTaskNrReportingID').prop( "disabled", true);
-    $('#decrTaskNrReportingID').removeClass( "active" ).addClass( "disabled" );
-    $('#decrTaskNrReportingID').prop( "disabled", true);
+    $('#incrTaskNrExpStepID').removeClass( "active" ).addClass( "disabled" );
+    $('#incrTaskNrExpStepID').prop( "disabled", true);
+    $('#decrTaskNrExpStepID').removeClass( "active" ).addClass( "disabled" );
+    $('#decrTaskNrExpStepID').prop( "disabled", true);
 
 
     var arrayLength = existingExpSteps.length;
@@ -286,7 +264,7 @@ function refreshExpSteps(existingList=existingExpSteps){
     }
 }
 
-function refreshReporting(existingList=existingReportings){
+function refreshReporting(existingList){
 
     // use the existingreportings by default; however, if a new list is given to the refresh function
     // by updating, deleting, etc. in this way the new list can be passed to the refresh function
@@ -338,7 +316,9 @@ function refreshReporting(existingList=existingReportings){
 }
 
 function getPartnerByID(partnerID){
-
+    /*
+    Search for a partner by their ID
+    */
     var nrPartners = existingPartners.length;
 
     for (j = 0; j < nrPartners; j++) {
@@ -408,6 +388,7 @@ function sendPartnerInfoToServer(update){
 
 } // end sendPartnerInfoToServer
 
+
 function sendReqInfoToServer(update){
 
     url = "/project/addreq/"
@@ -464,7 +445,7 @@ function sendExpStepInfoToServer(update){
 
     sendInfoToServer(dataToSend, url, existingExpSteps, refreshExpSteps)
 
-} // end sendExpStepsInfoToServer
+} // end sendExpStepInfoToServer
 
 
 function sendReportingInfoToServer(update){
@@ -493,11 +474,14 @@ function sendReportingInfoToServer(update){
 
     sendInfoToServer(dataToSend, url, existingReportings, refreshReporting)
 
-} // end sendreportingInfoToServer
+} // end sendReportingInfoToServer
 
 
 function sendInfoToServer(dataToSend, urlToSend, existingList, refreshFunction){
-
+    /*
+    Create an ajax request to update the database. When successful, the updated
+    model is send back and a refresh takes place
+    */
     $.ajax({
         url: urlToSend,
         type: "POST",

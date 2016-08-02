@@ -41,9 +41,10 @@
 
             <script>
                 var message = "Enter the information for your protocol in the boxes below. " +
-                               "You can specify data and method steps, experiment analysis steps " +
+                               "You should specify data and method steps, experiment analysis steps " +
                                "and what results will be reported. When describing the tasks, " +
-                               "it is required to fill in all fields."
+                               "it is required to fill in all fields. To be registered as Leader of the " +
+                               "experiment to get edit rights and allow new partners, please send an email to: switchon.vwsl@gmail.com"
                 setMessage("alert alert-success", "fa fa-4x fa-fw fa-pull-left fa-info-circle", message);
             </script>
 
@@ -100,7 +101,6 @@
                         </div>
                     </div> <!-- end row with the protocol information-->
                     {% endif %}
-
 
 
                     {% if form.0 == 'Partner' %}

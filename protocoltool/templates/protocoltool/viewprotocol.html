@@ -40,11 +40,11 @@
 
 
             <script>
-            writeLabelLine("#experimentTable > tbody", 1, "Full experiment name:", "{{ basic.title|linebreaks }}");
-            writeLabelLine("#experimentTable > tbody", 2, "Experiment Idea:", "{{ basic.experimentIdea|linebreaks }}");
-            writeLabelLine("#experimentTable > tbody", 1, "Hypothesis:", "{{ basic.hypothesis|linebreaks }}");
-            writeLabelLine("#experimentTable > tbody", 1, "Research objective:", "{{ basic.researchObjective|linebreaks }}");
-            writeLabelLine("#experimentTable > tbody", 2, "Date last update:", "{{ basic.dateLastUpdate|linebreaks }}");
+            writeLabelLine("#experimentTable > tbody", "Full experiment name:", "{{ basic.title|linebreaks }}");
+            writeLabelLine("#experimentTable > tbody", "Experiment Idea:", "{{ basic.experimentIdea|linebreaks }}");
+            writeLabelLine("#experimentTable > tbody", "Hypothesis:", "{{ basic.hypothesis|linebreaks }}");
+            writeLabelLine("#experimentTable > tbody", "Research objective:", "{{ basic.researchObjective|linebreaks }}");
+            writeLabelLine("#experimentTable > tbody", "Date last update:", "{{ basic.dateLastUpdate|linebreaks }}");
             </script>
 
             <hr>
@@ -88,11 +88,11 @@
                 doneText += " (In progress):";
             }
 
-            writeLabelLine("#methodTable > tbody", 1, doneText, "{{ step.task }}");
-            writeLabelLine("#methodTable > tbody", 1, "Description:", "{{ step.properties|linebreaks }}");
-            writeLabelLine("#methodTable > tbody", 1, "Contributing partner:", "{{ step.partner.name|linebreaks }}");
-            writeLabelLine("#methodTable > tbody", 1, "Deadline:", "{{ step.deadline|linebreaks }}");
-            writeLabelLine("#methodTable > tbody", 1, "", "");
+            writeLabelLine("#methodTable > tbody", doneText, "{{ step.task }}");
+            writeLabelLine("#methodTable > tbody", "Description:", "{{ step.properties|linebreaks }}");
+            writeLabelLine("#methodTable > tbody", "Contributing partner:", "{{ step.partner.name|linebreaks }}");
+            writeLabelLine("#methodTable > tbody", "Deadline:", "{{ step.deadline|linebreaks }}");
+            writeLabelLine("#methodTable > tbody", "", "");
             </script>
             {% endfor %}
 
@@ -116,11 +116,11 @@
                 doneText += " (In progress):";
             }
 
-            writeLabelLine("#stepTable > tbody", 1, doneText, "{{ step.task }}");
-            writeLabelLine("#stepTable > tbody", 1, "Description:", "{{ step.properties|linebreaks }}");
-            writeLabelLine("#stepTable > tbody", 1, "Contributing partner:", "{{ step.partner.name|linebreaks }}");
-            writeLabelLine("#stepTable > tbody", 1, "Deadline:", "{{ step.deadline|linebreaks }}");
-            writeLabelLine("#stepTable > tbody", 1, "", "");
+            writeLabelLine("#stepTable > tbody", doneText, "{{ step.task }}");
+            writeLabelLine("#stepTable > tbody", "Description:", "{{ step.properties|linebreaks }}");
+            writeLabelLine("#stepTable > tbody", "Contributing partner:", "{{ step.partner.name|linebreaks }}");
+            writeLabelLine("#stepTable > tbody", "Deadline:", "{{ step.deadline|linebreaks }}");
+            writeLabelLine("#stepTable > tbody", "", "");
             </script>
             {% endfor %}
 
@@ -142,11 +142,11 @@
                 doneText += " (In progress):";
             }
 
-            writeLabelLine("#resultTable > tbody", 1, doneText, "{{ step.task }}");
-            writeLabelLine("#resultTable > tbody", 1, "Description:", "{{ step.properties|linebreaks }}");
-            writeLabelLine("#resultTable > tbody", 1, "Contributing partner:", "{{ step.partner.name|linebreaks }}");
-            writeLabelLine("#resultTable > tbody", 1, "Deadline:", "{{ step.deadline|linebreaks }}");
-            writeLabelLine("#resultTable > tbody", 1, "", "");
+            writeLabelLine("#resultTable > tbody", doneText, "{{ step.task }}");
+            writeLabelLine("#resultTable > tbody", "Description:", "{{ step.properties|linebreaks }}");
+            writeLabelLine("#resultTable > tbody", "Contributing partner:", "{{ step.partner.name|linebreaks }}");
+            writeLabelLine("#resultTable > tbody", "Deadline:", "{{ step.deadline|linebreaks }}");
+            writeLabelLine("#resultTable > tbody", "", "");
             </script>
             {% endfor %}
 

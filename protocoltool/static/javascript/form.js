@@ -44,6 +44,9 @@ $(document).ready(function(){
 
 
     $('#saveInfoID').on('click', function(){
+        /*
+        Save the generic experiment info in the database
+        */
 
         // check if all values are valid
         validShortname = checkValidField($('#id_basic_shortname'));
@@ -83,7 +86,6 @@ $(document).ready(function(){
             warningPopup("One or more required fields are filled in incorrectly");
         }
     });
-
 
 
     $('#addPartnerID').on('click', function(){
