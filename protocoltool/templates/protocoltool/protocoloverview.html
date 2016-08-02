@@ -214,9 +214,7 @@
                                         <td class="col-md-3">
                                             <button type="button" class="btn btn-xs btn-default"
                                                     name="viewprotocol"
-                                                    onclick="window.open(
-                                                      '{{ external_protocol.url }}',
-                                                      '_blank');">View web page</button>
+                                                    onclick="window.open('{{ external_protocol.url }}', '_blank');">View web page</button>
                                         </td>
                                     </tr>
                                     {% endfor %}
@@ -231,11 +229,17 @@
                     </div> <!--END Datasets table-->
                 </div> <!--END Panel body-->
 
+
                 <div class="panel-footer clearfix">
                     <button type="button" class="btn btn-primary pull-left">
                         <i class="glyphicon glyphicon-envelope"></i>
-                        <span><a href="mailto:switchon.wm@gmail.com?subject=Protocol Tool">Feedback</a></span>
+                        <span><a href="" id="feedbackID">Feedback</a></span>
                     </button>
+
+                    <script>
+                    var email = ('mailto:switchon.wm@' + 'gmail.com?subject=Protocol Tool')
+                    document.getElementById("feedbackID").href = email;
+                    </script>
 
                     {% if show_review %}
                     <form action="../participate/" method="POST" class="form-inline">
