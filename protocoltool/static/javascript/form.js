@@ -127,7 +127,7 @@ $(document).ready(function(){
         for (i = 0; i < nrReqs; i++) {
             if (existingReqs[i].partnerID == partnerID){
                 partnerUsed = true;
-                warningPopup("This partner is a contributing partner in the data&method preparation, removal is therefore not allowed.");
+                warningPopup("This partner is the task leader in the data&method preparation, removal is therefore not allowed.");
             }
         }
 
@@ -136,7 +136,7 @@ $(document).ready(function(){
         for (i = 0; i < nrExpSteps; i++) {
             if (existingExpSteps[i].partnerID == partnerID){
                 partnerUsed = true;
-                warningPopup("This partner is a contributing partner in the experiment steps, removal is therefore not allowed.")
+                warningPopup("This partner is a the task leader in the experiment steps, removal is therefore not allowed.")
             }
         }
 

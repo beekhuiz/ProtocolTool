@@ -141,7 +141,7 @@ def createPDF(datasetID):
     for req in reqInfo:
         story.append(Paragraph('Task: {}'.format(req.task), styles['default']))
         story.append(Paragraph('Description: {}'.format(req.properties), styles['default']))
-        story.append(Paragraph('Contributing partner: {}'.format(req.partner.name), styles['default']))
+        story.append(Paragraph('Task leader: {}'.format(req.partner.name), styles['default']))
         story.append(Paragraph('Deadline: {}'.format(req.deadline), styles['default']))
 
         if req.done == True:
@@ -159,7 +159,7 @@ def createPDF(datasetID):
     for step in stepInfo:
         story.append(Paragraph('Task: {}'.format(step.task), styles['default']))
         story.append(Paragraph('Output: {}'.format(step.properties), styles['default']))
-        story.append(Paragraph('Contributing partner: {}'.format(step.partner.name), styles['default']))
+        story.append(Paragraph('Task leader: {}'.format(step.partner.name), styles['default']))
         story.append(Paragraph('Deadline: {}'.format(step.deadline), styles['default']))
 
         story.append(Spacer(1, 8))
@@ -172,7 +172,7 @@ def createPDF(datasetID):
     for reporting in reportingInfo:
         story.append(Paragraph('Task: {}'.format(reporting.task), styles['default']))
         story.append(Paragraph('Output: {}'.format(reporting.properties), styles['default']))
-        story.append(Paragraph('Contributing partner: {}'.format(reporting.partner.name), styles['default']))
+        story.append(Paragraph('Task leader: {}'.format(reporting.partner.name), styles['default']))
         story.append(Paragraph('Deadline: {}'.format(reporting.deadline), styles['default']))
 
         story.append(Spacer(1, 8))

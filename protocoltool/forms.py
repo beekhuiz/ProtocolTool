@@ -94,10 +94,12 @@ class DataReqForm(forms.ModelForm):
         }
         widgets = {
             'task': Textarea(
-                attrs={'rows':3, 'style':'resize:vertical;', 'class': 'form-control input-sm', 'placeholder': 'Short description of the protocol'}
+                attrs={'rows':3, 'style':'resize:vertical;', 'class': 'form-control input-sm', 'placeholder':
+                    'e.g. collect data, select computational tool, create input files, write scripts, adjust model code, update protocol'}
             ),
             'properties': Textarea(
-                attrs={'rows':3, 'style':'resize:vertical;', 'class': 'form-control input-sm', 'placeholder': 'e.g. time period, domain, etc.'}
+                attrs={'rows':3, 'style':'resize:vertical;', 'class': 'form-control input-sm', 'placeholder':
+                    'e.g. time-period, study sites/geographical domain, resolution, formats, detailed protocol'}
             ),
             'deadline': DateInput(
                 attrs={'class': 'form-control input-sm', 'type': 'date', 'placeholder': 'yyyy-mm-dd'}
@@ -121,10 +123,12 @@ class ExpStepForm(forms.ModelForm):
         }
         widgets = {
             'task': Textarea(
-                attrs={'rows':3, 'style':'resize:vertical;', 'class': 'form-control input-sm', 'placeholder': 'e.g. transform data, createinput files, run model'}
+                attrs={'rows':3, 'style':'resize:vertical;', 'class': 'form-control input-sm', 'placeholder':
+                    'e.g. run models/scripts, visualise results in plots/graphs, compile performance metrics, interpret findings'}
             ),
             'properties': Textarea(
-                attrs={'rows':3, 'style':'resize:vertical;', 'class': 'form-control input-sm', 'placeholder': 'e.g. variables, formats, etc.'}
+                attrs={'rows':3, 'style':'resize:vertical;', 'class': 'form-control input-sm', 'placeholder':
+                    'preliminary idea of expected results in e.g. maps, graphs, list of findings'}
             ),
             'deadline': DateInput(
                 attrs={'class': 'form-control input-sm', 'type': 'date', 'placeholder': 'yyyy-mm-dd'}
@@ -148,10 +152,12 @@ class ReportingForm(forms.ModelForm):
         }
         widgets = {
             'task': Textarea(
-                attrs={'rows':3, 'style':'resize:vertical;', 'class': 'form-control input-sm', 'placeholder': 'e.g. findings, '}
+                attrs={'rows':3, 'style':'resize:vertical;', 'class': 'form-control input-sm', 'placeholder':
+                    'e.g. write scientific papers, present results at conference, define final Figures and Tables '}
             ),
             'properties': Textarea(
-                attrs={'rows':3, 'style':'resize:vertical;', 'class': 'form-control input-sm', 'placeholder': 'e.g. graphs, maps, etc.'}
+                attrs={'rows':3, 'style':'resize:vertical;', 'class': 'form-control input-sm', 'placeholder':
+                    'e.g. preliminary titles of scientific papers and journals to address, conferences to attend, idea of final Figures and Tables'}
             ),
             'deadline': DateInput(
                 attrs={'class': 'form-control input-sm', 'type': 'date', 'placeholder': 'yyyy-mm-dd'}
