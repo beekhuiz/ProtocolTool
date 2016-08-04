@@ -17,7 +17,6 @@ class UserProfileForm(forms.ModelForm):
         fields = ['website']
 
 
-
 class BasicDatasetForm(forms.ModelForm):
     class Meta:
         model = BasicDataset
@@ -88,7 +87,7 @@ class DataReqForm(forms.ModelForm):
         ]
         labels = {
             'task': 'Task',
-            'properties': 'Description',
+            'properties': 'Description and links',
             'deadline': 'Deadline',
             'done': 'Done',
         }
@@ -99,7 +98,8 @@ class DataReqForm(forms.ModelForm):
             ),
             'properties': Textarea(
                 attrs={'rows':3, 'style':'resize:vertical;', 'class': 'form-control input-sm', 'placeholder':
-                    'e.g. time-period, study sites/geographical domain, resolution, formats, detailed protocol'}
+                    'e.g. time-period, study sites/geographical domain, resolution, formats, computational routines, detailed protocol. ' +
+                    'ENTER LINKS TO DATA & COMPUTATIONAL TOOLS HERE!'}
             ),
             'deadline': DateInput(
                 attrs={'class': 'form-control input-sm', 'type': 'date', 'placeholder': 'yyyy-mm-dd'}
