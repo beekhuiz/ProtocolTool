@@ -42,7 +42,7 @@ def writeTasks(story, styles, taskList):
         t=Table(data, hAlign='LEFT', colWidths=[4 * cm, 12 * cm])
         t.setStyle(TableStyle([('VALIGN',(0,0),(-1,-1),'TOP')]))
         story.append(t)
-        story.append(Spacer(1, 12))
+        story.append(Spacer(1, 16))
 
 
 def createPDF(datasetID):
@@ -103,8 +103,8 @@ def createPDF(datasetID):
         'title2',
         parent=styles['default'],
         fontName='Helvetica',
-        fontSize=13,
-        leading=16,
+        fontSize=14,
+        leading=18,
         leftIndent=5,
         alignment=TA_LEFT,
         textColor=black,
@@ -169,7 +169,7 @@ def createPDF(datasetID):
     t=Table(data, hAlign='LEFT', colWidths=[4 * cm, 12 * cm])
     t.setStyle(TableStyle([('VALIGN',(0,0),(-1,-1),'TOP')]))
     story.append(t)
-    story.append(Spacer(1, 16))
+    story.append(Spacer(1, 24))
 
 
     # Partners
@@ -188,17 +188,17 @@ def createPDF(datasetID):
         t=Table(data, hAlign='LEFT', colWidths=[4 * cm, 12 * cm])
         t.setStyle(TableStyle([('VALIGN',(0,0),(-1,-1),'TOP')]))
         story.append(t)
-        story.append(Spacer(1, 12))
+        story.append(Spacer(1, 16))
 
-    story.append(Spacer(1, 16))
+    story.append(Spacer(1, 24))
 
     story.append(Paragraph('A) Data & Method Preparation', styles['title2']))
     writeTasks(story, styles, reqInfo)
-    story.append(Spacer(1, 16))
+    story.append(Spacer(1, 24))
 
     story.append(Paragraph('B) Experiment Analysis Steps', styles['title2']))
     writeTasks(story, styles, stepInfo)
-    story.append(Spacer(1, 16))
+    story.append(Spacer(1, 24))
 
     story.append(Paragraph('C) Result Reporting', styles['title2']))
     writeTasks(story, styles, reportingInfo)
