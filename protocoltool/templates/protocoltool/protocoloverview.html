@@ -195,7 +195,7 @@
                                                     Review or repeat
                                                 </td>
                                                 <td class="col-md-3">
-                                                    <button type="button" class="btn btn-xs btn-default" value="{{ dataset.id }}" name="view" onclick="viewProtocol(this)">View description</button>
+                                                    <button type="button" class="btn btn-xs btn-default" value="{{ dataset.id }}" name="view" onclick="viewProtocol(this)">View protocol</button>
                                                     <button type="button" class="btn btn-xs btn-default" value="{{ dataset.id }}" name="viewprotocol" onclick="exportProtocol(this)">Download PDF</button>
                                                 </td>
                                             </tr>
@@ -221,7 +221,7 @@
                                         <td class="col-md-3">
                                             <button type="button" class="btn btn-xs btn-default"
                                                     name="viewprotocol"
-                                                    onclick="window.open('{{ external_protocol.url }}', '_blank');">View web page</button>
+                                                    onclick="window.open('{{ external_protocol.url }}', '_blank');">View protocol</button>
                                         </td>
                                     </tr>
                                     {% endfor %}

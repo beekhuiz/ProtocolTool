@@ -8,17 +8,41 @@ from reportlab.platypus import (
     PageTemplate,
     Frame,
     Paragraph,
-    Spacer
+    Spacer,
+    Table,
+    TableStyle,
 )
+from reportlab.lib.units import cm
 from reportlab.lib.styles import ParagraphStyle
 from reportlab.lib.enums import TA_LEFT, TA_CENTER
+from reportlab.lib.colors import Color
 from reportlab.lib.colors import (
     black,
     blue,
     white,
 )
 
+
 import pdb
+
+
+def writeTasks(story, styles, taskList):
+       
+    for task in taskList:
+
+        taskDone = "(In progress)"
+        if task.done == True:
+            taskDone = "(Done)"
+
+        data = [[Paragraph('Task {} {}:'.format(task.taskNr, taskDone), styles['label']), Paragraph(task.task, styles['default'])],
+            [Paragraph('Description:', styles['label']), Paragraph(task.properties, styles['default'])],
+           [Paragraph('Task leader:', styles['label']), Paragraph(task.partner.name, styles['default'])],
+           [Paragraph('Deadline:', styles['label']), Paragraph(str(task.deadline), styles['default'])]]
+
+        t=Table(data, hAlign='LEFT', colWidths=[4 * cm, 13 * cm])
+        t.setStyle(TableStyle([('VALIGN',(0,0),(-1,-1),'TOP')]))
+        story.append(t)
+        story.append(Spacer(1, 8))
 
 
 def createPDF(datasetID):
@@ -37,23 +61,19 @@ def createPDF(datasetID):
 
     # Create the HttpResponse object with the appropriate PDF headers.
     response = HttpResponse(content_type='application/pdf')
-    response['Content-Disposition'] = 'attachment; filename=' + basicInfo.title + '.pdf'
+    response['Content-Disposition'] = 'attachment; filename=' + basicInfo.shortname + '.pdf'
 
     styles = {
         'default': ParagraphStyle(
             'default',
             fontName='Times-Roman',
             fontSize=10,
-            leading=12,
+            leading=10,
             leftIndent=0,
             rightIndent=0,
             firstLineIndent=0,
-            alignment=TA_LEFT,
             spaceBefore=0,
             spaceAfter=0,
-            bulletFontName='Helvetica',
-            bulletFontSize=10,
-            bulletIndent=0,
             textColor= black,
             backColor=None,
             wordWrap=None,
@@ -63,10 +83,10 @@ def createPDF(datasetID):
             borderRadius= None,
             allowWidows= 1,
             allowOrphans= 0,
-            textTransform=None,  # 'uppercase' | 'lowercase' | None
             endDots=None,
             splitLongWords=1,
         ),
+
     }
 
     styles['title1'] = ParagraphStyle(
@@ -74,7 +94,7 @@ def createPDF(datasetID):
         parent=styles['default'],
         fontName='Helvetica-Bold',
         fontSize=24,
-        leading=42,
+        leading=52,
         alignment=TA_CENTER,
         textColor=black,
     )
@@ -83,10 +103,36 @@ def createPDF(datasetID):
         'title2',
         parent=styles['default'],
         fontName='Helvetica',
-        fontSize=14,
-        leading=22,
+        fontSize=13,
+        leading=16,
+        leftIndent=5,
         alignment=TA_LEFT,
         textColor=black,
+        spaceBefore = 0,
+        borderRadius = None,
+        firstLineIndent = 0,
+        underlineProportion = 0.0,
+        rightIndent = 0,
+        wordWrap = None,
+        allowWidows = 1,
+        backColor = Color(.9,.9,.9),
+        justifyLastLine = 0,
+        textTransform = None,
+        justifyBreaks = 0,
+        spaceShrinkage = 0.05,
+        splitLongWords = 1,
+        bulletFontSize = 10,
+        borderWidth = 1,
+        borderPadding = 2,
+        endDots = None,
+        spaceAfter = 4,
+
+    )
+
+    styles['label'] = ParagraphStyle(
+        'label',
+        parent=styles['default'],
+        fontName='Times-Bold',
     )
 
     buffer = BytesIO()
@@ -108,77 +154,66 @@ def createPDF(datasetID):
         ]
     )
 
+
+    # define table to create a horizontal line
+    horizontalLineStyle = TableStyle([
+         ("LINEBELOW", (0,0), (-1,-1), 1, black),
+       ])
+    data = [[""]]
+    horizontalLineTable = Table(data, hAlign='CENTER', colWidths=[16 * cm])
+    horizontalLineTable.setStyle(horizontalLineStyle)
+
+    # container for the 'Flowable' objects
     story = []
 
     story.append(Paragraph('Protocol: {}'.format(basicInfo.shortname), styles['title1']))
+
     story.append(Paragraph('Experiment Information', styles['title2']))
-    story.append(Paragraph('Full experiment name: {}'.format(basicInfo.title), styles['default']))
-    story.append(Paragraph('Experiment Idea: {}'.format(basicInfo.experimentIdea), styles['default']))
-    story.append(Paragraph('Hypothesis: {}'.format(basicInfo.hypothesis), styles['default']))
-    story.append(Paragraph('Research objective: {}'.format(basicInfo.researchObjective), styles['default']))
-    story.append(Paragraph('Date last update: {}'.format(basicInfo.dateLastUpdate), styles['default']))
-    story.append(Spacer(1, 8))
+    data= [[Paragraph('Full experiment name:', styles['label']), Paragraph(basicInfo.title, styles['default'])],
+           [Paragraph('Experiment Idea:', styles['label']), Paragraph(basicInfo.experimentIdea, styles['default'])],
+           [Paragraph('Hypothesis:', styles['label']), Paragraph(basicInfo.hypothesis, styles['default'])],
+           [Paragraph('Research objective:', styles['label']), Paragraph(basicInfo.researchObjective, styles['default'])]]
+
+    t=Table(data, hAlign='LEFT', colWidths=[4 * cm, 12 * cm])
+    t.setStyle(TableStyle([('VALIGN',(0,0),(-1,-1),'TOP')]))
+    story.append(t)
+    story.append(Spacer(1, 16))
 
     # Partners
-    story.append(Spacer(1, 10))
     story.append(Paragraph('Partners', styles['title2']))
 
     for partner in partnerInfo:
+
+        partnerName = Paragraph('{}'.format(partner.name), styles['default'])
         if partner.lead == True:
-            story.append(Paragraph('Name: {} (lead)'.format(partner.name), styles['default']))
-        else:
-            story.append(Paragraph('Name: {}'.format(partner.name), styles['default']))
+            partnerName = Paragraph('{} (lead)'.format(partner.name), styles['default'])
 
-        story.append(Paragraph('E-mail: {}'.format(partner.email), styles['default']))
-        story.append(Paragraph('Organisation: {}'.format(partner.organisation), styles['default']))
+        data = [[Paragraph('Name:', styles['label']), partnerName],
+            [Paragraph('E-mail:', styles['label']), Paragraph(partner.email, styles['default'])],
+           [Paragraph('Organisation:', styles['label']), Paragraph(partner.organisation, styles['default'])]]
+
+        t=Table(data, hAlign='LEFT', colWidths=[4 * cm, 12 * cm])
+        t.setStyle(TableStyle([('VALIGN',(0,0),(-1,-1),'TOP')]))
+        story.append(t)
         story.append(Spacer(1, 8))
 
+    story.append(Spacer(1, 16))
 
-    # Data Method preparation
-    story.append(Spacer(1, 10))
-    story.append(Paragraph('Data & Method Preparation', styles['title2']))
+    story.append(Paragraph('A) Data & Method Preparation', styles['title2']))
+    writeTasks(story, styles, reqInfo)
+    story.append(Spacer(1, 16))
 
-    for req in reqInfo:
-        story.append(Paragraph('Task: {}'.format(req.task), styles['default']))
-        story.append(Paragraph('Description: {}'.format(req.properties), styles['default']))
-        story.append(Paragraph('Task leader: {}'.format(req.partner.name), styles['default']))
-        story.append(Paragraph('Deadline: {}'.format(req.deadline), styles['default']))
+    story.append(Paragraph('B) Experiment Analysis Steps', styles['title2']))
+    writeTasks(story, styles, stepInfo)
+    story.append(Spacer(1, 16))
 
-        if req.done == True:
-            story.append(Paragraph('Done: Yes', styles['default']))
-        else:
-            story.append(Paragraph('Done: No', styles['default']))
+    story.append(Paragraph('C) Result Reporting', styles['title2']))
+    writeTasks(story, styles, reportingInfo)
 
-        story.append(Spacer(1, 8))
-
-
-    # Experiment execution step
-    story.append(Spacer(1, 10))
-    story.append(Paragraph('Experiment Analysis Steps', styles['title2']))
-
-    for step in stepInfo:
-        story.append(Paragraph('Task: {}'.format(step.task), styles['default']))
-        story.append(Paragraph('Output: {}'.format(step.properties), styles['default']))
-        story.append(Paragraph('Task leader: {}'.format(step.partner.name), styles['default']))
-        story.append(Paragraph('Deadline: {}'.format(step.deadline), styles['default']))
-
-        story.append(Spacer(1, 8))
-
-
-    # Result reporting
-    story.append(Spacer(1, 10))
-    story.append(Paragraph('Result Reporting', styles['title2']))
-
-    for reporting in reportingInfo:
-        story.append(Paragraph('Task: {}'.format(reporting.task), styles['default']))
-        story.append(Paragraph('Output: {}'.format(reporting.properties), styles['default']))
-        story.append(Paragraph('Task leader: {}'.format(reporting.partner.name), styles['default']))
-        story.append(Paragraph('Deadline: {}'.format(reporting.deadline), styles['default']))
-
-        story.append(Spacer(1, 8))
-
-
+    # write the document to disk
     doc.build(story)
+
+
     pdf = buffer.getvalue()
     buffer.close()
     response.write(pdf)
