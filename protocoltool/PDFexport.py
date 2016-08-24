@@ -34,15 +34,15 @@ def writeTasks(story, styles, taskList):
         if task.done == True:
             taskDone = "(Done)"
 
-        data = [[Paragraph('Task {} {}:'.format(task.taskNr, taskDone), styles['label']), Paragraph(task.task, styles['default'])],
-            [Paragraph('Description:', styles['label']), Paragraph(task.properties, styles['default'])],
+        data = [[Paragraph('Task {} {}:'.format(task.taskNr, taskDone), styles['label']), Paragraph(task.task.replace('\n','<br />\n'), styles['default'])],
+            [Paragraph('Description:', styles['label']), Paragraph(task.properties.replace('\n','<br />\n'), styles['default'])],
            [Paragraph('Task leader:', styles['label']), Paragraph(task.partner.name, styles['default'])],
            [Paragraph('Deadline:', styles['label']), Paragraph(str(task.deadline), styles['default'])]]
 
-        t=Table(data, hAlign='LEFT', colWidths=[4 * cm, 13 * cm])
+        t=Table(data, hAlign='LEFT', colWidths=[4 * cm, 12 * cm])
         t.setStyle(TableStyle([('VALIGN',(0,0),(-1,-1),'TOP')]))
         story.append(t)
-        story.append(Spacer(1, 8))
+        story.append(Spacer(1, 12))
 
 
 def createPDF(datasetID):
@@ -68,7 +68,7 @@ def createPDF(datasetID):
             'default',
             fontName='Times-Roman',
             fontSize=10,
-            leading=10,
+            leading=11,
             leftIndent=0,
             rightIndent=0,
             firstLineIndent=0,
@@ -125,7 +125,7 @@ def createPDF(datasetID):
         borderWidth = 1,
         borderPadding = 2,
         endDots = None,
-        spaceAfter = 4,
+        spaceAfter = 6,
 
     )
 
@@ -155,14 +155,6 @@ def createPDF(datasetID):
     )
 
 
-    # define table to create a horizontal line
-    horizontalLineStyle = TableStyle([
-         ("LINEBELOW", (0,0), (-1,-1), 1, black),
-       ])
-    data = [[""]]
-    horizontalLineTable = Table(data, hAlign='CENTER', colWidths=[16 * cm])
-    horizontalLineTable.setStyle(horizontalLineStyle)
-
     # container for the 'Flowable' objects
     story = []
 
@@ -170,14 +162,15 @@ def createPDF(datasetID):
 
     story.append(Paragraph('Experiment Information', styles['title2']))
     data= [[Paragraph('Full experiment name:', styles['label']), Paragraph(basicInfo.title, styles['default'])],
-           [Paragraph('Experiment Idea:', styles['label']), Paragraph(basicInfo.experimentIdea, styles['default'])],
-           [Paragraph('Hypothesis:', styles['label']), Paragraph(basicInfo.hypothesis, styles['default'])],
-           [Paragraph('Research objective:', styles['label']), Paragraph(basicInfo.researchObjective, styles['default'])]]
+           [Paragraph('Experiment Idea:', styles['label']), Paragraph(basicInfo.experimentIdea.replace('\n','<br />\n'), styles['default'])],
+           [Paragraph('Hypothesis:', styles['label']), Paragraph(basicInfo.hypothesis.replace('\n','<br />\n'), styles['default'])],
+           [Paragraph('Research objective:', styles['label']), Paragraph(basicInfo.researchObjective.replace('\n','<br />\n'), styles['default'])]]
 
     t=Table(data, hAlign='LEFT', colWidths=[4 * cm, 12 * cm])
     t.setStyle(TableStyle([('VALIGN',(0,0),(-1,-1),'TOP')]))
     story.append(t)
     story.append(Spacer(1, 16))
+
 
     # Partners
     story.append(Paragraph('Partners', styles['title2']))
@@ -195,7 +188,7 @@ def createPDF(datasetID):
         t=Table(data, hAlign='LEFT', colWidths=[4 * cm, 12 * cm])
         t.setStyle(TableStyle([('VALIGN',(0,0),(-1,-1),'TOP')]))
         story.append(t)
-        story.append(Spacer(1, 8))
+        story.append(Spacer(1, 12))
 
     story.append(Spacer(1, 16))
 
@@ -213,6 +206,14 @@ def createPDF(datasetID):
     # write the document to disk
     doc.build(story)
 
+
+    # # define table to create a horizontal line
+    # horizontalLineStyle = TableStyle([
+    #      ("LINEBELOW", (0,0), (-1,-1), 1, black),
+    #    ])
+    # data = [[""]]
+    # horizontalLineTable = Table(data, hAlign='CENTER', colWidths=[16 * cm])
+    # horizontalLineTable.setStyle(horizontalLineStyle)
 
     pdf = buffer.getvalue()
     buffer.close()
