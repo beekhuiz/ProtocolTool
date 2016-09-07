@@ -17,6 +17,78 @@ function writeLabelTwoLines(tablebody, label, text){
 }
 
 
+function removePartnerErrorClasses() {
+
+    $('#id_partner_name').removeClass('error');
+    $('#id_partner_email').removeClass('error');
+    $('#id_partner_organisation').removeClass('error');
+}
+
+function removeReqErrorClasses() {
+
+    $('#id_req_task').removeClass('error');
+    $('#id_req_properties').removeClass('error');
+    $('#partnerDataReq').removeClass('error');
+    $('#id_req_deadline').removeClass('error');
+}
+
+function removeExpErrorClasses() {
+
+    $('#id_exp_task').removeClass('error');
+    $('#id_exp_properties').removeClass('error');
+    $('#partnerExpStep').removeClass('error');
+    $('#id_exp_deadline').removeClass('error');
+}
+
+function removeReportingErrorClasses() {
+
+    $('#id_reporting_task').removeClass('error');
+    $('#id_reporting_properties').removeClass('error');
+    $('#partnerReporting').removeClass('error');
+    $('#id_reporting_deadline').removeClass('error');
+}
+
+
+//function checkValidFields(listItems){
+//
+//    removeErrorClasses();   // clear all error classes
+//
+//    var nrItems = listItems.length
+//    var allValid = True
+//
+//     for (i = 0; i < nrItems; i++) {
+//
+//        item = $(i[0]); // get the item using the ID
+//
+//        if(i[1] === 'text'){
+//           if(item.val() === null || item.val() === "" ){
+//                item.addClass('error');
+//                allValid = False;
+//            }
+//        }
+//
+//        if(i[1] === 'date'){
+//            dateString = item.val();
+//            var bits = dateString.split('-');
+//            var d = new Date(bits[0], bits[1] - 1, bits[2]);
+//
+//            if(d && (d.getMonth() + 1) == bits[1]){
+//                console.log('valid date');
+//            }
+//            else{
+//                item.addClass('error');
+//                allValid = False;
+//            }
+//        }
+//     } // end for
+//
+//     console.log(listItems);
+//     console.log(allValid);
+//     return allValid;
+//
+//} // end checkValidFields
+
+
 function checkValidField(item){
     /*
     check if a field in the form has any contents (is filled in)
@@ -30,6 +102,24 @@ function checkValidField(item){
         return true;
     }
 }
+
+
+function checkValidDate(item) {
+    // input is always (standard for date field HTML5) YYYY-mm-dd
+    dateString = item.val();
+    var bits = dateString.split('-');
+    var d = new Date(bits[0], bits[1] - 1, bits[2]);
+
+    if(d && (d.getMonth() + 1) == bits[1]){
+        item.removeClass('error');
+        return true;
+    }
+    else{
+        item.addClass('error');
+        return false;
+    }
+}
+
 
 function warningPopup(messageText){
     /*
@@ -48,7 +138,7 @@ function finish() {
     validTitle = checkValidField($('#id_basic_title'));
 
     if (validShortname && validTitle){
-        bootbox.confirm('Data in the form fields on the left that are not added or saved will be lost. Are you sure you wish to go back to the participate tool?', function(result){
+        bootbox.confirm('Experiment information that is not saved will be lost. Are you sure you wish to close the form?', function(result){
             if(result){
                 $('#dataset_form').submit();
             }
@@ -162,10 +252,12 @@ function refreshPartners(){
     $("#partnerReporting").val(selectedPartnerID)
 }
 
+
 function refreshReqs(existingList){
 
     existingReqs = existingList;
 
+    // CLEAR TABLE AND FORM
     $('#id_req_done').prop('checked', false)
     $('#id_req_task').val("")
     $('#id_req_properties').val("")
@@ -177,16 +269,9 @@ function refreshReqs(existingList){
     }
     $("#partnerDataReq").val(null)
 
-    // update buttons
-    $('#updateReqID').removeClass( "active" ).addClass( "disabled" );
-    $('#updateReqID').prop( "disabled", true);
-    $('#deleteReqID').removeClass( "active" ).addClass( "disabled" );
-    $('#deleteReqID').prop( "disabled", true);
-    $('#incrTaskNrReqID').removeClass( "active" ).addClass( "disabled" );
-    $('#incrTaskNrReqID').prop( "disabled", true);
-    $('#decrTaskNrReqID').removeClass( "active" ).addClass( "disabled" );
-    $('#decrTaskNrReqID').prop( "disabled", true);
+    setButtonsReq(false);    // update buttons
 
+    // rebuild table overview
     var arrayLength = existingReqs.length;
     $("#reqTableID tbody tr").remove();
 
@@ -210,7 +295,40 @@ function refreshReqs(existingList){
             '<td class="col-md-2">' + existingReqs[i].deadline + '</td>' +
             '<td class="col-md-2">' + taskDone + '</td></tr>')
     }
-}
+
+
+    // SET TABLE AND FORM TO SELECTED REQUIREMENT
+    selectedID = $('#selectedReqID').val();
+    parent = $('#reqTableID');
+    $('#' + selectedID, parent).addClass("highlight").siblings().removeClass("highlight"); // highlight selected row
+
+    var nrSteps = existingReqs.length;
+
+    for (i = 0; i < nrSteps; i++) {
+
+        if (existingReqs[i].id == selectedID){
+
+            removeReqErrorClasses();                // remove all error classes
+
+            $('#id_req_task').val(existingReqs[i].task);
+            $('#id_req_properties').val(existingReqs[i].properties);
+            $('#id_req_deadline').val(existingReqs[i].deadline);
+            if(existingReqs[i].done == 'True'){
+                $('#id_done').prop('checked', true);
+            }
+            else{
+                $('#id_done').prop('checked', false);
+            }
+
+            contrPartner = getPartnerByID(existingReqs[i].partnerID);
+
+            $('#partnerDataReq').val(contrPartner.id);
+
+            setButtonsReq(true); // update buttons
+        }
+    } // end for
+} // end refreshReqs
+
 
 function refreshExpSteps(existingList){
 
@@ -218,6 +336,7 @@ function refreshExpSteps(existingList){
     // by updating, deleting, etc. in this way the new list can be passed to the refresh function
     existingExpSteps = existingList
 
+    // CLEAR TABLE AND FORM
     $('#id_exp_task').val("")
     $('#id_exp_properties').val("")
 
@@ -228,15 +347,7 @@ function refreshExpSteps(existingList){
     }
     $("#partnerExpStep").val(null)
 
-    // update buttons
-    $('#updateExpStepID').removeClass( "active" ).addClass( "disabled" );
-    $('#updateExpStepID').prop( "disabled", true);
-    $('#deleteExpStepID').removeClass( "active" ).addClass( "disabled" );
-    $('#deleteExpStepID').prop( "disabled", true);
-    $('#incrTaskNrExpStepID').removeClass( "active" ).addClass( "disabled" );
-    $('#incrTaskNrExpStepID').prop( "disabled", true);
-    $('#decrTaskNrExpStepID').removeClass( "active" ).addClass( "disabled" );
-    $('#decrTaskNrExpStepID').prop( "disabled", true);
+    setButtonsExpStep(false);    // update buttons
 
 
     var arrayLength = existingExpSteps.length;
@@ -262,6 +373,39 @@ function refreshExpSteps(existingList){
             '<td class="col-md-2">' + existingExpSteps[i].deadline + '</td>' +
             '<td class="col-md-2">' + taskDone + '</td></tr>')
     }
+
+
+    // SET TABLE AND FORM TO SELECTED EXP STEP
+    selectedID = $('#selectedExpStepID').val();
+    parent = $('#expStepTableID');
+    $('#' + selectedID, parent).addClass("highlight").siblings().removeClass("highlight"); // highlight selected row
+
+    var nrSteps = existingExpSteps.length;
+
+    for (i = 0; i < nrSteps; i++) {
+
+        if (existingExpSteps[i].id == selectedID){
+
+            removeExpErrorClasses();                // remove all error classes
+
+            $('#id_exp_task').val(existingExpSteps[i].task);
+            $('#id_exp_properties').val(existingExpSteps[i].properties);
+            $('#id_exp_deadline').val(existingExpSteps[i].deadline);
+            if(existingExpSteps[i].done == 'True'){
+                $('#id_done').prop('checked', true);
+            }
+            else{
+                $('#id_done').prop('checked', false);
+            }
+
+            contrPartner = getPartnerByID(existingExpSteps[i].partnerID);
+
+            $('#partnerExpStep').val(contrPartner.id);
+
+            setButtonsExpStep(true); // update buttons
+        }
+    } // end for
+
 }
 
 function refreshReporting(existingList){
@@ -280,15 +424,7 @@ function refreshReporting(existingList){
     }
     $("#partnerReporting").val(null)
 
-    // update buttons
-    $('#updateReportingID').removeClass( "active" ).addClass( "disabled" );
-    $('#updateReportingID').prop( "disabled", true);
-    $('#deleteReportingID').removeClass( "active" ).addClass( "disabled" );
-    $('#deleteReportingID').prop( "disabled", true);
-    $('#incrTaskNrReportingID').removeClass( "active" ).addClass( "disabled" );
-    $('#incrTaskNrReportingID').prop( "disabled", true);
-    $('#decrTaskNrReportingID').removeClass( "active" ).addClass( "disabled" );
-    $('#decrTaskNrReportingID').prop( "disabled", true);
+    setButtonsReporting(false); // update buttons
 
     var arrayLength = existingReportings.length;
     $("#reportingTableID tbody tr").remove();
@@ -313,6 +449,39 @@ function refreshReporting(existingList){
             '<td class="col-md-2">' + existingReportings[i].deadline + '</td>' +
             '<td class="col-md-2">' + taskDone + '</td></tr>')
     }
+
+
+    // SET TABLE AND FORM TO SELECTED EXP STEP
+    selectedID = $('#selectedReportingID').val();
+    parent = $('#reportingTableID');
+    $('#' + selectedID, parent).addClass("highlight").siblings().removeClass("highlight"); // highlight selected row
+
+    var nrSteps = existingReportings.length;
+
+    for (i = 0; i < nrSteps; i++) {
+
+        if (existingReportings[i].id == selectedID){
+
+            removeReportingErrorClasses();                // remove all error classes
+
+            $('#id_reporting_task').val(existingReportings[i].task);
+            $('#id_reporting_properties').val(existingReportings[i].properties);
+            $('#id_reporting_deadline').val(existingReportings[i].deadline);
+            if(existingReportings[i].done == 'True'){
+                $('#id_done').prop('checked', true);
+            }
+            else{
+                $('#id_done').prop('checked', false);
+            }
+
+            contrPartner = getPartnerByID(existingReportings[i].partnerID);
+
+            $('#partnerReporting').val(contrPartner.id);
+
+            setButtonsReporting(true); // update buttons
+        }
+    } // end for
+
 }
 
 function getPartnerByID(partnerID){
@@ -401,7 +570,7 @@ function sendReqInfoToServer(update){
 
     dataToSend = {
         datasetID: datasetID,
-        task: $('#id_req_task').val(),    // use the class set in the widget in 'forms.py' to identify the field
+        task: $('#id_req_task').val(),
         properties: $('#id_req_properties').val(),
         partnerID: $("#partnerDataReq").val(),
         deadline: $('#id_req_deadline').val(),
@@ -430,7 +599,7 @@ function sendExpStepInfoToServer(update){
 
     dataToSend = {
         datasetID: datasetID,
-        task: $('#id_exp_task').val(),    // use the class set in the widget in 'forms.py' to identify the field
+        task: $('#id_exp_task').val(),
         properties: $('#id_exp_properties').val(),
         partnerID: $("#partnerExpStep").val(),
         deadline: $("#id_exp_deadline").val(),
@@ -460,7 +629,7 @@ function sendReportingInfoToServer(update){
 
     dataToSend = {
         datasetID: datasetID,
-        task: $('#id_reporting_task').val(),    // use the class set in the widget in 'forms.py' to identify the field
+        task: $('#id_reporting_task').val(),
         properties: $('#id_reporting_properties').val(),
         partnerID: $("#partnerReporting").val(),
         deadline: $('#id_reporting_deadline').val(),
@@ -498,3 +667,80 @@ function sendInfoToServer(dataToSend, urlToSend, existingList, refreshFunction){
         }
     });
 }
+
+
+function setButtonsReq(active){
+
+    if (active === true){
+        $('#updateReqID').removeClass( "disabled" ).addClass( "active" );
+        $('#updateReqID').prop( "disabled", false);
+        $('#deleteReqID').removeClass( "disabled" ).addClass( "active" );
+        $('#deleteReqID').prop( "disabled", false);
+        $('#incrTaskNrReqID').removeClass( "disabled" ).addClass( "active" );
+        $('#incrTaskNrReqID').prop( "disabled", false);
+        $('#decrTaskNrReqID').removeClass( "disabled" ).addClass( "active" );
+        $('#decrTaskNrReqID').prop( "disabled", false);
+    }
+    else{
+        $('#updateReqID').removeClass( "active" ).addClass( "disabled" );
+        $('#updateReqID').prop( "disabled", true);
+        $('#deleteReqID').removeClass( "active" ).addClass( "disabled" );
+        $('#deleteReqID').prop( "disabled", true);
+        $('#incrTaskNrReqID').removeClass( "active" ).addClass( "disabled" );
+        $('#incrTaskNrReqID').prop( "disabled", true);
+        $('#decrTaskNrReqID').removeClass( "active" ).addClass( "disabled" );
+        $('#decrTaskNrReqID').prop( "disabled", true);
+    }
+}
+
+
+function setButtonsExpStep(active){
+
+    if (active === true){
+        // update buttons
+        $('#updateExpStepID').removeClass( "disabled" ).addClass( "active" );
+        $('#updateExpStepID').prop( "disabled", false);
+        $('#deleteExpStepID').removeClass( "disabled" ).addClass( "active" );
+        $('#deleteExpStepID').prop( "disabled", false);
+        $('#incrTaskNrExpStepID').removeClass( "disabled" ).addClass( "active" );
+        $('#incrTaskNrExpStepID').prop( "disabled", false);
+        $('#decrTaskNrExpStepID').removeClass( "disabled" ).addClass( "active" );
+        $('#decrTaskNrExpStepID').prop( "disabled", false);
+    }
+    else{
+        $('#updateExpStepID').removeClass( "active" ).addClass( "disabled" );
+        $('#updateExpStepID').prop( "disabled", true);
+        $('#deleteExpStepID').removeClass( "active" ).addClass( "disabled" );
+        $('#deleteExpStepID').prop( "disabled", true);
+        $('#incrTaskNrExpStepID').removeClass( "active" ).addClass( "disabled" );
+        $('#incrTaskNrExpStepID').prop( "disabled", true);
+        $('#decrTaskNrExpStepID').removeClass( "active" ).addClass( "disabled" );
+        $('#decrTaskNrExpStepID').prop( "disabled", true);
+    }
+}
+
+
+function setButtonsReporting(active){
+
+    if (active === true){
+        $('#updateReportingID').removeClass( "disabled" ).addClass( "active" );
+        $('#updateReportingID').prop( "disabled", false);
+        $('#deleteReportingID').removeClass( "disabled" ).addClass( "active" );
+        $('#deleteReportingID').prop( "disabled", false);
+        $('#incrTaskNrReportingID').removeClass( "disabled" ).addClass( "active" );
+        $('#incrTaskNrReportingID').prop( "disabled", false);
+        $('#decrTaskNrReportingID').removeClass( "disabled" ).addClass( "active" );
+        $('#decrTaskNrReportingID').prop( "disabled", false);
+    }
+    else{
+        $('#updateReportingID').removeClass( "active" ).addClass( "disabled" );
+        $('#updateReportingID').prop( "disabled", true);
+        $('#deleteReportingID').removeClass( "active" ).addClass( "disabled" );
+        $('#deleteReportingID').prop( "disabled", true);
+        $('#incrTaskNrReportingID').removeClass( "active" ).addClass( "disabled" );
+        $('#incrTaskNrReportingID').prop( "disabled", true);
+        $('#decrTaskNrReportingID').removeClass( "active" ).addClass( "disabled" );
+        $('#decrTaskNrReportingID').prop( "disabled", true);
+    }
+}
+

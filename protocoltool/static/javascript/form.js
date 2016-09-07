@@ -1,3 +1,4 @@
+
 $(document).ready(function(){
 
     // fill in all the partner information
@@ -6,7 +7,10 @@ $(document).ready(function(){
     $('#partnerTable').on('click', 'tr', function(){
 
         selectedPartner = $(this).find(".partnername").text();
+        $(this).closest("tr").addClass("highlight").siblings().removeClass("highlight");
+
         var arrayLength = existingPartners.length;
+
 
         for (i = 0; i < arrayLength; i++) {
 
@@ -89,6 +93,8 @@ $(document).ready(function(){
 
 
     $('#addPartnerID').on('click', function(){
+
+        removePartnerErrorClasses();
 
         // check if all values are valid
         validName = checkValidField($('#id_partner_name'));
@@ -177,15 +183,12 @@ $(document).ready(function(){
 
             if (existingReqs[i].id == selectedReqID){
 
-                // remove all error classes
-                $('#id_req_task').removeClass('error');
-                $('#id_req_properties').removeClass('error');
-                $('#partnerDataReq').removeClass('error');
+                removeReqErrorClasses();                // remove all error classes
 
                 $('#id_req_task').val(existingReqs[i].task);
                 $('#id_req_properties').val(existingReqs[i].properties);
                 $('#id_req_deadline').val(existingReqs[i].deadline);
-                 if(existingReqs[i].done == 'True'){
+                if(existingReqs[i].done == 'True'){
                     $('#id_done').prop('checked', true);
                 }
                 else{
@@ -197,29 +200,23 @@ $(document).ready(function(){
                 $('#partnerDataReq').val(contrPartner.id);
                 $('#selectedReqID').val(selectedReqID);
 
-                // update buttons
-                $('#updateReqID').removeClass( "disabled" ).addClass( "active" );
-                $('#updateReqID').prop( "disabled", false);
-                $('#deleteReqID').removeClass( "disabled" ).addClass( "active" );
-                $('#deleteReqID').prop( "disabled", false);
-                $('#incrTaskNrReqID').removeClass( "disabled" ).addClass( "active" );
-                $('#incrTaskNrReqID').prop( "disabled", false);
-                $('#decrTaskNrReqID').removeClass( "disabled" ).addClass( "active" );
-                $('#decrTaskNrReqID').prop( "disabled", false);
-
+                setButtonsReq(true);   // update buttons
             }
         } // end for
-
     }); // end on reqTable clicked
 
+
     $('#addReqID').on('click', function(){
+
+        removeReqErrorClasses();
 
         // check if all values are valid
         validTask = checkValidField($('#id_req_task'));
         validProp = checkValidField($('#id_req_properties'));
         validPartner = checkValidField($('#partnerDataReq'));
+        validDeadline = checkValidField($('#id_req_deadline'));
 
-        if(validTask === true && validProp === true && validPartner === true){
+        if(validTask === true && validProp === true && validPartner === true && validDeadline === true){
             sendReqInfoToServer(false);
         }
         else{
@@ -228,12 +225,16 @@ $(document).ready(function(){
     });
 
     $('#updateReqID').on('click', function(){
+
+        removeReqErrorClasses();
+
         // check if all values are valid
         validTask = checkValidField($('#id_req_task'));
         validProp = checkValidField($('#id_req_properties'));
         validPartner = checkValidField($('#partnerDataReq'));
+        validDeadline = checkValidField($('#id_req_deadline'));
 
-        if(validTask === true && validProp === true && validPartner === true){
+        if(validTask === true && validProp === true && validPartner === true && validDeadline === true){
             sendReqInfoToServer(true);
         }
         else{
@@ -242,12 +243,13 @@ $(document).ready(function(){
     });
 
     $('#deleteReqID').on('click', function(){
+        removeReqErrorClasses();
 
-         var dataToSend = {stepID: $('#selectedReqID').val(),
+        var dataToSend = {stepID: $('#selectedReqID').val(),
                    datasetID: datasetID,
                    csrfmiddlewaretoken: csrfmiddlewaretoken}
 
-         sendInfoToServer(dataToSend, "/project/deletereq/", existingReqs, refreshReqs)
+        sendInfoToServer(dataToSend, "/project/deletereq/", existingReqs, refreshReqs)
     });
 
     $('#incrTaskNrReqID').on('click', function(){
@@ -282,9 +284,7 @@ $(document).ready(function(){
             if (existingExpSteps[i].id == selectedExpStepID){
 
                 // remove all error classes
-                $('#id_exp_task').removeClass('error');
-                $('#id_exp_properties').removeClass('error');
-                $('#partnerExpStep').removeClass('error');
+                removeExpErrorClasses();
 
                 $('#id_exp_task').val(existingExpSteps[i].task);
                 $('#id_exp_properties').val(existingExpSteps[i].properties);
@@ -295,15 +295,7 @@ $(document).ready(function(){
                 $('#partnerExpStep').val(contrPartner.id);
                 $('#selectedExpStepID').val(selectedExpStepID);
 
-                // update buttons
-                $('#updateExpStepID').removeClass( "disabled" ).addClass( "active" );
-                $('#updateExpStepID').prop( "disabled", false);
-                $('#deleteExpStepID').removeClass( "disabled" ).addClass( "active" );
-                $('#deleteExpStepID').prop( "disabled", false);
-                $('#incrTaskNrExpStepID').removeClass( "disabled" ).addClass( "active" );
-                $('#incrTaskNrExpStepID').prop( "disabled", false);
-                $('#decrTaskNrExpStepID').removeClass( "disabled" ).addClass( "active" );
-                $('#decrTaskNrExpStepID').prop( "disabled", false);
+                setButtonsExpStep(true);    // update buttons
             }
         } // end for
 
@@ -315,8 +307,9 @@ $(document).ready(function(){
         validTask = checkValidField($('#id_exp_task'));
         validProp = checkValidField($('#id_exp_properties'));
         validPartner = checkValidField($('#partnerExpStep'));
+        validDeadline = checkValidField($('#id_exp_deadline'));
 
-        if(validTask === true && validProp === true && validPartner === true){
+        if(validTask === true && validProp === true && validPartner === true && validDeadline === true){
             sendExpStepInfoToServer(false);
         }
         else{
@@ -327,10 +320,11 @@ $(document).ready(function(){
     $('#updateExpStepID').on('click', function(){
         // check if all values are valid
         validTask = checkValidField($('#id_exp_task'));
-        validProp = checkValidField($('#exp_properties'));
+        validProp = checkValidField($('#id_exp_properties'));
         validPartner = checkValidField($('#partnerExpStep'));
+        validDeadline = checkValidField($('#id_exp_deadline'));
 
-        if(validTask === true && validProp === true && validPartner === true){
+        if(validTask === true && validProp === true && validPartner === true && validDeadline === true){
             sendExpStepInfoToServer(true);
         }
         else{
@@ -339,6 +333,8 @@ $(document).ready(function(){
     });
 
     $('#deleteExpStepID').on('click', function(){
+
+         removeExpErrorClasses();
 
          var dataToSend = {stepID: $('#selectedExpStepID').val(),
                    datasetID: datasetID,
@@ -379,10 +375,7 @@ $(document).ready(function(){
 
             if (existingReportings[i].id == selectedReportingID){
 
-                // remove all error classes
-                $('#id_reporting_task').removeClass('error');
-                $('#id_reporting_properties').removeClass('error');
-                $('#partnerReporting').removeClass('error');
+                removeReportingErrorClasses();                // remove reporting error classes
 
                 $('#id_reporting_task').val(existingReportings[i].task);
                 $('#id_reporting_properties').val(existingReportings[i].properties);
@@ -393,15 +386,7 @@ $(document).ready(function(){
                 $('#partnerReporting').val(contrPartner.id);
                 $('#selectedReportingID').val(selectedReportingID);
 
-                // update buttons
-                $('#updateReportingID').removeClass( "disabled" ).addClass( "active" );
-                $('#updateReportingID').prop( "disabled", false);
-                $('#deleteReportingID').removeClass( "disabled" ).addClass( "active" );
-                $('#deleteReportingID').prop( "disabled", false);
-                $('#incrTaskNrReportingID').removeClass( "disabled" ).addClass( "active" );
-                $('#incrTaskNrReportingID').prop( "disabled", false);
-                $('#decrTaskNrReportingID').removeClass( "disabled" ).addClass( "active" );
-                $('#decrTaskNrReportingID').prop( "disabled", false);
+                setButtonsReporting(true);   // update buttons
             }
         } // end for
 
@@ -413,8 +398,9 @@ $(document).ready(function(){
         validTask = checkValidField($('#id_reporting_task'));
         validProp = checkValidField($('#id_reporting_properties'));
         validPartner = checkValidField($('#partnerReporting'));
+        validDeadline = checkValidField($('#id_reporting_deadline'));
 
-        if(validTask === true && validProp === true && validPartner === true){
+        if(validTask === true && validProp === true && validPartner === true && validDeadline === true){
             sendReportingInfoToServer(false);
         }
         else{
@@ -427,8 +413,9 @@ $(document).ready(function(){
         validTask = checkValidField($('#id_reporting_task'));
         validProp = checkValidField($('#id_reporting_properties'));
         validPartner = checkValidField($('#partnerReporting'));
+        validDeadline = checkValidField($('#id_reporting_deadline'));
 
-        if(validTask === true && validProp === true && validPartner === true){
+        if(validTask === true && validProp === true && validPartner === true && validDeadline === true){
             sendReportingInfoToServer(true);
         }
         else{
@@ -437,6 +424,8 @@ $(document).ready(function(){
     });
 
     $('#deleteReportingID').on('click', function(){
+
+        removeReportingErrorClasses();
 
         var dataToSend = {stepID: $('#selectedReportingID').val(),
                    datasetID: datasetID,

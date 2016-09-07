@@ -1,6 +1,7 @@
 __author__ = 'beekhuiz'
 from .models import BasicDataset, Partner, DataReq, ExpStep, Reporting
 from django.http import HttpResponse
+import os
 from io import BytesIO
 
 from reportlab.platypus import (
@@ -10,6 +11,7 @@ from reportlab.platypus import (
     Paragraph,
     Spacer,
     Table,
+    Image,
     TableStyle,
 )
 from reportlab.lib.units import cm
@@ -19,7 +21,6 @@ from reportlab.lib.colors import Color
 from reportlab.lib.colors import (
     black,
     blue,
-    white,
 )
 
 
@@ -27,14 +28,15 @@ import pdb
 
 
 def writeTasks(story, styles, taskList):
-       
+
+
     for task in taskList:
 
-        taskDone = "(In progress)"
-        if task.done == True:
-            taskDone = "(Done)"
+        # taskDone = "(In progress)"
+        # if task.done == True:
+        #     taskDone = "(Done)"
 
-        data = [[Paragraph('Task {} {}:'.format(task.taskNr, taskDone), styles['label']), Paragraph(task.task.replace('\n','<br />\n'), styles['default'])],
+        data = [[Paragraph('Task {}:'.format(task.taskNr), styles['label']), Paragraph(task.task.replace('\n','<br />\n'), styles['default'])],
             [Paragraph('Description:', styles['label']), Paragraph(task.properties.replace('\n','<br />\n'), styles['default'])],
            [Paragraph('Task leader:', styles['label']), Paragraph(task.partner.name, styles['default'])],
            [Paragraph('Deadline:', styles['label']), Paragraph(str(task.deadline), styles['default'])]]
@@ -55,9 +57,9 @@ def createPDF(datasetID):
     # Get all the information of this protocol
     basicInfo = BasicDataset.objects.get(id=datasetID)
     partnerInfo = Partner.objects.filter(dataset_id=datasetID)
-    reqInfo = DataReq.objects.filter(dataset_id=datasetID)
-    stepInfo = ExpStep.objects.filter(dataset_id=datasetID)
-    reportingInfo = Reporting.objects.filter(dataset_id=datasetID)
+    reqInfo = DataReq.objects.filter(dataset_id=datasetID).order_by('taskNr')
+    stepInfo = ExpStep.objects.filter(dataset_id=datasetID).order_by('taskNr')
+    reportingInfo = Reporting.objects.filter(dataset_id=datasetID).order_by('taskNr')
 
     # Create the HttpResponse object with the appropriate PDF headers.
     response = HttpResponse(content_type='application/pdf')
@@ -94,7 +96,7 @@ def createPDF(datasetID):
         parent=styles['default'],
         fontName='Helvetica-Bold',
         fontSize=24,
-        leading=52,
+        leading=30,
         alignment=TA_CENTER,
         textColor=black,
     )
@@ -158,7 +160,17 @@ def createPDF(datasetID):
     # container for the 'Flowable' objects
     story = []
 
-    story.append(Paragraph('Protocol: {}'.format(basicInfo.shortname), styles['title1']))
+    scriptDir = os.path.dirname(__file__)
+    im = Image(os.path.join(scriptDir, "static/img/sologo_new_cropped.png"), width=2.6*cm, height=2*cm)
+    im.hAlign = 'RIGHT'
+
+    data = [[im, Paragraph('{}'.format(basicInfo.shortname), styles['title1'])]]
+
+    t=Table(data, hAlign='LEFT', colWidths=[2 * cm, 14 * cm])
+    t.setStyle(TableStyle([('VALIGN',(0,0),(-1,-1),'TOP')]))
+    story.append(t)
+    story.append(Spacer(1, 16))
+
 
     story.append(Paragraph('Experiment Information', styles['title2']))
     data= [[Paragraph('Full experiment name:', styles['label']), Paragraph(basicInfo.title, styles['default'])],
@@ -205,15 +217,6 @@ def createPDF(datasetID):
 
     # write the document to disk
     doc.build(story)
-
-
-    # # define table to create a horizontal line
-    # horizontalLineStyle = TableStyle([
-    #      ("LINEBELOW", (0,0), (-1,-1), 1, black),
-    #    ])
-    # data = [[""]]
-    # horizontalLineTable = Table(data, hAlign='CENTER', colWidths=[16 * cm])
-    # horizontalLineTable.setStyle(horizontalLineStyle)
 
     pdf = buffer.getvalue()
     buffer.close()
