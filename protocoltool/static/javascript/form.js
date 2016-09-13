@@ -4,7 +4,7 @@ $(document).ready(function(){
     // fill in all the partner information
     refreshAll();
 
-    $('#partnerTable').on('click', 'tr', function(){
+    $('#partnerTable').on('click', 'tbody tr', function(){
 
         selectedPartner = $(this).find(".partnername").text();
         $(this).closest("tr").addClass("highlight").siblings().removeClass("highlight");
@@ -28,7 +28,6 @@ $(document).ready(function(){
                 $('#id_partner_organisation').val(existingPartners[i].organisation);
 
                 if(existingPartners[i].lead == 'True'){
-                    console.log("Check the cb!");
                     $('#id_partner_lead').prop('checked', true);
                 }
                 else{
@@ -75,8 +74,6 @@ $(document).ready(function(){
                 // handle a successful response
                 success : function(json) {
                     existingExperimentInfo = JSON.parse(json['existingExperimentInfoJSON']);
-                    console.log(existingExperimentInfo)
-
                     refreshExperimentInfo();
                 },
                 // handle a non-successful response
@@ -189,10 +186,10 @@ $(document).ready(function(){
                 $('#id_req_properties').val(existingReqs[i].properties);
                 $('#id_req_deadline').val(existingReqs[i].deadline);
                 if(existingReqs[i].done == 'True'){
-                    $('#id_done').prop('checked', true);
+                    $('#id_req_done').prop('checked', true);
                 }
                 else{
-                    $('#id_done').prop('checked', false);
+                    $('#id_req_done').prop('checked', false);
                 }
 
                 contrPartner = getPartnerByID(existingReqs[i].partnerID);
@@ -289,6 +286,12 @@ $(document).ready(function(){
                 $('#id_exp_task').val(existingExpSteps[i].task);
                 $('#id_exp_properties').val(existingExpSteps[i].properties);
                 $('#id_exp_deadline').val(existingExpSteps[i].deadline);
+                if(existingExpSteps[i].done == 'True'){
+                    $('#id_exp_done').prop('checked', true);
+                }
+                else{
+                    $('#id_exp_done').prop('checked', false);
+                }
 
                 contrPartner = getPartnerByID(existingExpSteps[i].partnerID);
 
@@ -380,7 +383,12 @@ $(document).ready(function(){
                 $('#id_reporting_task').val(existingReportings[i].task);
                 $('#id_reporting_properties').val(existingReportings[i].properties);
                 $('#id_reporting_deadline').val(existingReportings[i].deadline);
-
+                if(existingReportings[i].done == 'True'){
+                    $('#id_reporting_done').prop('checked', true);
+                }
+                else{
+                    $('#id_reporting_done').prop('checked', false);
+                }
                 contrPartner = getPartnerByID(existingReportings[i].partnerID);
 
                 $('#partnerReporting').val(contrPartner.id);

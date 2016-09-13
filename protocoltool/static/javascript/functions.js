@@ -212,6 +212,7 @@ function refreshPartners(){
     // reset selected partner ID
     $('#selectedPartnerID').val('-99')
 
+
     // reset partner table
     var arrayLength = existingPartners.length;
     $("#partnerTable tbody tr").remove();
@@ -225,6 +226,8 @@ function refreshPartners(){
         $("#partnerTable > tbody").append('<tr class="partnerRow"><td class="col-md-5 partnername">' + existingPartners[i].name +
         '<td class="col-md-5">' + existingPartners[i].organisation + '</td><td class="col-md-2">' + leadText + '</td></tr>');
     }
+
+
 
     // also refresh the partners in the reqs table
     selectedPartnerID = $("#partnerDataReq").val()  // temporary store selected partner
@@ -506,23 +509,33 @@ function sendPartnerInfoToServer(update){
     var lead = 'False';
     if($('#id_partner_lead').is(':checked')){
 
-        var existingLead = 'False';
+        var existingLead = false;
+        selectedPartnerID = $('#selectedPartnerID').val() // for update, store current selected partner
 
         // check if there is already a lead partner
         var nrPartners = existingPartners.length;
         for (j = 0; j < nrPartners; j++) {
-            if(existingPartners[j].lead == 'True'){
-                existingLead = 'True';
+
+            if(update === true){
+                if(existingPartners[j].lead == 'True' && existingPartners[j].id != selectedPartnerID){
+                    existingLead = true;
+                }
+            }
+            if(update === false){
+                if(existingPartners[j].lead == 'True'){
+                    existingLead = true;
+                }
             }
         }
 
-        if(update == false && existingLead == 'True'){
+        if(existingLead == true){
             warningPopup('There is already a partner in the lead; ' +
                          'please uncheck the lead box or change the existing partner in the lead')
             return;
         }
-
-        lead = 'True';
+        else{
+           lead = 'True';
+        }
     }
 
     dataToSend = {datasetID: datasetID,
@@ -538,6 +551,8 @@ function sendPartnerInfoToServer(update){
         partnerID = $('#selectedPartnerID').val();
         dataToSend['partnerID'] = partnerID;
     }
+
+    $('#selectedPartnerID').val(-1) // deselect the partners after storing the form data
 
     $.ajax({
         url: url,
@@ -582,6 +597,7 @@ function sendReqInfoToServer(update){
         dataToSend['stepID'] = $('#selectedReqID').val();
     }
 
+    $('#selectedReqID').val(-1)
     sendInfoToServer(dataToSend, url, existingReqs, refreshReqs)
 
 } // end sendReqInfoToServer
@@ -611,7 +627,7 @@ function sendExpStepInfoToServer(update){
         dataToSend['stepID'] = $('#selectedExpStepID').val();
     }
 
-
+    $('#selectedExpStepID').val(-1)
     sendInfoToServer(dataToSend, url, existingExpSteps, refreshExpSteps)
 
 } // end sendExpStepInfoToServer
@@ -641,6 +657,7 @@ function sendReportingInfoToServer(update){
         dataToSend['stepID'] = $('#selectedReportingID').val();
     }
 
+    $('#selectedReportingID').val(-1)
     sendInfoToServer(dataToSend, url, existingReportings, refreshReporting)
 
 } // end sendReportingInfoToServer

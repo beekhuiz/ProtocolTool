@@ -51,17 +51,17 @@
             <h4> Partners </h4>
 
             <div class="row">
-                <div class="col-md-8">
+                <div class="col-md-10">
                     <table id="partnerTable" table-border="0">
-                        <th class="col-md-2 infotext"><strong>Name</strong></th>
-                        <th class="col-md-2 infotext"><strong>E-mail</strong></th>
-                        <th class="col-md-2 infotext"><strong>Organisation</strong></th>
+                        <th class="col-md-3 infotext"><strong>Name</strong></th>
+                        <th class="col-md-3 infotext"><strong>E-mail</strong></th>
+                        <th class="col-md-3 infotext"><strong>Organisation</strong></th>
                         <th class="col-md-1 infotext"><strong></strong></th>
                         <tbody>
                          {% for partner in partners %}
-                            <tr><td class="col-md-2 infotext">{{ partner.name }}</td>
-                            <td class="col-md-2 infotext">{{ partner.email }}</td>
-                            <td class="col-md-2 infotext">{{ partner.organisation}}</td>
+                            <tr><td class="col-md-3 infotext">{{ partner.name }}</td>
+                            <td class="col-md-3 infotext">{{ partner.email }}</td>
+                            <td class="col-md-3 infotext">{{ partner.organisation}}</td>
                             <td class="col-md-1 infotext"><strong>{% if partner.lead %}lead{% endif %}</strong></td></tr>
                          {% endfor %}
                         </tbody>
