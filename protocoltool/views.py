@@ -220,15 +220,11 @@ def viewProtocol(request, dataset_id):
     '''
 
     datasetID = int(dataset_id)
-    # context = getAllProtocolInfo(dataset_id)
+    context = getAllProtocolInfo(dataset_id)
 
-    context = {}
-
-    context['basic'] = BasicDataset.objects.get(id=datasetID)
+    # TEMP: Add partner info from the Partner objects
+    #TODO: use partnerinfo in the context to view partner info in the protocol
     context['partners'] = Partner.objects.filter(dataset_id=datasetID)
-    context['methods'] = DataReq.objects.filter(dataset_id=datasetID).order_by('taskNr')
-    context['steps'] = ExpStep.objects.filter(dataset_id=datasetID).order_by('taskNr')
-    context['results'] = Reporting.objects.filter(dataset_id=datasetID).order_by('taskNr')
 
     return render(request, 'protocoltool/viewprotocol.html', context)
 

@@ -1,3 +1,18 @@
+
+<!--Load in all data from Django to javascript-->
+<script type='text/javascript'>
+
+    var datasetID = "{{ dataset_id }}";
+
+    var experimentInfo = {{ existingExperimentInfoJSON|safe }};
+    var partners = {{ existingPartnersJSON|safe }};
+    var reqs = {{ existingReqsJSON|safe }};
+    var expSteps = {{ existingExpStepsJSON|safe }};
+    var reportings = {{ existingReportingsJSON|safe }};
+
+</script>
+
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -38,14 +53,14 @@
                 </tbody>
             </table>
 
-
             <script>
-            writeLabelLine("#experimentTable > tbody", "Full experiment name:", "{{ basic.title|linebreaks }}");
-            writeLabelLine("#experimentTable > tbody", "Experiment Idea:", "{{ basic.experimentIdea|linebreaks }}");
-            writeLabelLine("#experimentTable > tbody", "Hypothesis:", "{{ basic.hypothesis|linebreaks }}");
-            writeLabelLine("#experimentTable > tbody", "Research objective:", "{{ basic.researchObjective|linebreaks }}");
-            writeLabelLine("#experimentTable > tbody", "Date last update:", "{{ basic.dateLastUpdate|linebreaks }}");
+                writeLabelLine("#experimentTable > tbody", "Full experiment name:", experimentInfo.title);
+                writeLabelLine("#experimentTable > tbody", "Experiment Idea:", experimentInfo.experimentIdea );
+                writeLabelLine("#experimentTable > tbody", "Hypothesis:", experimentInfo.hypothesis );
+                writeLabelLine("#experimentTable > tbody", "Research objective:", experimentInfo.researchObjective);
+                writeLabelLine("#experimentTable > tbody", "Date last update:", experimentInfo.dateLastUpdate);
             </script>
+
 
             <hr>
             <h4> Partners </h4>
@@ -77,24 +92,9 @@
                 </tbody>
             </table>
 
-            {% for step in methods %}
             <script>
-            doneText = "Task " + "{{ step.taskNr }}"
-
-            if("{{ step.done }}" == 'True'){
-                doneText += " (Done):";
-            }
-            else {
-                doneText += " (In progress):";
-            }
-
-            writeLabelLine("#methodTable > tbody", doneText, "{{ step.task }}");
-            writeLabelLine("#methodTable > tbody", "Description:", "{{ step.properties|linebreaks }}");
-            writeLabelLine("#methodTable > tbody", "Task leader:", "{{ step.partner.name|linebreaks }}");
-            writeLabelLine("#methodTable > tbody", "Deadline:", "{{ step.deadline|linebreaks }}");
-            writeLabelLine("#methodTable > tbody", "", "");
+                writeStepsViewProtocol(reqs, "methodTable");
             </script>
-            {% endfor %}
 
 
             <hr>
@@ -105,24 +105,10 @@
                 </tbody>
             </table>
 
-            {% for step in steps %}
             <script>
-            doneText = "Task " + "{{ step.taskNr }}"
-
-            if("{{ step.done }}" == 'True'){
-                doneText += " (Done):";
-            }
-            else {
-                doneText += " (In progress):";
-            }
-
-            writeLabelLine("#stepTable > tbody", doneText, "{{ step.task }}");
-            writeLabelLine("#stepTable > tbody", "Description:", "{{ step.properties|linebreaks }}");
-            writeLabelLine("#stepTable > tbody", "Task leader:", "{{ step.partner.name|linebreaks }}");
-            writeLabelLine("#stepTable > tbody", "Deadline:", "{{ step.deadline|linebreaks }}");
-            writeLabelLine("#stepTable > tbody", "", "");
+                writeStepsViewProtocol(expSteps, "stepTable");
             </script>
-            {% endfor %}
+
 
             <hr>
             <h4> C) Result Reporting </h4>
@@ -131,24 +117,10 @@
                 </tbody>
             </table>
 
-            {% for step in results %}
             <script>
-            doneText = "Task " + "{{ step.taskNr }}"
-
-            if("{{ step.done }}" == 'True'){
-                doneText += " (Done):";
-            }
-            else {
-                doneText += " (In progress):";
-            }
-
-            writeLabelLine("#resultTable > tbody", doneText, "{{ step.task }}");
-            writeLabelLine("#resultTable > tbody", "Description:", "{{ step.properties|linebreaks }}");
-            writeLabelLine("#resultTable > tbody", "Task leader:", "{{ step.partner.name|linebreaks }}");
-            writeLabelLine("#resultTable > tbody", "Deadline:", "{{ step.deadline|linebreaks }}");
-            writeLabelLine("#resultTable > tbody", "", "");
+                writeStepsViewProtocol(reportings, "resultTable");
             </script>
-            {% endfor %}
+
 
         </div> <!--END CONTAINER -->
 

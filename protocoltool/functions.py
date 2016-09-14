@@ -139,13 +139,16 @@ def getListSteps(datasetID, allObjects):
     existingObjects = allObjects.objects.filter(dataset__id=datasetID)
 
     existingObjectsList = []
+
     for existingObject in existingObjects:
+
         reportingDict = {
             "id": existingObject.id,
             "taskNr": existingObject.taskNr,
             "task": existingObject.task,
             "properties": existingObject.properties,
             "partnerID": existingObject.partner.id,
+            "partnerName": existingObject.partner.name,
             "deadline": str(existingObject.deadline),
             "done": str(existingObject.done),
         }

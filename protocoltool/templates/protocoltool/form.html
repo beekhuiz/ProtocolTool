@@ -465,14 +465,10 @@
     var datasetID = "{{ dataset_id }}";
 
     var existingExperimentInfo = {{ existingExperimentInfoJSON|safe }};
-    //console.log(existingExperimentInfo)
-
     var existingPartners = {{ existingPartnersJSON|safe }};
     var existingReqs = {{ existingReqsJSON|safe }};
     var existingExpSteps = {{ existingExpStepsJSON|safe }};
     var existingReportings = {{ existingReportingsJSON|safe }};
-
-    console.log(existingPartners);
 
     var csrfmiddlewaretoken =  "{{ csrf_token }}";
 

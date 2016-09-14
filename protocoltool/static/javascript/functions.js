@@ -1,3 +1,4 @@
+
 function writeLabelLine(tablebody, label, text){
     /*
     write a line of text with a label to a table.
@@ -16,13 +17,37 @@ function writeLabelTwoLines(tablebody, label, text){
           '<tr><td class="infotext"><strong>' + label + '</strong><br>' + text + '</td></tr>')
 }
 
-
 function removePartnerErrorClasses() {
 
     $('#id_partner_name').removeClass('error');
     $('#id_partner_email').removeClass('error');
     $('#id_partner_organisation').removeClass('error');
 }
+
+
+function writeStepsViewProtocol(steps, table) {
+
+    var nrSteps = steps.length;
+
+    for(i = 0; i < nrSteps; i++){
+
+        doneText = "Task " + steps[i].taskNr
+
+        if(steps[i].done == 'True'){
+            doneText += " (Done):";
+        }
+        else {
+            doneText += " (In progress):";
+        }
+
+        writeLabelLine("#" + table + " > tbody", doneText, steps[i].task);
+        writeLabelLine("#" + table + " > tbody", "Description:", steps[i].properties);
+        writeLabelLine("#" + table + " > tbody", "Task leader:", steps[i].partnerName);
+        writeLabelLine("#" + table + " > tbody", "Deadline:", steps[i].deadline);
+        writeLabelLine("#" + table + " > tbody", "", "");
+    }
+}
+
 
 function removeReqErrorClasses() {
 
